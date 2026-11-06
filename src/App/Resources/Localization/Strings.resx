@@ -106,4 +106,5 @@
   <data name="VoiceUnavailable" xml:space="preserve"><value>Speech recognition is unavailable. Check microphone access and installed speech languages.</value></data>
   <data name="VoiceTextSent" xml:space="preserve"><value>Text sent to the TV.</value></data>
   <data name="InputMenu" xml:space="preserve"><value>Open TV input menu</value></data>
+  <data name="PowerToggle" xml:space="preserve"><value>Toggle TV power</value></data>
 </root>

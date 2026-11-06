@@ -11,9 +11,9 @@
     <MauiXamlInflator>SourceGen</MauiXamlInflator>
     <ApplicationTitle>BRAVIA Remote</ApplicationTitle>
     <ApplicationId>app.braviaremote.controller</ApplicationId>
-    <ApplicationDisplayVersion>0.4.0</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>0.4.1</ApplicationDisplayVersion>
     <Version>$(ApplicationDisplayVersion)</Version>
-    <ApplicationVersion>9</ApplicationVersion>
+    <ApplicationVersion>10</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
     <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>

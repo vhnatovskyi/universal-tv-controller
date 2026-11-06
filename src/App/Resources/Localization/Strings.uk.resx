@@ -106,4 +106,5 @@
   <data name="VoiceUnavailable" xml:space="preserve"><value>Розпізнавання мовлення недоступне. Перевір доступ до мікрофона та встановлені мови мовлення.</value></data>
   <data name="VoiceTextSent" xml:space="preserve"><value>Текст надіслано на телевізор.</value></data>
   <data name="InputMenu" xml:space="preserve"><value>Відкрити меню входів ТВ</value></data>
+  <data name="PowerToggle" xml:space="preserve"><value>Увімкнути або вимкнути ТВ</value></data>
 </root>

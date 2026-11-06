@@ -16,6 +16,8 @@ internal sealed class TvControl(IPAddress address, GoogleTvPairing pairing)
         await GoogleTvApps.ControlAsync(address, pairing, power: on);
     }
 
+    public Task TogglePowerAsync() => GoogleTvApps.ControlAsync(address, pairing, sonyKey: 0);
+
     public static async Task<GoogleTvPairing?> GetPairingAsync(Guid profile)
     {
         var saved = await SecureStorage.Default.GetAsync($"google-tv-pair-{profile:N}");

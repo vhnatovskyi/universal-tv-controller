@@ -272,19 +272,51 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private async void OnPower(object? sender, EventArgs e)
-    {
-        if (sender is Button { CommandParameter: string state })
-        {
+    private bool? tvPoweredOn;
 
-            await RunAsync(async tv =>
-            {
-                await tv.SetPowerAsync(state == "on");
-                return null;
-            });
-        }
+    private async void OnTogglePower(object? sender, EventArgs e)
+    {
+        var observedPower = tvPoweredOn;
+        await RunAsync(async tv =>
+        {
+            if (observedPower is { } on)
+                await tv.SetPowerAsync(!on);
+            else
+                await tv.TogglePowerAsync();
+            return null;
+        });
     }
 
+    private void UpdatePowerState(bool? on)
+    {
+        tvPoweredOn = on;
+        PowerButton.ImageSource = on switch
+        {
+            true => "control_power_on.png",
+            false => "control_power_off.png",
+            _ => "control_power.png"
+        };
+        PowerButton.BackgroundColor = Color.FromArgb(on switch
+        {
+            true => "#173832",
+            false => "#35242E",
+            _ => "#1B2937"
+        });
+        PowerButton.BorderColor = Color.FromArgb(on switch
+        {
+            true => "#3B9D82",
+            false => "#9C5966",
+            _ => "#40576D"
+        });
+        var description = Text(on switch
+        {
+            true => "PowerOff",
+            false => "PowerOn",
+            _ => "PowerToggle"
+        });
+        ToolTipProperties.SetText(PowerButton, description);
+        SemanticProperties.SetDescription(PowerButton, description);
+    }
     private async Task RunAsync(Func<TvControl, Task<string?>> operation)
     {
         if (busy || CurrentProfile is not { } profile)

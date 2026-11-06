@@ -107,7 +107,7 @@ public static class GoogleTvApps
             false => 223u,
             _ => sonyKey switch
             {
-                1 => 178u, 6 => 3u, 7 => 176u, 8 => 4u, 9 => 19u, 10 => 20u, 11 => 22u, 12 => 21u,
+                0 => 26u, 1 => 178u, 6 => 3u, 7 => 176u, 8 => 4u, 9 => 19u, 10 => 20u, 11 => 22u, 12 => 21u,
                 13 => 23u, 30 => 24u, 31 => 25u, 32 => 164u,
                 101 => 243u, 102 => 244u, 103 => 245u, 104 => 246u,
                 _ => throw new IOException("Unsupported remote key.")
@@ -122,6 +122,12 @@ public static class GoogleTvApps
     {
         var data = fields.FirstOrDefault(field => field.Number == 50).Data;
         return data is null ? null : (int)ReadFields(data).FirstOrDefault(field => field.Number == 7).Value;
+    }
+
+    private static bool? ReadPower(List<Field> fields)
+    {
+        var data = fields.FirstOrDefault(field => field.Number == 40).Data;
+        return data is null ? null : ReadFields(data).FirstOrDefault(field => field.Number == 1).Value != 0;
     }
 
     public static async Task<GoogleTvPairing?> PairAsync(
@@ -226,7 +232,7 @@ public static class GoogleTvApps
     }
 
     public static async Task WatchAppAsync(IPAddress address, GoogleTvPairing pairing,
-        Action<string> appChanged, Action<int> volumeChanged, CancellationToken token)
+        Action<string> appChanged, Action<int> volumeChanged, Action<bool> powerChanged, CancellationToken token)
     {
         using var certificate = X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(pairing.Certificate), "");
         using var client = new TcpClient(address.AddressFamily);
@@ -241,6 +247,8 @@ public static class GoogleTvApps
         {
             if (ReadVolume(message) is { } volume)
                 volumeChanged(volume);
+            if (ReadPower(message) is { } power)
+                powerChanged(power);
         });
         if (initialApp is not null)
             appChanged(initialApp);
@@ -253,6 +261,8 @@ public static class GoogleTvApps
                 appChanged(package);
             if (ReadVolume(message) is { } volume)
                 volumeChanged(volume);
+            if (ReadPower(message) is { } power)
+                powerChanged(power);
         }
     }
 

@@ -38,6 +38,7 @@ public partial class MainPage
         {
             VolumeValue.Text = "—";
             ActiveAppChip.IsVisible = false;
+            UpdatePowerState(null);
         }
 
         if (!volumeTrackingActive || busy || !RemoteButtons.IsVisible || CurrentProfile is not { } profile)
@@ -70,6 +71,11 @@ public partial class MainPage
                         {
                             if (!token.IsCancellationRequested)
                                 VolumeValue.Text = volume.ToString(CultureInfo.CurrentCulture);
+                        }),
+                        power => MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            if (!token.IsCancellationRequested)
+                                UpdatePowerState(power);
                         }), token);
                 }
                 catch (Exception error) when (error is IOException or SocketException or AuthenticationException
@@ -79,6 +85,7 @@ public partial class MainPage
                         return;
                     VolumeValue.Text = "—";
                     ActiveAppChip.IsVisible = false;
+                    UpdatePowerState(null);
                 }
                 await Task.Delay(TimeSpan.FromSeconds(5), token);
             }
