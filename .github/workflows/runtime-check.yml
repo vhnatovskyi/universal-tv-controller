@@ -1,11 +1,15 @@
 name: Runtime diagnostics
 on:
+  push:
+    branches: [fix/runtime-install-ci]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   dependencies:
-    runs-on: windows-2025
+    runs-on:
+  push:
+    branches: [fix/runtime-install-ci] windows-2025
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
