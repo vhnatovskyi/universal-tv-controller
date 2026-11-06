@@ -159,13 +159,13 @@
                 <Entry x:Name="ProfileNameEntry" Placeholder="{DynamicResource Loc.ProfileExample}" MaxLength="60"
                        TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#1B2635"
                        SemanticProperties.Description="{DynamicResource Loc.ProfileName}" />
-                <VerticalStackLayout x:Name="AddressFields" Spacing="8">
-                    <Label Text="{DynamicResource Loc.TvAddress}" TextColor="#E4EDF9" />
-                    <Entry x:Name="AddressEntry" Placeholder="{DynamicResource Loc.AddressExample}"
-                           TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#1B2635"
-                           IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"
-                           SemanticProperties.Description="{DynamicResource Loc.TvAddress}" />
-                </VerticalStackLayout>
+                <Picker x:Name="DevicePicker" Title="{DynamicResource Loc.SelectTv}" TitleColor="#95A3B8"
+                        TextColor="White" BackgroundColor="#1B2635" SelectedIndexChanged="OnDeviceSelected"
+                        SemanticProperties.Description="{DynamicResource Loc.SelectTv}" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <Label x:Name="DiscoveryStatus" TextColor="#95A3B8" FontSize="12" VerticalOptions="Center" />
+                    <Button x:Name="FindDevicesButton" Grid.Column="1" Text="{DynamicResource Loc.FindDevices}" Clicked="OnFindDevices" />
+                </Grid>
                 <Label x:Name="EditorError" IsVisible="False" TextColor="#FFB8B8" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <Button x:Name="SaveProfileButton" Text="{DynamicResource Loc.PairAndSave}" Clicked="OnSaveProfile" />

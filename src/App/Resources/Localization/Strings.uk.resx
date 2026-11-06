@@ -89,4 +89,9 @@
   <data name="AppLaunchUnconfirmed" xml:space="preserve"><value>Телевізор не підтвердив відкриття застосунку. Перевір, чи він встановлений, і спробуй ще раз.</value></data>
   <data name="PairAndSave" xml:space="preserve"><value>Спарувати та зберегти</value></data>
   <data name="IpService" xml:space="preserve"><value>Google TV</value></data>
+  <data name="SelectTv" xml:space="preserve"><value>Обери Google TV</value></data>
+  <data name="FindDevices" xml:space="preserve"><value>Шукати знову</value></data>
+  <data name="SearchingTvs" xml:space="preserve"><value>Шукаємо в домашній мережі…</value></data>
+  <data name="TvsFound" xml:space="preserve"><value>Знайдено пристроїв: {0}.</value></data>
+  <data name="NoTvsFound" xml:space="preserve"><value>Google TV не знайдено. Перевір, чи ТВ увімкнений і під’єднаний до тієї ж мережі.</value></data>
 </root>

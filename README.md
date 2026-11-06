@@ -11,7 +11,7 @@ Download `BraviaRemote-Setup-X.Y.Z.exe` from [GitHub Releases](https://github.co
 ## Connect a TV
 
 1. Connect the TV and PC or iPhone to the same home network.
-2. Add a profile with a name and the TV's local IPv4 address, then choose **Pair and save**.
+2. Add a profile, select your TV from the discovered devices, and choose **Pair and save**. The TV name is filled in automatically and can be edited.
 3. Enter the six-character code shown on the TV. The profile is saved once pairing succeeds.
 4. Use **Settings** to choose the default profile, pair again, or add quick buttons for YouTube, Netflix, and Kyivstar TV.
 

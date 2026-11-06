@@ -99,6 +99,8 @@ public partial class MainPage : ContentPage
 
     private void ShowScreen(Screen next)
     {
+        if (next != Screen.ProfileEditor)
+            discovery?.Cancel();
 
         screen = next;
         MenuOverlay.IsVisible = false;
@@ -162,10 +164,13 @@ public partial class MainPage : ContentPage
         editorReturnScreen = screen;
         editingId = profile?.Id;
         ProfileNameEntry.Text = profile?.Name;
-        AddressEntry.Text = profile?.Address;
+        selectedDevice = profile is null ? null : new DiscoveredTv(profile.Name, profile.Address);
+        discoveredDevices = selectedDevice is null ? [] : [selectedDevice];
+        RefreshDevicePicker();
 
         EditorError.IsVisible = false;
         ShowScreen(Screen.ProfileEditor);
+        _ = FindDevicesAsync();
     }
 
     private async void OnSaveProfile(object? sender, EventArgs e)
@@ -176,9 +181,9 @@ public partial class MainPage : ContentPage
             ShowEditorError(Text("MissingProfileName"));
             return;
         }
-        if (!TelevisionProfiles.TryParseAddress(AddressEntry.Text, out var address))
+        if (selectedDevice is null || !TelevisionProfiles.TryParseAddress(selectedDevice.Address, out var address))
         {
-            ShowEditorError(Text("InvalidAddress"));
+            ShowEditorError(Text("SelectTv"));
             return;
         }
         var index = profiles.Items.FindIndex(profile => profile.Id == editingId);
@@ -216,7 +221,8 @@ public partial class MainPage : ContentPage
     private void CloseEditor()
     {
 
-        ProfileNameEntry.Text = AddressEntry.Text = null;
+        discovery?.Cancel();
+        ProfileNameEntry.Text = null;
         ShowScreen(editorReturnScreen);
     }
 

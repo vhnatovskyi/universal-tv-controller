@@ -89,4 +89,9 @@
   <data name="AppLaunchUnconfirmed" xml:space="preserve"><value>The TV did not confirm opening the app. Check that it is installed and try again.</value></data>
   <data name="PairAndSave" xml:space="preserve"><value>Pair and save</value></data>
   <data name="IpService" xml:space="preserve"><value>Google TV</value></data>
+  <data name="SelectTv" xml:space="preserve"><value>Select a Google TV</value></data>
+  <data name="FindDevices" xml:space="preserve"><value>Search again</value></data>
+  <data name="SearchingTvs" xml:space="preserve"><value>Searching the home network…</value></data>
+  <data name="TvsFound" xml:space="preserve"><value>Found {0} device(s).</value></data>
+  <data name="NoTvsFound" xml:space="preserve"><value>No Google TV found. Check that the TV is on and connected to the same network.</value></data>
 </root>
