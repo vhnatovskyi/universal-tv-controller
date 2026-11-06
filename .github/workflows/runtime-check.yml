@@ -1,0 +1,26 @@
+name: Installer bootstrap
+on:
+  push:
+    branches: [main]
+    paths: ['installer/**', 'scripts/Test-Installer.ps1', '.github/workflows/runtime-check.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dependencies:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test installer bootstrap
+        shell: pwsh
+        run: |
+          New-Item payload/uk -ItemType Directory -Force | Out-Null
+          Copy-Item src/App/Platforms/Windows/remote.ico payload/remote.ico
+          Set-Content payload/UniversalTvController.exe 'Installer test placeholder'
+          Set-Content payload/uk/UniversalTvController.resources.dll 'Installer test placeholder'
+          $version=(Get-Content version.json -Raw | ConvertFrom-Json).version
+          $payload=(Resolve-Path payload).Path
+          $out=(New-Item dist -ItemType Directory -Force).FullName
+          & "${env:ProgramFiles(x86)}/Inno Setup 6/ISCC.exe" /Q "/DAppVersion=$version" "/DPayloadDirectory=$payload" "/DOutputDirectory=$out" installer/BraviaRemote.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./scripts/Test-Installer.ps1
