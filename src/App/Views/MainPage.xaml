@@ -189,27 +189,6 @@
                         HorizontalOptions="Center" BackgroundColor="#1B2937" BorderColor="#40576D" BorderWidth="1.5"
                         Clicked="OnTogglePower" SemanticProperties.Description="{DynamicResource Loc.PowerToggle}"
                         ToolTipProperties.Text="{DynamicResource Loc.PowerToggle}">
-                    <VisualStateManager.VisualStateGroups>
-                        <VisualStateGroup Name="CommonStates">
-                            <VisualState Name="Normal" />
-                            <VisualState Name="PointerOver">
-                                <VisualState.Setters>
-                                    <Setter Property="Opacity" Value="0.85" />
-                                </VisualState.Setters>
-                            </VisualState>
-                            <VisualState Name="Pressed">
-                                <VisualState.Setters>
-                                    <Setter Property="Scale" Value="0.9" />
-                                    <Setter Property="Opacity" Value="0.65" />
-                                </VisualState.Setters>
-                            </VisualState>
-                            <VisualState Name="Disabled">
-                                <VisualState.Setters>
-                                    <Setter Property="Opacity" Value="0.5" />
-                                </VisualState.Setters>
-                            </VisualState>
-                        </VisualStateGroup>
-                    </VisualStateManager.VisualStateGroups>
                 </Button>
                 <Border x:Name="DirectionPad" HorizontalOptions="Center" WidthRequest="204" HeightRequest="204" Padding="10"
                         Stroke="#3B526C" StrokeThickness="1.5" StrokeShape="RoundRectangle 160">

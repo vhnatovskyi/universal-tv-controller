@@ -36,11 +36,12 @@ if (-not $SkipInstaller) {
 
 try {
     $target = 'net10.0-windows10.0.19041.0'
-    dotnet publish $project -f $target -p:BraviaWindowsOnly=true -c Release -r win-x64 --self-contained -o $stage
+    dotnet publish $project -f $target -p:BraviaWindowsOnly=true -c Release -r win-x64 --self-contained false -o $stage
     if ($LASTEXITCODE -ne 0) { throw 'Windows publish failed.' }
     if (-not (Test-Path -LiteralPath (Join-Path $stage 'UniversalTvController.exe') -PathType Leaf)) {
         throw 'Windows executable is missing.'
     }
+    Copy-Item -LiteralPath (Join-Path $root 'installer/Install-Dependencies.ps1') -Destination $stage
     if (-not $SkipInstaller) {
         & $compiler "/DAppVersion=$version" "/DPayloadDirectory=$stage" "/DOutputDirectory=$outputPath" (Join-Path $root 'installer/BraviaRemote.iss')
         if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $setup -PathType Leaf)) {

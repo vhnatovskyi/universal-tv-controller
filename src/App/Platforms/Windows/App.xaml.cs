@@ -16,6 +16,7 @@ public partial class App : MauiWinUIApplication
 	/// </summary>
 	public App()
 	{
+		UnhandledException += (_, e) => System.IO.File.WriteAllText(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "universal-tv-startup.log"), e.Exception.ToString());
 		this.InitializeComponent();
 	}
 

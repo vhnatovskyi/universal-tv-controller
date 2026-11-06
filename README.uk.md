@@ -29,3 +29,5 @@
 
 - [Опис протоколу Google TV Remote](https://github.com/sonalder-darlene/libremote-android-tv/blob/main/PROTOCOL.md)
 - [Pair to Mac](https://learn.microsoft.com/dotnet/maui/ios/pair-to-mac?view=net-maui-10.0)
+
+Windows v0.4.3 використовує спільні .NET 10 (x64) та Windows App Runtime 1.7 (x64). Інсталятор перевіряє їх і завантажує відсутні компоненти Microsoft; встановлення .NET може запитати дозвіл адміністратора. Для ZIP потрібні ті самі залежності (запустіть Install-Dependencies.ps1 через Windows PowerShell). Інсталятор стискає файли застосунку алгоритмом Windows LZX на підтримуваних дисках NTFS. Runtime займають додаткове місце та використовуються спільно з іншими програмами.
