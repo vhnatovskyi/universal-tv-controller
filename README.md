@@ -1,4 +1,4 @@
-# BRAVIA Remote
+# Universal TV Controller
 
 [Українська](README.uk.md)
 
@@ -6,7 +6,7 @@ A .NET MAUI remote for Sony BRAVIA on Windows and iPhone, using Google TV pairin
 
 ## Install on Windows
 
-Download `BraviaRemote-Setup-X.Y.Z.exe` from [GitHub Releases](https://github.com/vhnatovskyi/tv-controller/releases/latest). The installer adds the app to the Start menu and supports removal through Windows Settings. A portable ZIP is also available.
+Download `UniversalTvController-Setup-X.Y.Z.exe` from [GitHub Releases](https://github.com/vhnatovskyi/universal-tv-controller/releases/latest). The installer adds the app to the Start menu and supports removal through Windows Settings. A portable ZIP is also available.
 
 ## Connect a TV
 

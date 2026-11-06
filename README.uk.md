@@ -1,4 +1,4 @@
-# BRAVIA Remote
+# Universal TV Controller
 
 [English](README.md)
 
@@ -6,7 +6,7 @@
 
 ## Встановлення на Windows
 
-Завантаж `BraviaRemote-Setup-X.Y.Z.exe` з [GitHub Releases](https://github.com/vhnatovskyi/tv-controller/releases/latest). Інсталятор додає застосунок у меню «Пуск» і підтримує видалення через налаштування Windows. Також доступний портативний ZIP.
+Завантаж `UniversalTvController-Setup-X.Y.Z.exe` з [GitHub Releases](https://github.com/vhnatovskyi/universal-tv-controller/releases/latest). Інсталятор додає застосунок у меню «Пуск» і підтримує видалення через налаштування Windows. Також доступний портативний ZIP.
 
 ## Підключення телевізора
 

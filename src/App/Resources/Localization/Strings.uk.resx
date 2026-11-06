@@ -80,7 +80,7 @@
   <data name="SystemLanguage" xml:space="preserve"><value>Мова системи</value></data>
   <data name="ChooseRelease" xml:space="preserve"><value>Обери реліз</value></data>
   <data name="UpdatesEmpty" xml:space="preserve"><value>Релізів не знайдено.</value></data>
-  <data name="AboutHeading" xml:space="preserve"><value>Пульт BRAVIA під рукою</value></data>
+  <data name="AboutHeading" xml:space="preserve"><value>Universal TV Controller</value></data>
   <data name="CheckUpdates" xml:space="preserve"><value>Перевірити релізи</value></data>
   <data name="UpdatesChecking" xml:space="preserve"><value>Завантажуємо релізи…</value></data>
   <data name="PairTvFirst" xml:space="preserve"><value>Спочатку спаруйся з Google TV у налаштуваннях профілю телевізора.</value></data>

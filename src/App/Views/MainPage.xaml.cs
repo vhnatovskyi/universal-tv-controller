@@ -28,7 +28,7 @@ public partial class MainPage : ContentPage
         profiles = TelevisionProfiles.Load(Preferences.Default);
         InitializeComponent();
         Resources["RemoteButtonHeight"] = DeviceInfo.Platform == DevicePlatform.WinUI ? 36d : 44d;
-        VersionLabel.Text = $"BRAVIA Remote v{DisplayVersion}";
+        VersionLabel.Text = $"Universal TV Controller v{DisplayVersion}";
 
 
         RefreshLanguageChoices();

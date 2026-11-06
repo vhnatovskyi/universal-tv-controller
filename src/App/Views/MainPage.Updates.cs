@@ -10,7 +10,7 @@ namespace BraviaRemote;
 
 public partial class MainPage
 {
-    private const string Repository = "vhnatovskyi/tv-controller";
+    private const string Repository = "vhnatovskyi/universal-tv-controller";
     private const string RepositoryUrl = "https://github.com/" + Repository;
     private static readonly HttpClient GitHub = new() { Timeout = TimeSpan.FromSeconds(6) };
     private sealed record PublishedRelease(Version Version, DateTimeOffset? Published, string Notes)
@@ -69,7 +69,7 @@ public partial class MainPage
     {
         var endpoint = latestOnly ? "/latest" : "?per_page=20";
         using var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.github.com/repos/{Repository}/releases{endpoint}");
-        request.Headers.UserAgent.ParseAdd($"BraviaRemote/{DisplayVersion}");
+        request.Headers.UserAgent.ParseAdd($"UniversalTvController/{DisplayVersion}");
         request.Headers.Accept.ParseAdd("application/vnd.github+json");
         using var response = await GitHub.SendAsync(request);
         if (response.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.TooManyRequests)
@@ -97,7 +97,9 @@ public partial class MainPage
             var id = entry.Element(atom + "id")?.Value;
             var tag = id?[(id.LastIndexOf('/') + 1)..];
             // GitHub also includes bare tags in this feed. Published releases use the title set by our workflow.
-            if (!TryReadVersion(tag, out var version) || entry.Element(atom + "title")?.Value != $"BRAVIA Remote {tag}")
+            var title = entry.Element(atom + "title")?.Value;
+            if (!TryReadVersion(tag, out var version)
+                || (title != $"Universal TV Controller {tag}" && title != $"BRAVIA Remote {tag}"))
                 return null;
             var date = DateTimeOffset.TryParse(entry.Element(atom + "updated")?.Value, CultureInfo.InvariantCulture,
                 DateTimeStyles.None, out var published) ? published : (DateTimeOffset?)null;

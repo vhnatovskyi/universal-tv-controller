@@ -134,7 +134,7 @@ public static class GoogleTvApps
         IPAddress address, Func<bool, Task<string?>> readCode)
     {
         using var rsa = RSA.Create(2048);
-        var request = new CertificateRequest($"CN=BRAVIA Remote {Guid.NewGuid():N}", rsa,
+        var request = new CertificateRequest($"CN=Universal TV Controller {Guid.NewGuid():N}", rsa,
             HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         using var generated = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddYears(5));
         var certificateBytes = generated.Export(X509ContentType.Pkcs12, "");
@@ -146,7 +146,7 @@ public static class GoogleTvApps
         await AuthenticateAsync(tls, address, certificate, handshake.Token);
         using var server = X509CertificateLoader.LoadCertificate(tls.RemoteCertificate!.GetRawCertData());
 
-        await PairMessageAsync(tls, 10, Message(Text(1, "atvremote"), Text(2, "BRAVIA Remote")), 11, handshake.Token);
+        await PairMessageAsync(tls, 10, Message(Text(1, "atvremote"), Text(2, "Universal TV Controller")), 11, handshake.Token);
         var encoding = Message(Number(1, 3), Number(2, 6));
         await PairMessageAsync(tls, 20, Message(Bytes(1, encoding), Number(3, 1)), 20, handshake.Token);
         await PairMessageAsync(tls, 30, Message(Bytes(1, encoding), Number(2, 1)), 31, handshake.Token);
@@ -284,7 +284,7 @@ public static class GoogleTvApps
                 features = offered & requested;
                 if ((features & required) != required)
                     throw new IOException("The TV does not support the required remote feature.");
-                var info = Message(Number(3, 1), Text(4, "1"), Text(5, "BRAVIA Remote"), Text(6, "1.0"));
+                var info = Message(Number(3, 1), Text(4, "1"), Text(5, "Universal TV Controller"), Text(6, "1.0"));
                 await SendAsync(tls, Bytes(1, Message(Number(1, features), Bytes(2, info))), token);
             }
 

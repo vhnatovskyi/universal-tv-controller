@@ -13,7 +13,7 @@ For Windows builds, install the .NET 10 SDK, the `maui-windows` workload, and In
 ./scripts/Test-Installer.ps1
 ```
 
-Run the installer test from a clean Windows environment with BRAVIA Remote closed. The test installs into a temporary directory and then uninstalls. For a portable-only local build, use `./scripts/Build-Release.ps1 -SkipInstaller`.
+Run the installer test from a clean Windows environment with Universal TV Controller closed. The test installs into a temporary directory and then uninstalls. For a portable-only local build, use `./scripts/Build-Release.ps1 -SkipInstaller`.
 
 On a Mac with compatible Xcode and .NET 10:
 

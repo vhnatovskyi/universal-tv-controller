@@ -28,7 +28,7 @@ public partial class MainPage
 
         window.TitleBar = new TitleBar
         {
-            Title = window.Title ?? "BRAVIA Remote",
+            Title = window.Title ?? "Universal TV Controller",
             Icon = "remote_mark.png",
             BackgroundColor = Color.FromArgb("#101820"),
             ForegroundColor = Colors.White,

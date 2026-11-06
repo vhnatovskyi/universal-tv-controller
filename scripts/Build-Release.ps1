@@ -19,8 +19,8 @@ if ($appVersion -cne $version -or ($Tag -and $Tag -cne "v$version")) {
 
 $outputPath = (New-Item -ItemType Directory -Path $OutputDirectory -Force).FullName
 $stage = Join-Path ([IO.Path]::GetTempPath()) ("bravia-release-" + [guid]::NewGuid())
-$archive = Join-Path $outputPath "BraviaRemote-$version-Windows-x64.zip"
-$setup = Join-Path $outputPath "BraviaRemote-Setup-$version.exe"
+$archive = Join-Path $outputPath "UniversalTvController-$version-Windows-x64.zip"
+$setup = Join-Path $outputPath "UniversalTvController-Setup-$version.exe"
 if ((Test-Path -LiteralPath $archive) -or (Test-Path -LiteralPath $setup)) {
     throw "Release files for $version already exist in $outputPath"
 }
@@ -38,7 +38,7 @@ try {
     $target = 'net10.0-windows10.0.19041.0'
     dotnet publish $project -f $target -p:BraviaWindowsOnly=true -c Release -r win-x64 --self-contained -o $stage
     if ($LASTEXITCODE -ne 0) { throw 'Windows publish failed.' }
-    if (-not (Test-Path -LiteralPath (Join-Path $stage 'BraviaRemote.exe') -PathType Leaf)) {
+    if (-not (Test-Path -LiteralPath (Join-Path $stage 'UniversalTvController.exe') -PathType Leaf)) {
         throw 'Windows executable is missing.'
     }
     if (-not $SkipInstaller) {

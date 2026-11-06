@@ -9,11 +9,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <MauiXamlInflator>SourceGen</MauiXamlInflator>
-    <ApplicationTitle>BRAVIA Remote</ApplicationTitle>
+    <ApplicationTitle>Universal TV Controller</ApplicationTitle>
+    <AssemblyName>UniversalTvController</AssemblyName>
+    <RootNamespace>BraviaRemote</RootNamespace>
     <ApplicationId>app.braviaremote.controller</ApplicationId>
-    <ApplicationDisplayVersion>0.4.1</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>0.4.2</ApplicationDisplayVersion>
     <Version>$(ApplicationDisplayVersion)</Version>
-    <ApplicationVersion>10</ApplicationVersion>
+    <ApplicationVersion>11</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
     <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>

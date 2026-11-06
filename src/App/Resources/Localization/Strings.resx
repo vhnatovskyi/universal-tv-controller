@@ -80,7 +80,7 @@
   <data name="SystemLanguage" xml:space="preserve"><value>System language</value></data>
   <data name="ChooseRelease" xml:space="preserve"><value>Choose a release</value></data>
   <data name="UpdatesEmpty" xml:space="preserve"><value>No releases found.</value></data>
-  <data name="AboutHeading" xml:space="preserve"><value>Your BRAVIA remote</value></data>
+  <data name="AboutHeading" xml:space="preserve"><value>Universal TV Controller</value></data>
   <data name="CheckUpdates" xml:space="preserve"><value>Check releases</value></data>
   <data name="UpdatesChecking" xml:space="preserve"><value>Loading releases…</value></data>
   <data name="PairTvFirst" xml:space="preserve"><value>Pair with Google TV in this TV profile’s settings first.</value></data>

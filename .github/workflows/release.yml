@@ -23,5 +23,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $assets = @(Get-ChildItem dist -File | ForEach-Object FullName)
-          gh release create $env:GITHUB_REF_NAME @assets --verify-tag --latest --title "BRAVIA Remote $env:GITHUB_REF_NAME" --notes-file docs/RELEASE-NOTES.md
+          gh release create $env:GITHUB_REF_NAME @assets --verify-tag --latest --title "Universal TV Controller $env:GITHUB_REF_NAME" --notes-file docs/RELEASE-NOTES.md
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

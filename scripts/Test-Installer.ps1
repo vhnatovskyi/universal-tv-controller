@@ -2,15 +2,15 @@ param([string]$OutputDirectory = 'dist')
 
 $ErrorActionPreference = 'Stop'
 $version = (Get-Content -Raw (Join-Path $PSScriptRoot '../version.json') | ConvertFrom-Json).version
-$installer = (Resolve-Path (Join-Path $OutputDirectory "BraviaRemote-Setup-$version.exe")).Path
+$installer = (Resolve-Path (Join-Path $OutputDirectory "UniversalTvController-Setup-$version.exe")).Path
 $target = Join-Path ([IO.Path]::GetTempPath()) ("bravia-install-test-" + [guid]::NewGuid())
-$app = Join-Path $target 'BraviaRemote.exe'
+$app = Join-Path $target 'UniversalTvController.exe'
 $uninstaller = Join-Path $target 'unins000.exe'
 
 try {
     $arguments = '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LANG=uk /DIR="' + $target + '"'
     $result = Start-Process -FilePath $installer -ArgumentList $arguments -WindowStyle Hidden -Wait -PassThru
-    $localizedAssembly = Join-Path $target 'uk/BraviaRemote.resources.dll'
+    $localizedAssembly = Join-Path $target 'uk/UniversalTvController.resources.dll'
     if ($result.ExitCode -ne 0) {
         throw "Windows installer exited with code $($result.ExitCode)."
     }
