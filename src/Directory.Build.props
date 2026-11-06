@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup>
+    <Authors>Vladyslav Hnatovskyi</Authors>
+    <Company>Vladyslav Hnatovskyi</Company>
+    <Product>Universal TV Controller</Product>
+    <AssemblyTitle>Universal TV Controller</AssemblyTitle>
+    <Copyright>Copyright © 2026 Vladyslav Hnatovskyi · vhnatovskyi@hotmail.com</Copyright>
+    <Description>Google TV remote for Windows and iPhone. GitHub: https://github.com/vhnatovskyi/universal-tv-controller | LinkedIn: https://www.linkedin.com/in/vladyslav-hnatovskyi/</Description>
+    <RepositoryUrl>https://github.com/vhnatovskyi/universal-tv-controller</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/vhnatovskyi/universal-tv-controller</PackageProjectUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyMetadata Include="Author" Value="Vladyslav Hnatovskyi" />
+    <AssemblyMetadata Include="Contact" Value="mailto:vhnatovskyi@hotmail.com" />
+    <AssemblyMetadata Include="RepositoryUrl" Value="https://github.com/vhnatovskyi/universal-tv-controller" />
+    <AssemblyMetadata Include="LinkedIn" Value="https://www.linkedin.com/in/vladyslav-hnatovskyi/" />
+  </ItemGroup>
+</Project>

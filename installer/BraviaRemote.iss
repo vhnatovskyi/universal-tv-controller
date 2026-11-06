@@ -2,7 +2,16 @@
 AppId=app.braviaremote.controller
 AppName=Universal TV Controller
 AppVersion={#AppVersion}
-AppPublisher=Universal TV Controller
+AppPublisher=Vladyslav Hnatovskyi
+AppCopyright=Copyright © 2026 Vladyslav Hnatovskyi · vhnatovskyi@hotmail.com
+AppSupportURL=https://github.com/vhnatovskyi/universal-tv-controller/issues
+AppUpdatesURL=https://github.com/vhnatovskyi/universal-tv-controller/releases
+VersionInfoCompany=Vladyslav Hnatovskyi
+VersionInfoDescription=Universal TV Controller Setup
+VersionInfoProductName=Universal TV Controller
+VersionInfoCopyright=Copyright © 2026 Vladyslav Hnatovskyi · vhnatovskyi@hotmail.com
+VersionInfoProductTextVersion={#AppVersion}
+VersionInfoTextVersion={#AppVersion}
 AppPublisherURL=https://github.com/vhnatovskyi/universal-tv-controller
 AppMutex=Local\app.braviaremote.controller
 DefaultDirName={localappdata}\Programs\BraviaRemote

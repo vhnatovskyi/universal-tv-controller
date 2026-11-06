@@ -1,21 +1,15 @@
-## Universal TV Controller v0.4.4
+## Universal TV Controller v0.4.5
 
 ### English
 
-- Fix runtime installation when setup is launched from PowerShell 7, including GitHub Actions. Preserve Microsoft signature verification and surface dependency errors in installer tests.
-
-- Smaller framework-dependent Windows distribution with shared .NET 10 x64 and Windows App Runtime 1.7 x64.
-- Setup checks prerequisites and downloads missing Microsoft runtimes, verifying their digital signatures before execution. First installation may require internet and administrator permission.
-- Windows LZX compression reduces app disk usage on supported NTFS volumes. Shared runtimes use additional disk space.
-- Remove obsolete bundled runtime files during upgrades.
-- Fix startup failure caused by duplicate visual states on the Power button.
+- Add author, contact, copyright, repository and LinkedIn metadata to application assemblies, matching Peripheral Battery Monitor.
+- Show Vladyslav Hnatovskyi as the Windows installer publisher and in executable file properties; add support and update links.
+- Add copyright metadata to the iOS app and author details to both READMEs.
+- Validate author metadata in Windows installer tests.
 
 ### Українська
 
-- Виправлено встановлення runtime при запуску інсталятора з PowerShell 7, зокрема в GitHub Actions. Збережено перевірку підписів Microsoft і додано детальні помилки залежностей до тестів інсталятора.
-
-- Компактна версія Windows зі спільними .NET 10 x64 та Windows App Runtime 1.7 x64.
-- Інсталятор перевіряє залежності та завантажує відсутні runtime Microsoft із перевіркою цифрового підпису. Перше встановлення може потребувати інтернету й дозволу адміністратора.
-- Стиснення Windows LZX зменшує місце для файлів застосунку на підтримуваних дисках NTFS. Спільні runtime займають додаткове місце.
-- Під час оновлення видаляються застарілі вбудовані файли runtime.
-- Виправлено збій запуску через дублювання візуальних станів кнопки живлення.
+- Додано автора, контакти, copyright, репозиторій і LinkedIn до метаданих застосунку за прикладом Peripheral Battery Monitor.
+- Vladyslav Hnatovskyi вказаний як видавець інсталятора Windows та у властивостях виконуваних файлів; додано посилання підтримки й оновлень.
+- Додано copyright до застосунку iOS та інформацію про автора до обох README.
+- Тести інсталятора Windows перевіряють метадані автора.

@@ -31,3 +31,7 @@ See the [development guide](docs/DEVELOPMENT.md). The iPhone version requires a 
 - [Pair to Mac](https://learn.microsoft.com/dotnet/maui/ios/pair-to-mac?view=net-maui-10.0)
 
 Windows v0.4.3 uses shared .NET 10 (x64) and Windows App Runtime 1.7 (x64). Setup checks these dependencies and downloads missing components from Microsoft; .NET installation may ask for administrator permission. The ZIP requires the same runtimes (run Install-Dependencies.ps1 with Windows PowerShell). Setup applies Windows LZX compression to app files on supported NTFS disks. Runtime storage is additional and shared with other apps.
+
+## Author
+
+Vladyslav Hnatovskyi — [GitHub](https://github.com/vhnatovskyi) · [LinkedIn](https://www.linkedin.com/in/vladyslav-hnatovskyi/) · [vhnatovskyi@hotmail.com](mailto:vhnatovskyi@hotmail.com)

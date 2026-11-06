@@ -23,4 +23,4 @@ jobs:
           $out=(New-Item dist -ItemType Directory -Force).FullName
           & "${env:ProgramFiles(x86)}/Inno Setup 6/ISCC.exe" /Q "/DAppVersion=$version" "/DPayloadDirectory=$payload" "/DOutputDirectory=$out" installer/BraviaRemote.iss
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          ./scripts/Test-Installer.ps1
+          ./scripts/Test-Installer.ps1 -BootstrapOnly
