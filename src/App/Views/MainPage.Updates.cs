@@ -8,6 +8,7 @@ public partial class MainPage
     private static readonly HttpClient GitHub = new() { Timeout = TimeSpan.FromSeconds(6) };
     private bool releaseChecked;
     private Uri? updatePage;
+    private Version? updateVersion;
 
     internal static string DisplayVersion => AppInfo.Current.Version.ToString(3);
 
@@ -39,13 +40,20 @@ public partial class MainPage
                 return;
 
             updatePage = new Uri($"https://github.com/{Repository}/releases/tag/{tag}");
-            UpdateLabel.Text = $"Доступна версія {release.ToString(3)}";
+            updateVersion = release;
+            RefreshUpdateText();
             UpdateBanner.IsVisible = true;
         }
         catch (Exception error) when (error is HttpRequestException or JsonException or OperationCanceledException)
         {
             // The remote remains usable without GitHub or internet access.
         }
+    }
+
+    private void RefreshUpdateText()
+    {
+        if (updateVersion is { } release)
+            UpdateLabel.Text = Localization.Text("UpdateAvailable", release.ToString(3));
     }
 
     private async void OnOpenRelease(object? sender, EventArgs e)

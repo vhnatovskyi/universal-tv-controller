@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net.Sockets;
+using static BraviaRemote.Localization;
 
 namespace BraviaRemote;
 
@@ -26,6 +27,8 @@ public partial class MainPage : ContentPage
         profiles = TelevisionProfiles.Load(Preferences.Default);
         InitializeComponent();
         VersionLabel.Text = $"BRAVIA Remote v{DisplayVersion}";
+        LanguagePicker.ItemsSource = new[] { "English", "Українська" };
+        LanguagePicker.SelectedIndex = IsUkrainian ? 1 : 0;
         RefreshProfiles(profiles.DefaultId);
     }
 
@@ -51,14 +54,14 @@ public partial class MainPage : ContentPage
         RemoteButtons.IsVisible = screen == Screen.Remote && profile is not null;
         ProfileActions.IsVisible = ShortcutSettingsButton.IsVisible = profile is not null;
         DefaultLabel.IsVisible = isDefault;
-        DefaultLabel.Text = isDefault ? "Профіль за замовчуванням" : "";
+        DefaultLabel.Text = isDefault ? Text("DefaultProfile") : "";
         DefaultButton.IsEnabled = !isDefault;
         ToolbarTitle.Text = screen switch
         {
-            Screen.Settings => "Налаштування",
-            Screen.ProfileEditor => editingId is null ? "Новий профіль" : "Редагування профілю",
-            Screen.ShortcutEditor => "Швидкі кнопки",
-            _ => profile?.Name ?? "Пульт"
+            Screen.Settings => Text("Settings"),
+            Screen.ProfileEditor => Text(editingId is null ? "NewProfile" : "EditProfile"),
+            Screen.ShortcutEditor => Text("Shortcuts"),
+            _ => profile?.Name ?? Text("Remote")
         };
         toastVersion++;
         Toast.IsVisible = false;
@@ -88,6 +91,20 @@ public partial class MainPage : ContentPage
 
     private void OnShowSettings(object? sender, EventArgs e) => ShowScreen(Screen.Settings);
 
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        if (LanguagePicker.SelectedIndex < 0 || Application.Current is not { } app)
+            return;
+
+        var ukrainian = LanguagePicker.SelectedIndex == 1;
+        if (ukrainian == IsUkrainian)
+            return;
+
+        SetLanguage(app.Resources, ukrainian);
+        RefreshUpdateText();
+        RefreshRemote();
+    }
+
     private void OnAddProfile(object? sender, EventArgs e) => OpenEditor(null);
 
     private void OnEditProfile(object? sender, EventArgs e) => OpenEditor(CurrentProfile);
@@ -96,7 +113,7 @@ public partial class MainPage : ContentPage
     {
         editorReturnScreen = screen;
         editingId = profile?.Id;
-        EditorTitle.Text = profile is null ? "Новий профіль" : "Редагування профілю";
+        EditorTitle.Text = Text(profile is null ? "NewProfile" : "EditProfile");
         ProfileNameEntry.Text = profile?.Name;
         AddressEntry.Text = profile?.Address;
         EditorError.IsVisible = false;
@@ -108,13 +125,13 @@ public partial class MainPage : ContentPage
         var name = ProfileNameEntry.Text?.Trim();
         if (string.IsNullOrEmpty(name))
         {
-            ShowEditorError("Введи назву профілю.");
+            ShowEditorError(Text("MissingProfileName"));
             return;
         }
 
         if (!TelevisionProfiles.TryParseAddress(AddressEntry.Text, out var address))
         {
-            ShowEditorError("Введи IPv4-адресу телевізора, наприклад 192.168.1.50.");
+            ShowEditorError(Text("InvalidAddress"));
             return;
         }
 
@@ -156,41 +173,41 @@ public partial class MainPage : ContentPage
     }
 
     private async void OnCheck(object? sender, EventArgs e) =>
-        await RunAsync(async tv => $"З’єднання встановлено. Гучність: {await tv.GetVolumeAsync()}.", showSuccess: true);
+        await RunAsync(async tv => Text("Connected", await tv.GetVolumeAsync()));
 
     private async void OnKey(object? sender, EventArgs e)
     {
-        if (sender is Button { CommandParameter: string code } button
+        if (sender is Button { CommandParameter: string code }
             && int.TryParse(code, NumberStyles.None, CultureInfo.InvariantCulture, out var key))
         {
             await RunAsync(async tv =>
             {
                 await tv.PressAsync(key);
-                return $"Телевізор прийняв команду «{button.Text}».";
+                return null;
             });
         }
     }
 
     private async void OnPower(object? sender, EventArgs e)
     {
-        if (sender is Button { CommandParameter: string state } button)
+        if (sender is Button { CommandParameter: string state })
         {
             await RunAsync(async tv =>
             {
                 await tv.SetPowerAsync(state == "on");
-                return $"Телевізор прийняв команду «{button.Text}».";
+                return null;
             });
         }
     }
 
-    private async Task RunAsync(Func<BraviaClient, Task<string>> operation, bool showSuccess = false)
+    private async Task RunAsync(Func<BraviaClient, Task<string?>> operation)
     {
         if (busy || CurrentProfile is not { } profile)
             return;
 
         if (!TelevisionProfiles.TryParseAddress(profile.Address, out var address))
         {
-            ShowToast("Перевір IP-адресу в налаштуваннях профілю.", success: false);
+            ShowToast(Text("CheckProfileAddress"), success: false);
             return;
         }
 
@@ -200,24 +217,28 @@ public partial class MainPage : ContentPage
         try
         {
             var message = await operation(new BraviaClient(address));
-            if (showSuccess)
+            if (message is not null)
                 ShowToast(message, success: true);
         }
         catch (OperationCanceledException)
         {
-            ShowToast("Телевізор не відповів. Перевір мережу та керування IP.", success: false);
+            ShowToast(Text("TvTimeout"), success: false);
         }
         catch (SocketException)
         {
-            ShowToast("Не вдалося під’єднатися. Перевір мережу та просте управління IP.", success: false);
+            ShowToast(Text("ConnectionFailed"), success: false);
         }
         catch (EndOfStreamException)
         {
-            ShowToast("Телевізор закрив з’єднання до підтвердження команди.", success: false);
+            ShowToast(Text("ConnectionClosed"), success: false);
         }
-        catch (IOException error)
+        catch (BraviaProtocolException error)
         {
-            ShowToast(error.Message, success: false);
+            ShowToast(Text(error.CommandRejected ? "CommandRejected" : "InvalidReply"), success: false);
+        }
+        catch (IOException)
+        {
+            ShowToast(Text("ConnectionFailed"), success: false);
         }
         finally
         {

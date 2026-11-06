@@ -4,16 +4,22 @@ public partial class MainPage
 {
     private const int MaxShortcuts = 6;
     private const int MaxSteps = 16;
-    private static readonly Dictionary<string, int> ShortcutKeys = new(StringComparer.OrdinalIgnoreCase)
+    private const int HomeKey = 6;
+    private static readonly Dictionary<int, string> ShortcutSteps = new()
     {
-        ["Додому"] = 6,
-        ["Назад"] = 8,
-        ["Вгору"] = 9,
-        ["Вниз"] = 10,
-        ["Праворуч"] = 11,
-        ["Ліворуч"] = 12,
-        ["OK"] = 13
+        [HomeKey] = "Home",
+        [8] = "Back",
+        [9] = "Up",
+        [10] = "Down",
+        [11] = "Right",
+        [12] = "Left",
+        [13] = "OK"
     };
+    private static readonly Dictionary<string, int> ShortcutKeys = ShortcutSteps
+        .SelectMany(step => new[] { "en", "uk" }.Select(language =>
+            (Name: Localization.StepName(step.Value, language), Code: step.Key)))
+        .Distinct()
+        .ToDictionary(step => step.Name, step => step.Code, StringComparer.OrdinalIgnoreCase);
 
     private QuickButton[] Shortcuts => CurrentProfile?.Shortcuts ?? [];
 
@@ -35,10 +41,10 @@ public partial class MainPage
                 {
                     await tv.PressAsync(shortcut.Keys[step]);
                     if (step + 1 < shortcut.Keys.Length)
-                        await Task.Delay(shortcut.Keys[step] == ShortcutKeys["Додому"] ? 1400 : 350);
+                        await Task.Delay(shortcut.Keys[step] == HomeKey ? 1400 : 350);
                 }
-                return $"Виконано швидку кнопку «{shortcut.Name}».";
-            }, showSuccess: true);
+                return Localization.Text("ShortcutDone", shortcut.Name);
+            });
             QuickButtons.Add(button, index % 3, index / 3);
         }
     }
@@ -74,7 +80,7 @@ public partial class MainPage
         var shortcut = Shortcuts.ElementAtOrDefault(ShortcutPicker.SelectedIndex);
         ShortcutName.Text = shortcut?.Name;
         ShortcutSequence.Text = shortcut is null ? "" : string.Join(", ", shortcut.Keys.Select(key =>
-            ShortcutKeys.First(pair => pair.Value == key).Key));
+            Localization.Text(ShortcutSteps[key])));
         RemoveShortcutButton.IsEnabled = shortcut is not null;
         ShortcutError.IsVisible = false;
     }
@@ -84,14 +90,14 @@ public partial class MainPage
         var name = ShortcutName.Text?.Trim();
         if (string.IsNullOrEmpty(name))
         {
-            ShowShortcutError("Введи назву швидкої кнопки.");
+            ShowShortcutError(Localization.Text("MissingShortcutName"));
             return;
         }
 
         var steps = (ShortcutSequence.Text ?? "").Split(',', StringSplitOptions.TrimEntries);
         if (steps.Length > MaxSteps || steps.Any(step => !ShortcutKeys.ContainsKey(step)))
         {
-            ShowShortcutError($"Введи від 1 до {MaxSteps} команд зі списку через кому.");
+            ShowShortcutError(Localization.Text("InvalidShortcutSteps", MaxSteps));
             return;
         }
 
@@ -99,7 +105,7 @@ public partial class MainPage
         var index = ShortcutPicker.SelectedIndex;
         if (index < 0 && shortcuts.Count >= MaxShortcuts)
         {
-            ShowShortcutError($"Можна додати до {MaxShortcuts} швидких кнопок на профіль.");
+            ShowShortcutError(Localization.Text("ShortcutLimit", MaxShortcuts));
             return;
         }
 

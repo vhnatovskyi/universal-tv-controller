@@ -2,7 +2,11 @@ namespace BraviaRemote;
 
 public partial class App : Application
 {
-    public App() => InitializeComponent();
+    public App()
+    {
+        InitializeComponent();
+        Localization.Initialize(Resources);
+    }
 
     protected override Window CreateWindow(IActivationState? activationState)
     {

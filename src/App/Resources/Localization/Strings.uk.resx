@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Menu" xml:space="preserve"><value>Меню</value></data>
+  <data name="Remote" xml:space="preserve"><value>Пульт</value></data>
+  <data name="Volume" xml:space="preserve"><value>Гучність</value></data>
+  <data name="Minimize" xml:space="preserve"><value>Згорнути вікно</value></data>
+  <data name="Maximize" xml:space="preserve"><value>Розгорнути або відновити вікно</value></data>
+  <data name="CloseWindow" xml:space="preserve"><value>Закрити вікно</value></data>
+  <data name="OpenRelease" xml:space="preserve"><value>Відкрити реліз</value></data>
+  <data name="Profiles" xml:space="preserve"><value>Профілі телевізорів</value></data>
+  <data name="ChooseProfile" xml:space="preserve"><value>Обери профіль</value></data>
+  <data name="Profile" xml:space="preserve"><value>Профіль телевізора</value></data>
+  <data name="AddProfile" xml:space="preserve"><value>Додати профіль</value></data>
+  <data name="Edit" xml:space="preserve"><value>Редагувати</value></data>
+  <data name="SetDefault" xml:space="preserve"><value>За замовчуванням</value></data>
+  <data name="ConfigureShortcuts" xml:space="preserve"><value>Налаштувати швидкі кнопки</value></data>
+  <data name="Onboarding" xml:space="preserve"><value>Додай профіль телевізора, щоб почати.</value></data>
+  <data name="Shortcuts" xml:space="preserve"><value>Швидкі кнопки</value></data>
+  <data name="ChooseShortcut" xml:space="preserve"><value>Обери кнопку</value></data>
+  <data name="NewShortcut" xml:space="preserve"><value>Нова кнопка</value></data>
+  <data name="ShortcutName" xml:space="preserve"><value>Назва кнопки</value></data>
+  <data name="ShortcutHelp" xml:space="preserve"><value>Запиши шлях від «Додому» до потрібної плитки. Команди відокремлюй комами.</value></data>
+  <data name="ShortcutCommands" xml:space="preserve"><value>Команди: Додому, Вгору, Вниз, Ліворуч, Праворуч, Назад, OK</value></data>
+  <data name="ShortcutExample" xml:space="preserve"><value>Додому, Вниз, Праворуч, OK</value></data>
+  <data name="Save" xml:space="preserve"><value>Зберегти</value></data>
+  <data name="Delete" xml:space="preserve"><value>Видалити</value></data>
+  <data name="BackToSettings" xml:space="preserve"><value>До налаштувань</value></data>
+  <data name="ProfileName" xml:space="preserve"><value>Назва профілю</value></data>
+  <data name="ProfileExample" xml:space="preserve"><value>Наприклад, Вітальня</value></data>
+  <data name="TvAddress" xml:space="preserve"><value>IP-адреса телевізора</value></data>
+  <data name="AddressExample" xml:space="preserve"><value>Наприклад, 192.168.1.50</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Скасувати</value></data>
+  <data name="PowerOn" xml:space="preserve"><value>Увімкнути</value></data>
+  <data name="PowerOff" xml:space="preserve"><value>Вимкнути</value></data>
+  <data name="Up" xml:space="preserve"><value>Вгору</value></data>
+  <data name="Left" xml:space="preserve"><value>Ліворуч</value></data>
+  <data name="Confirm" xml:space="preserve"><value>Підтвердити</value></data>
+  <data name="Right" xml:space="preserve"><value>Праворуч</value></data>
+  <data name="Down" xml:space="preserve"><value>Вниз</value></data>
+  <data name="Back" xml:space="preserve"><value>Назад</value></data>
+  <data name="Home" xml:space="preserve"><value>Додому</value></data>
+  <data name="Inputs" xml:space="preserve"><value>Входи</value></data>
+  <data name="VolumeDownShort" xml:space="preserve"><value>Гучн. −</value></data>
+  <data name="VolumeDown" xml:space="preserve"><value>Зменшити гучність</value></data>
+  <data name="Mute" xml:space="preserve"><value>Без звуку</value></data>
+  <data name="VolumeUpShort" xml:space="preserve"><value>Гучн. +</value></data>
+  <data name="VolumeUp" xml:space="preserve"><value>Збільшити гучність</value></data>
+  <data name="CheckConnection" xml:space="preserve"><value>Перевірити з’єднання</value></data>
+  <data name="CloseMenu" xml:space="preserve"><value>Закрити меню</value></data>
+  <data name="Settings" xml:space="preserve"><value>Налаштування</value></data>
+  <data name="Language" xml:space="preserve"><value>Мова застосунку</value></data>
+  <data name="DefaultProfile" xml:space="preserve"><value>Профіль за замовчуванням</value></data>
+  <data name="NewProfile" xml:space="preserve"><value>Новий профіль</value></data>
+  <data name="EditProfile" xml:space="preserve"><value>Редагування профілю</value></data>
+  <data name="MissingProfileName" xml:space="preserve"><value>Введи назву профілю.</value></data>
+  <data name="InvalidAddress" xml:space="preserve"><value>Введи IPv4-адресу телевізора, наприклад 192.168.1.50.</value></data>
+  <data name="Connected" xml:space="preserve"><value>З’єднання встановлено. Гучність: {0}.</value></data>
+  <data name="CheckProfileAddress" xml:space="preserve"><value>Перевір IP-адресу в налаштуваннях профілю.</value></data>
+  <data name="TvTimeout" xml:space="preserve"><value>Телевізор не відповів. Перевір мережу та керування IP.</value></data>
+  <data name="ConnectionFailed" xml:space="preserve"><value>Не вдалося під’єднатися. Перевір мережу та просте управління IP.</value></data>
+  <data name="ConnectionClosed" xml:space="preserve"><value>Телевізор закрив з’єднання до підтвердження команди.</value></data>
+  <data name="CommandRejected" xml:space="preserve"><value>Телевізор відхилив команду або не підтримує її.</value></data>
+  <data name="InvalidReply" xml:space="preserve"><value>Телевізор надіслав неочікувану відповідь.</value></data>
+  <data name="ShortcutDone" xml:space="preserve"><value>Виконано швидку кнопку «{0}».</value></data>
+  <data name="MissingShortcutName" xml:space="preserve"><value>Введи назву швидкої кнопки.</value></data>
+  <data name="InvalidShortcutSteps" xml:space="preserve"><value>Введи від 1 до {0} команд зі списку через кому.</value></data>
+  <data name="ShortcutLimit" xml:space="preserve"><value>Можна додати до {0} швидких кнопок на профіль.</value></data>
+  <data name="UpdateAvailable" xml:space="preserve"><value>Доступна версія {0}</value></data>
+</root>

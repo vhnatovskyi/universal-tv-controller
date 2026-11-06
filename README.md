@@ -1,57 +1,31 @@
 # BRAVIA Remote
 
-Один застосунок .NET MAUI для Windows і iPhone. Обидві версії підключаються напряму до Sony BRAVIA через Simple IP Control (TCP 20060). Перша цільова модель — BRAVIA 3. Для роботи потрібна спільна домашня мережа й увімкнене «Просте управління IP» на телевізорі.
+[Українська](README.uk.md)
 
-## Користування
+A .NET MAUI remote for Sony BRAVIA on Windows and iPhone. It connects to the TV over the local network using Sony Simple IP Control (TCP 20060). The app was initially tested with a BRAVIA 3.
 
-1. Увімкни телевізор і відкрий BRAVIA Remote.
-2. Натисни «Додати профіль» і введи назву та IPv4-адресу телевізора. Профілями можна керувати в «☰ → Налаштування». IP-адреса доступна у формі створення або редагування. Якщо попередня версія зберегла адресу, вона стане профілем «BRAVIA 3».
-3. Перший профіль стає профілем за замовчуванням. Щоб змінити його, обери інший профіль і натисни «За замовчуванням». Наступного разу застосунок відкриє цей профіль.
-4. Індикатор «Гучність» оновлюється приблизно кожні три секунди, поки відкрито пульт. Якщо телевізор не відповідає, показується тире. На iPhone дозволь доступ до локальної мережі, коли iOS запитає.
-5. Використовуй стрілки, OK, «Назад», «Додому», вибір входу, гучність і вимкнення звуку. Увімкнення з режиму очікування залежить від параметра «Віддалений пуск» і від того, чи доступний TCP-порт у цьому режимі.
+## Install on Windows
 
-У «☰ → Налаштування → Налаштувати швидкі кнопки» можна зберегти до шести кнопок на профіль. Наприклад, назви кнопку «YouTube» та запиши послідовність `Додому, Вниз, Праворуч, OK`, якщо саме так ти переходиш до плитки на своєму телевізорі. Те саме можна налаштувати для Netflix, Kyivstar TV та інших плиток. Якщо їхній порядок або початковий фокус зміниться, відредагуй послідовність.
+1. Open [GitHub Releases](https://github.com/vhnatovskyi/tv-controller/releases/latest) and download `BraviaRemote-Setup-X.Y.Z.exe` for Windows x64.
+2. Run the installer, then open **BRAVIA Remote** from the Start menu. The installer runs for the current user. To remove the app, use **Settings → Apps → Installed apps**.
+3. For portable use, extract the entire `BraviaRemote-X.Y.Z-Windows-x64.zip` archive and run `BraviaRemote.exe`.
 
-## Windows
+## Use the remote
 
-Розпакуй увесь архів Windows x64 і запусти `BraviaRemote.exe` з розпакованої папки.
+1. Connect the TV and your Windows PC or iPhone to the same home network. Turn on **Simple IP Control** on the TV. On iPhone, allow local network access when prompted.
+2. Add a TV profile with a name and the TV’s IPv4 address. The first profile becomes the default. To change it, open **☰ → Settings**, select another profile, and choose **Set as default**. The app opens the default profile next time.
+3. The volume chip updates about every three seconds while the remote is open. **Check connection** shows the result in a temporary notification.
+4. In **Settings → Configure quick buttons**, save up to six buttons per profile. For example, name a button **YouTube** and enter `Home, Down, Right, OK` if that sequence reaches your TV’s YouTube tile. Edit the sequence if the home screen layout changes.
+5. To switch languages, open **Settings → App language**. English is the default.
 
-Для збірки з коду потрібні .NET 10 SDK та інструменти .NET MAUI для Windows. З кореня репозиторію:
+Wake from standby depends on the TV’s Remote Start setting and whether Simple IP Control remains reachable in standby.
 
-```powershell
-dotnet publish src/App/BraviaRemote.csproj -c Release -f net10.0-windows10.0.19041.0 -p:BraviaWindowsOnly=true -r win-x64 --self-contained -o work/publish
-```
+## Build and release
 
-## iPhone
+See the [development and release guide](docs/DEVELOPMENT.md). The iPhone version requires a Mac with Xcode and signing for a physical device.
 
-Потрібні Mac із сумісною версією Xcode, .NET 10 SDK, навантаження `maui-ios` та налаштований підпис для Apple Account. З Windows можна використати Pair to Mac. На Mac збірку для симулятора Apple Silicon можна запустити так:
-
-```sh
-dotnet workload install maui-ios
-dotnet build src/App/BraviaRemote.csproj -f net10.0-ios -t:Run -p:RuntimeIdentifier=iossimulator-arm64
-```
-
-Для фізичного iPhone обери під’єднаний пристрій, сертифікат розробника та профіль для `app.braviaremote.controller` в інструментах MAUI. За потреби задай унікальний ідентифікатор застосунку, зареєстрований у твоїй команді Apple. Тестування з Personal Team безкоштовне, профіль діє сім днів.
-
-## Релізи
-
-1. Онови тричастинну версію в `version.json` і `ApplicationDisplayVersion` у файлі проєкту. Для iOS також збільш `ApplicationVersion`.
-2. Онови `docs/RELEASE-NOTES.md` і запусти `./scripts/Build-Release.ps1` на Windows.
-3. Запуш коміт у `main`, потім створи й запуш тег `vX.Y.Z`. GitHub Actions перевірить відповідність версії, збере Windows ZIP і опублікує його разом із `SHA256SUMS.txt`.
-
-CI збирає Windows і перевіряє компіляцію для симулятора iOS. Підписаний iPhone-пакет потребує окремого налаштування підпису.
-
-Під час запуску застосунок перевіряє останній стабільний реліз GitHub. Якщо доступна новіша версія, показує банер із посиланням на реліз. Користувач сам завантажує й встановлює оновлення.
-
-## Структура репозиторію
-
-- `src/App` — застосунок MAUI, екрани, локальні налаштування та код платформ.
-- `src/Shared` — спільний клієнт протоколу Sony Simple IP Control.
-- `scripts` — збірка та пакування Windows-релізу.
-- `docs` — нотатки до релізу.
-- `.github/workflows` — перевірки та публікація за тегом.
+The app checks GitHub Releases at startup. A banner links to the release when a newer stable version is available. Downloading and installing updates is manual.
 
 - [Sony Simple IP Control](https://pro-bravia.sony.net/remote-display-control/simple-ip-control/)
-- [Інструкція Microsoft для iOS на Mac](https://learn.microsoft.com/dotnet/maui/ios/cli?view=net-maui-10.0)
-- [Підключення до Mac з Windows](https://learn.microsoft.com/dotnet/maui/ios/pair-to-mac?view=net-maui-10.0)
+- [Pair to Mac for iOS development](https://learn.microsoft.com/dotnet/maui/ios/pair-to-mac?view=net-maui-10.0)
 - [Apple Personal Team](https://developer.apple.com/help/account/basics/about-your-developer-account)

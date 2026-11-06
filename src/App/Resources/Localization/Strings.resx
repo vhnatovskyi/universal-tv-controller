@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Menu" xml:space="preserve"><value>Menu</value></data>
+  <data name="Remote" xml:space="preserve"><value>Remote</value></data>
+  <data name="Volume" xml:space="preserve"><value>Volume</value></data>
+  <data name="Minimize" xml:space="preserve"><value>Minimize window</value></data>
+  <data name="Maximize" xml:space="preserve"><value>Maximize or restore window</value></data>
+  <data name="CloseWindow" xml:space="preserve"><value>Close window</value></data>
+  <data name="OpenRelease" xml:space="preserve"><value>Open release</value></data>
+  <data name="Profiles" xml:space="preserve"><value>TV profiles</value></data>
+  <data name="ChooseProfile" xml:space="preserve"><value>Choose a profile</value></data>
+  <data name="Profile" xml:space="preserve"><value>TV profile</value></data>
+  <data name="AddProfile" xml:space="preserve"><value>Add profile</value></data>
+  <data name="Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="SetDefault" xml:space="preserve"><value>Set as default</value></data>
+  <data name="ConfigureShortcuts" xml:space="preserve"><value>Configure quick buttons</value></data>
+  <data name="Onboarding" xml:space="preserve"><value>Add a TV profile to get started.</value></data>
+  <data name="Shortcuts" xml:space="preserve"><value>Quick buttons</value></data>
+  <data name="ChooseShortcut" xml:space="preserve"><value>Choose a button</value></data>
+  <data name="NewShortcut" xml:space="preserve"><value>New button</value></data>
+  <data name="ShortcutName" xml:space="preserve"><value>Button name</value></data>
+  <data name="ShortcutHelp" xml:space="preserve"><value>Enter the path from Home to the app tile. Separate commands with commas.</value></data>
+  <data name="ShortcutCommands" xml:space="preserve"><value>Commands: Home, Up, Down, Left, Right, Back, OK</value></data>
+  <data name="ShortcutExample" xml:space="preserve"><value>Home, Down, Right, OK</value></data>
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="BackToSettings" xml:space="preserve"><value>Back to settings</value></data>
+  <data name="ProfileName" xml:space="preserve"><value>Profile name</value></data>
+  <data name="ProfileExample" xml:space="preserve"><value>For example, Living room</value></data>
+  <data name="TvAddress" xml:space="preserve"><value>TV IP address</value></data>
+  <data name="AddressExample" xml:space="preserve"><value>For example, 192.168.1.50</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="PowerOn" xml:space="preserve"><value>Power on</value></data>
+  <data name="PowerOff" xml:space="preserve"><value>Power off</value></data>
+  <data name="Up" xml:space="preserve"><value>Up</value></data>
+  <data name="Left" xml:space="preserve"><value>Left</value></data>
+  <data name="Confirm" xml:space="preserve"><value>Confirm</value></data>
+  <data name="Right" xml:space="preserve"><value>Right</value></data>
+  <data name="Down" xml:space="preserve"><value>Down</value></data>
+  <data name="Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Inputs" xml:space="preserve"><value>Inputs</value></data>
+  <data name="VolumeDownShort" xml:space="preserve"><value>Vol. −</value></data>
+  <data name="VolumeDown" xml:space="preserve"><value>Volume down</value></data>
+  <data name="Mute" xml:space="preserve"><value>Mute</value></data>
+  <data name="VolumeUpShort" xml:space="preserve"><value>Vol. +</value></data>
+  <data name="VolumeUp" xml:space="preserve"><value>Volume up</value></data>
+  <data name="CheckConnection" xml:space="preserve"><value>Check connection</value></data>
+  <data name="CloseMenu" xml:space="preserve"><value>Close menu</value></data>
+  <data name="Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Language" xml:space="preserve"><value>App language</value></data>
+  <data name="DefaultProfile" xml:space="preserve"><value>Default profile</value></data>
+  <data name="NewProfile" xml:space="preserve"><value>New profile</value></data>
+  <data name="EditProfile" xml:space="preserve"><value>Edit profile</value></data>
+  <data name="MissingProfileName" xml:space="preserve"><value>Enter a profile name.</value></data>
+  <data name="InvalidAddress" xml:space="preserve"><value>Enter the TV’s IPv4 address, for example 192.168.1.50.</value></data>
+  <data name="Connected" xml:space="preserve"><value>Connected. Volume: {0}.</value></data>
+  <data name="CheckProfileAddress" xml:space="preserve"><value>Check the IP address in the profile settings.</value></data>
+  <data name="TvTimeout" xml:space="preserve"><value>The TV did not respond. Check the network and IP control.</value></data>
+  <data name="ConnectionFailed" xml:space="preserve"><value>Could not connect. Check the network and Simple IP Control.</value></data>
+  <data name="ConnectionClosed" xml:space="preserve"><value>The TV closed the connection before acknowledging the command.</value></data>
+  <data name="CommandRejected" xml:space="preserve"><value>The TV rejected the command or does not support it.</value></data>
+  <data name="InvalidReply" xml:space="preserve"><value>The TV returned an unexpected response.</value></data>
+  <data name="ShortcutDone" xml:space="preserve"><value>Quick button “{0}” completed.</value></data>
+  <data name="MissingShortcutName" xml:space="preserve"><value>Enter a quick button name.</value></data>
+  <data name="InvalidShortcutSteps" xml:space="preserve"><value>Enter 1 to {0} commands from the list, separated by commas.</value></data>
+  <data name="ShortcutLimit" xml:space="preserve"><value>You can add up to {0} quick buttons per profile.</value></data>
+  <data name="UpdateAvailable" xml:space="preserve"><value>Version {0} is available</value></data>
+</root>

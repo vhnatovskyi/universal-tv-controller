@@ -1,10 +1,17 @@
-## BRAVIA Remote v0.2.0
+## BRAVIA Remote v0.3.0
 
-- Пульт для Sony BRAVIA через Simple IP Control у домашній мережі.
-- Профілі телевізорів, профіль за замовчуванням і швидкі кнопки для кожного профілю.
-- Компактне меню й індикатор поточної гучності.
-- Банер для нових версій із переходом на GitHub Releases.
-- Один екземпляр застосунку на Windows та одна сцена на iPhone.
+### English
 
-Для Windows x64 розпакуй увесь ZIP і запусти `BraviaRemote.exe`.
-Версія для iPhone доступна як вихідний код MAUI. Для встановлення на пристрій її треба зібрати та підписати.
+- English and Ukrainian interface. English is the default and the app remembers the selected language.
+- Windows x64 installer with English and Ukrainian setup, Start menu entry, and an uninstaller.
+- The portable ZIP and SHA-256 checksums are available alongside the installer.
+
+To install on Windows, download and run `BraviaRemote-Setup-0.3.0.exe`. The iPhone version is available as MAUI source and requires an Apple-signed build for a physical device.
+
+### Українська
+
+- Англійський та український інтерфейс. За замовчуванням використовується англійська, вибір мови зберігається.
+- Інсталятор Windows x64 з англійською й українською мовами, ярликом у меню «Пуск» і можливістю видалення.
+- Портативний ZIP і контрольні суми SHA-256 доступні поруч з інсталятором.
+
+Для встановлення на Windows завантаж і запусти `BraviaRemote-Setup-0.3.0.exe`. Для iPhone доступний вихідний код MAUI. Для встановлення на пристрій потрібна підписана Apple збірка.
