@@ -1,5 +1,6 @@
 param([switch]$CheckOnly)
 $ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 function Test-DotNet {
     $path = Join-Path $env:ProgramW6432 'dotnet/shared/Microsoft.NETCore.App'
