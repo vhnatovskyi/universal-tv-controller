@@ -1,1 +1,3 @@
 "NSLocalNetworkUsageDescription" = "Access to your local network is required to control your Sony BRAVIA TV.";
+"NSMicrophoneUsageDescription" = "The microphone is used to dictate text to your TV.";
+"NSSpeechRecognitionUsageDescription" = "Speech recognition converts your voice to text for your TV.";

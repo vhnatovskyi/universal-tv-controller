@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>The microphone is used to dictate text to your TV.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>Speech recognition converts your voice to text for your TV.</string>
     <key>NSBonjourServices</key>
     <array>
         <string>_androidtvremote2._tcp</string>

@@ -75,6 +75,16 @@
         </Border>
         <ScrollView x:Name="ScreenScroll" Grid.Row="2" SizeChanged="OnRemoteViewportChanged">
           <VerticalStackLayout Padding="12,12" Spacing="8" MaximumWidthRequest="480" HorizontalOptions="Fill">
+            <VerticalStackLayout x:Name="DiscoveryPanel" Padding="4,12" Spacing="16" IsVisible="False">
+                <Label Text="{DynamicResource Loc.DiscoveryHelp}" TextColor="#A9BDCF" />
+                <HorizontalStackLayout Spacing="12" HorizontalOptions="Center" Padding="0,16">
+                    <ActivityIndicator x:Name="DiscoverySpinner" Color="#72CCFA" WidthRequest="28" HeightRequest="28" />
+                    <Label x:Name="DiscoveryStatus" TextColor="#A9BDCF" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <VerticalStackLayout x:Name="DeviceCards" Spacing="10" />
+                <Button x:Name="FindDevicesButton" Text="{DynamicResource Loc.FindDevices}" Clicked="OnFindDevices" />
+                <Button Text="{DynamicResource Loc.Cancel}" Clicked="OnCancelDiscovery" BackgroundColor="Transparent" />
+            </VerticalStackLayout>
             <VerticalStackLayout x:Name="UpdatesPanel" Padding="12" Spacing="10" IsVisible="False">
                 <Label x:Name="InstalledVersionLabel" TextColor="#95A3B8" FontSize="11" />
                 <Picker x:Name="ReleasePicker" Title="{DynamicResource Loc.ChooseRelease}" TitleColor="#95A3B8"
@@ -159,13 +169,7 @@
                 <Entry x:Name="ProfileNameEntry" Placeholder="{DynamicResource Loc.ProfileExample}" MaxLength="60"
                        TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#1B2635"
                        SemanticProperties.Description="{DynamicResource Loc.ProfileName}" />
-                <Picker x:Name="DevicePicker" Title="{DynamicResource Loc.SelectTv}" TitleColor="#95A3B8"
-                        TextColor="White" BackgroundColor="#1B2635" SelectedIndexChanged="OnDeviceSelected"
-                        SemanticProperties.Description="{DynamicResource Loc.SelectTv}" />
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                    <Label x:Name="DiscoveryStatus" TextColor="#95A3B8" FontSize="12" VerticalOptions="Center" />
-                    <Button x:Name="FindDevicesButton" Grid.Column="1" Text="{DynamicResource Loc.FindDevices}" Clicked="OnFindDevices" />
-                </Grid>
+                <Button x:Name="SelectedDeviceButton" Text="{DynamicResource Loc.SelectTv}" Clicked="OnChooseDevice" />
                 <Label x:Name="EditorError" IsVisible="False" TextColor="#FFB8B8" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <Button x:Name="SaveProfileButton" Text="{DynamicResource Loc.PairAndSave}" Clicked="OnSaveProfile" />
@@ -180,31 +184,61 @@
                 </VerticalStackLayout.Resources>
                 <Grid x:Name="QuickButtons" ColumnDefinitions="*,*,*" ColumnSpacing="8" RowSpacing="8" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                    <Button Text="{DynamicResource Loc.PowerOn}" CommandParameter="on" Clicked="OnPower" />
-                    <Button Grid.Column="1" Text="{DynamicResource Loc.PowerOff}" CommandParameter="off" Clicked="OnPower" />
+                    <Button Text="⏻" FontSize="23" TextColor="#6ED9B6" CommandParameter="on" Clicked="OnPower"
+                            SemanticProperties.Description="{DynamicResource Loc.PowerOn}" ToolTipProperties.Text="{DynamicResource Loc.PowerOn}" />
+                    <Button Grid.Column="1" Text="⏻" FontSize="23" TextColor="#F19A9F" CommandParameter="off" Clicked="OnPower"
+                            SemanticProperties.Description="{DynamicResource Loc.PowerOff}" ToolTipProperties.Text="{DynamicResource Loc.PowerOff}" />
                 </Grid>
-                <Border HorizontalOptions="Center" WidthRequest="204" Padding="6"
-                        BackgroundColor="#141E2B" Stroke="#2C3A4D" StrokeShape="RoundRectangle 10">
-                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="4" RowSpacing="4">
-                        <Button Grid.Column="1" Text="↑" FontSize="18" Padding="0" CommandParameter="9" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Up}" />
-                        <Button Grid.Row="1" Text="←" FontSize="18" Padding="0" CommandParameter="12" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Left}" />
+                <Border x:Name="DirectionPad" HorizontalOptions="Center" WidthRequest="204" HeightRequest="204" Padding="10"
+                        Stroke="#3B526C" StrokeThickness="1.5" StrokeShape="RoundRectangle 160">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#25374C" Offset="0" />
+                            <GradientStop Color="#131E2A" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="*,*,*" ColumnSpacing="2" RowSpacing="2">
+                        <Grid.Resources>
+                            <Style TargetType="Button" BasedOn="{StaticResource StandardButtonStyle}">
+                                <Setter Property="CornerRadius" Value="100" />
+                                <Setter Property="BackgroundColor" Value="Transparent" />
+                                <Setter Property="BorderWidth" Value="0" />
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                        </Grid.Resources>
+                        <Button Grid.Column="1" Text="⌃" FontSize="26" CommandParameter="9" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Up}" />
+                        <Button Grid.Row="1" Text="‹" FontSize="29" CommandParameter="12" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Left}" />
                         <Button Grid.Column="1" Grid.Row="1" Text="OK" Padding="0" CommandParameter="13" Clicked="OnKey"
-                                SemanticProperties.Description="{DynamicResource Loc.Confirm}" BackgroundColor="#243548" BorderColor="#4E8CAA" TextColor="#9BDBF9" />
-                        <Button Grid.Column="2" Grid.Row="1" Text="→" FontSize="18" Padding="0" CommandParameter="11" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Right}" />
-                        <Button Grid.Column="1" Grid.Row="2" Text="↓" FontSize="18" Padding="0" CommandParameter="10" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Down}" />
+                                SemanticProperties.Description="{DynamicResource Loc.Confirm}" BackgroundColor="#304E65" BorderWidth="1.5" BorderColor="#72CCFA" TextColor="#C6EFFF" FontAttributes="Bold" />
+                        <Button Grid.Column="2" Grid.Row="1" Text="›" FontSize="29" CommandParameter="11" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Right}" />
+                        <Button Grid.Column="1" Grid.Row="2" Text="⌄" FontSize="26" CommandParameter="10" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Down}" />
                     </Grid>
                 </Border>
                 <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="8">
-                    <Button Text="{DynamicResource Loc.Back}" CommandParameter="8" Clicked="OnKey" />
-                    <Button Grid.Column="1" Text="{DynamicResource Loc.Home}" CommandParameter="6" Clicked="OnKey" />
-                    <Button Grid.Column="2" Text="{DynamicResource Loc.Inputs}" CommandParameter="1" Clicked="OnKey" />
-                    <Button Grid.Row="1" Text="{DynamicResource Loc.VolumeDownShort}" CommandParameter="31" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.VolumeDown}" />
-                    <Button Grid.Column="1" Grid.Row="1" Text="{DynamicResource Loc.Mute}" CommandParameter="32" Clicked="OnKey" />
-                    <Button Grid.Column="2" Grid.Row="1" Text="{DynamicResource Loc.VolumeUpShort}" CommandParameter="30" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.VolumeUp}" />
+                    <Button Text="↶" FontSize="24" CommandParameter="8" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Back}" ToolTipProperties.Text="{DynamicResource Loc.Back}" />
+                    <Button Grid.Column="1" ImageSource="control_home.png" CommandParameter="6" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Home}" ToolTipProperties.Text="{DynamicResource Loc.Home}" />
+                    <Button Grid.Column="2" ImageSource="control_input.png" Clicked="OnInputs" SemanticProperties.Description="{DynamicResource Loc.Inputs}" ToolTipProperties.Text="{DynamicResource Loc.Inputs}" />
+                    <Button Grid.Row="1" Text="−" FontSize="25" TextColor="#A1CEEC" CommandParameter="31" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.VolumeDown}" ToolTipProperties.Text="{DynamicResource Loc.VolumeDown}" />
+                    <Button Grid.Column="1" Grid.Row="1" ImageSource="control_mute.png" CommandParameter="32" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Mute}" ToolTipProperties.Text="{DynamicResource Loc.Mute}" />
+                    <Button Grid.Column="2" Grid.Row="1" Text="+" FontSize="25" TextColor="#A1CEEC" CommandParameter="30" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.VolumeUp}" ToolTipProperties.Text="{DynamicResource Loc.VolumeUp}" />
+                </Grid>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Button x:Name="VoiceButton" ImageSource="control_mic.png" Text="{DynamicResource Loc.VoiceInput}" TextColor="#D4BDFB"
+                            BackgroundColor="#29243D" BorderColor="#584879" Clicked="OnVoiceInput" />
+                    <Button Grid.Column="1" ImageSource="control_settings.png" Text="{DynamicResource Loc.TvSettings}"
+                            CommandParameter="7" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.TvSettings}" />
                 </Grid>
             </VerticalStackLayout>
           </VerticalStackLayout>
         </ScrollView>
+        <Border x:Name="VoicePanel" Grid.Row="2" IsVisible="False" BackgroundColor="#131E2A" Stroke="#584879"
+                StrokeShape="RoundRectangle 16" Padding="20" Margin="20" VerticalOptions="Center">
+            <VerticalStackLayout Spacing="14">
+                <ActivityIndicator x:Name="VoiceSpinner" Color="#D4BDFB" WidthRequest="40" HeightRequest="40" />
+                <Label x:Name="VoiceStatus" TextColor="#E6D9FF" HorizontalTextAlignment="Center" />
+                <Button Text="{DynamicResource Loc.Cancel}" Clicked="OnCancelVoice" />
+            </VerticalStackLayout>
+        </Border>
         <Border x:Name="Toast" Grid.Row="2" IsVisible="False" InputTransparent="True"
                 VerticalOptions="End" Margin="12,0,12,12" Padding="12,10" StrokeShape="RoundRectangle 10">
             <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">

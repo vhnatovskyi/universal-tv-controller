@@ -15,6 +15,7 @@ public partial class App : Application
         window.Stopped += (_, _) => page.SetVolumeTracking(false);
         window.Resumed += (_, _) => page.SetVolumeTracking(true);
         window.Destroying += (_, _) => page.SetVolumeTracking(false);
+        window.Destroying += (_, _) => page.CancelVoiceInput();
 #if WINDOWS
         window.Width = 420;
         window.Height = 520;

@@ -11,9 +11,9 @@
     <MauiXamlInflator>SourceGen</MauiXamlInflator>
     <ApplicationTitle>BRAVIA Remote</ApplicationTitle>
     <ApplicationId>app.braviaremote.controller</ApplicationId>
-    <ApplicationDisplayVersion>0.3.5</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>0.4.0</ApplicationDisplayVersion>
     <Version>$(ApplicationDisplayVersion)</Version>
-    <ApplicationVersion>8</ApplicationVersion>
+    <ApplicationVersion>9</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
     <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
@@ -34,10 +34,12 @@
     <MauiFont Include="Resources/Fonts/*" />
     <MauiImage Include="Resources/Images/remote_mark.svg" BaseSize="72,72" />
     <MauiImage Include="Resources/Images/active_*.svg" BaseSize="24,24" />
+    <MauiImage Include="Resources/Images/control_*.svg" BaseSize="24,24" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.20" />
     <ProjectReference Include="../Shared/BraviaRemote.Shared.csproj" />
   </ItemGroup>
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+    <PackageReference Include="System.Speech" Version="10.0.0" />
     <Content Include="Platforms/Windows/remote.ico" Link="remote.ico"
              CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>

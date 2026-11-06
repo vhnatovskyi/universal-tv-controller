@@ -6,34 +6,65 @@ public partial class MainPage
     private DiscoveredTv? selectedDevice;
     private CancellationTokenSource? discovery;
 
-    private async void OnFindDevices(object? sender, EventArgs e) => await FindDevicesAsync();
+    private void OnChooseDevice(object? sender, EventArgs e) => OpenDiscovery();
 
-    private void OnDeviceSelected(object? sender, EventArgs e)
+    private void OpenDiscovery()
     {
-        selectedDevice = discoveredDevices.ElementAtOrDefault(DevicePicker.SelectedIndex);
-        SaveProfileButton.IsEnabled = selectedDevice is not null;
-        if (selectedDevice is not null && string.IsNullOrWhiteSpace(ProfileNameEntry.Text))
-            ProfileNameEntry.Text = selectedDevice.Name;
+        ShowScreen(Screen.Discovery);
+        _ = FindDevicesAsync();
     }
 
-    private void RefreshDevicePicker()
+    private void OnCancelDiscovery(object? sender, EventArgs e)
     {
-        var address = selectedDevice?.Address;
-        DevicePicker.ItemsSource = discoveredDevices.Select(device => device.Name).ToList();
-        DevicePicker.SelectedIndex = Array.FindIndex(discoveredDevices, device => device.Address == address);
-        if (DevicePicker.SelectedIndex < 0 && discoveredDevices.Length == 1)
-            DevicePicker.SelectedIndex = 0;
-        OnDeviceSelected(null, EventArgs.Empty);
+        discovery?.Cancel();
+        ShowScreen(selectedDevice is null ? editorReturnScreen : Screen.ProfileEditor);
+    }
+
+    private async void OnFindDevices(object? sender, EventArgs e) => await FindDevicesAsync();
+
+    private void RefreshSelectedDevice()
+    {
+        SelectedDeviceButton.Text = selectedDevice?.Name ?? Localization.Text("SelectTv");
+        SaveProfileButton.IsEnabled = selectedDevice is not null;
+    }
+
+    private void RefreshDeviceCards()
+    {
+        DeviceCards.Children.Clear();
+        foreach (var device in discoveredDevices)
+        {
+            var button = new Button
+            {
+                Text = device.Name,
+                ImageSource = "control_input.png",
+                ContentLayout = new Button.ButtonContentLayout(Button.ButtonContentLayout.ImagePosition.Left, 14),
+                HeightRequest = 68,
+                CornerRadius = 12,
+                BorderColor = Color.FromArgb("#3B526C"),
+                BackgroundColor = Color.FromArgb("#1B293A")
+            };
+            button.SetDynamicResource(SemanticProperties.DescriptionProperty, "Loc.SelectTv");
+            button.Clicked += (_, _) =>
+            {
+                selectedDevice = device;
+                if (string.IsNullOrWhiteSpace(ProfileNameEntry.Text))
+                    ProfileNameEntry.Text = device.Name;
+                RefreshSelectedDevice();
+                ShowScreen(Screen.ProfileEditor);
+            };
+            DeviceCards.Add(button);
+        }
     }
 
     private async Task FindDevicesAsync()
     {
-        if (discovery is not null)
-            return;
+        discovery?.Cancel();
         using var searching = new CancellationTokenSource();
         discovery = searching;
         FindDevicesButton.IsEnabled = false;
+        DiscoverySpinner.IsRunning = DiscoverySpinner.IsVisible = true;
         DiscoveryStatus.Text = Localization.Text("SearchingTvs");
+        DeviceCards.Children.Clear();
         try
         {
 #if IOS
@@ -43,10 +74,8 @@ public partial class MainPage
 #endif
             if (searching.IsCancellationRequested)
                 return;
-            discoveredDevices = selectedDevice is not null
-                ? found.Append(selectedDevice).DistinctBy(device => device.Address).ToArray()
-                : found;
-            RefreshDevicePicker();
+            discoveredDevices = found;
+            RefreshDeviceCards();
             DiscoveryStatus.Text = Localization.Text(found.Length > 0 ? "TvsFound" : "NoTvsFound", found.Length);
         }
         catch (OperationCanceledException)
@@ -58,8 +87,12 @@ public partial class MainPage
         }
         finally
         {
-            discovery = null;
-            FindDevicesButton.IsEnabled = true;
+            if (ReferenceEquals(discovery, searching))
+            {
+                discovery = null;
+                FindDevicesButton.IsEnabled = true;
+                DiscoverySpinner.IsRunning = DiscoverySpinner.IsVisible = false;
+            }
         }
     }
 }

@@ -94,4 +94,16 @@
   <data name="SearchingTvs" xml:space="preserve"><value>Шукаємо в домашній мережі…</value></data>
   <data name="TvsFound" xml:space="preserve"><value>Знайдено пристроїв: {0}.</value></data>
   <data name="NoTvsFound" xml:space="preserve"><value>Google TV не знайдено. Перевір, чи ТВ увімкнений і під’єднаний до тієї ж мережі.</value></data>
+  <data name="FindGoogleTv" xml:space="preserve"><value>Пошук Google TV</value></data>
+  <data name="DiscoveryHelp" xml:space="preserve"><value>Увімкни телевізор і під’єднай його до тієї ж домашньої мережі. Обери пристрій нижче для спарування.</value></data>
+  <data name="VoiceInput" xml:space="preserve"><value>Голосове введення</value></data>
+  <data name="TvSettings" xml:space="preserve"><value>Налаштування ТВ</value></data>
+  <data name="VoiceListening" xml:space="preserve"><value>Слухаю… Скажи коротку фразу. Спочатку відкрий поле введення на телевізорі.</value></data>
+  <data name="VoiceConfirm" xml:space="preserve"><value>Перевір текст перед надсиланням на телевізор.</value></data>
+  <data name="SendText" xml:space="preserve"><value>Надіслати на ТВ</value></data>
+  <data name="VoiceNoSpeech" xml:space="preserve"><value>Мовлення не розпізнано. Спробуй ще раз.</value></data>
+  <data name="VoiceOpenField" xml:space="preserve"><value>Відкрий пошук або поле введення на ТВ та повтори голосове введення.</value></data>
+  <data name="VoiceUnavailable" xml:space="preserve"><value>Розпізнавання мовлення недоступне. Перевір доступ до мікрофона та встановлені мови мовлення.</value></data>
+  <data name="VoiceTextSent" xml:space="preserve"><value>Текст надіслано на телевізор.</value></data>
+  <data name="InputMenu" xml:space="preserve"><value>Відкрити меню входів ТВ</value></data>
 </root>

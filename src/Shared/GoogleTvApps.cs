@@ -12,6 +12,7 @@ namespace BraviaRemote;
 
 public sealed record GoogleTvPairing(string Fingerprint, string Certificate);
 public sealed class AppLaunchUnconfirmedException() : IOException("The TV did not confirm the requested app in the foreground.");
+public sealed class TvTextFieldRequiredException() : IOException("Open a text field on the TV before typing.");
 
 public static class GoogleTvApps
 {
@@ -21,6 +22,56 @@ public static class GoogleTvApps
     private const uint CurrentApp = 4;
     private const uint Keys = 2;
     private const uint Volume = 64;
+
+    public static async Task TypeTextAsync(IPAddress address, GoogleTvPairing pairing, string text)
+    {
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var token = timeout.Token;
+        using var certificate = X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(pairing.Certificate), "");
+        using var client = new TcpClient(address.AddressFamily);
+        await client.ConnectAsync(address, 6466, token);
+        using var tls = new SslStream(client.GetStream(), false, (_, peer, _, _) =>
+            peer is not null && string.Equals(pairing.Fingerprint,
+                Convert.ToHexString(peer.GetCertHash(HashAlgorithmName.SHA256)), StringComparison.Ordinal));
+        await AuthenticateAsync(tls, address, certificate, token);
+        uint imeCounter = 0, fieldCounter = 0, start = 0, end = 0;
+        var hasField = false;
+        await ConfigureAsync(tls, Ping | Power | CurrentApp, CurrentApp, token, message =>
+        {
+            var editorData = message.FirstOrDefault(field => field.Number == 20).Data;
+            if (editorData is not null)
+            {
+                var editor = ReadFields(editorData);
+                var infoData = editor.FirstOrDefault(field => field.Number == 1).Data;
+                if (infoData is not null)
+                {
+                    var info = ReadFields(infoData);
+                    hasField = info.FirstOrDefault(field => field.Number == 2).Value != 0;
+                    fieldCounter = info.FirstOrDefault(field => field.Number == 1).Value;
+                }
+                var statusData = editor.FirstOrDefault(field => field.Number == 2).Data;
+                if (statusData is not null)
+                {
+                    var status = ReadFields(statusData);
+                    imeCounter = status.FirstOrDefault(field => field.Number == 1).Value;
+                    start = status.FirstOrDefault(field => field.Number == 3).Value;
+                    end = status.FirstOrDefault(field => field.Number == 4).Value;
+                }
+            }
+            var batchData = message.FirstOrDefault(field => field.Number == 21).Data;
+            if (batchData is not null)
+            {
+                var batch = ReadFields(batchData);
+                imeCounter = batch.FirstOrDefault(field => field.Number == 1).Value;
+                fieldCounter = batch.FirstOrDefault(field => field.Number == 2).Value;
+            }
+        });
+        if (!hasField)
+            throw new TvTextFieldRequiredException();
+        var edit = Message(Number(1, 1), Bytes(2, Message(Number(1, start), Number(2, end), Text(3, text))));
+        await SendAsync(tls, Bytes(21, Message(Number(1, imeCounter), Number(2, fieldCounter), Bytes(3, edit))), token);
+        await Task.Delay(250, token);
+    }
 
     public static async Task<int> ControlAsync(IPAddress address, GoogleTvPairing pairing, int? sonyKey = null, bool? power = null)
     {
@@ -56,8 +107,9 @@ public static class GoogleTvApps
             false => 223u,
             _ => sonyKey switch
             {
-                1 => 178u, 6 => 3u, 8 => 4u, 9 => 19u, 10 => 20u, 11 => 22u, 12 => 21u,
+                1 => 178u, 6 => 3u, 7 => 176u, 8 => 4u, 9 => 19u, 10 => 20u, 11 => 22u, 12 => 21u,
                 13 => 23u, 30 => 24u, 31 => 25u, 32 => 164u,
+                101 => 243u, 102 => 244u, 103 => 245u, 104 => 246u,
                 _ => throw new IOException("Unsupported remote key.")
             }
         };

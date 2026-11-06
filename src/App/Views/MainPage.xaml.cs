@@ -16,7 +16,7 @@ public partial class MainPage : ContentPage
     private bool volumeTrackingActive;
     private CancellationTokenSource? volumePolling;
 
-    private enum Screen { Remote, Settings, ProfileEditor, ShortcutEditor, Updates, About }
+    private enum Screen { Remote, Settings, ProfileEditor, ShortcutEditor, Updates, About, Discovery }
 
     private TelevisionProfile? CurrentProfile =>
         ProfilePicker.SelectedIndex is var index && index >= 0 && index < profiles.Items.Count
@@ -55,9 +55,9 @@ public partial class MainPage : ContentPage
 
         var shortcutRows = (Shortcuts.Length + ShortcutColumns - 1) / ShortcutColumns;
         var minimum = DeviceInfo.Platform == DevicePlatform.WinUI ? 36d : 44d;
-        // The remote has six control rows, 24px of outer padding, and 44px of borders and gaps.
-        var available = ScreenScroll.Height - 68 - shortcutRows * 8;
-        var height = Math.Clamp(Math.Floor(available / (6 + shortcutRows)), minimum, 58);
+        var available = ScreenScroll.Height - 80 - shortcutRows * 8;
+        var height = Math.Clamp(Math.Floor(available / (7 + shortcutRows)), minimum, 58);
+        DirectionPad.WidthRequest = DirectionPad.HeightRequest = height * 3 + 24;
         if (!Resources.TryGetValue("RemoteButtonHeight", out var previous) || !Equals(previous, height))
             Resources["RemoteButtonHeight"] = height;
     }
@@ -71,6 +71,7 @@ public partial class MainPage : ContentPage
         ShortcutEditor.IsVisible = screen == Screen.ShortcutEditor;
         UpdatesPanel.IsVisible = screen == Screen.Updates;
         AboutPanel.IsVisible = screen == Screen.About;
+        DiscoveryPanel.IsVisible = screen == Screen.Discovery;
         Onboarding.IsVisible = screen == Screen.Remote && profile is null;
         RemoteButtons.IsVisible = screen == Screen.Remote && profile is not null;
         CheckButton.IsVisible = RemoteButtons.IsVisible;
@@ -87,6 +88,7 @@ public partial class MainPage : ContentPage
             Screen.ShortcutEditor => Text("Shortcuts"),
             Screen.Updates => Text("Updates"),
             Screen.About => Text("About"),
+            Screen.Discovery => Text("FindGoogleTv"),
             _ => profile?.Name ?? Text("Remote")
         };
         toastVersion++;
@@ -99,7 +101,7 @@ public partial class MainPage : ContentPage
 
     private void ShowScreen(Screen next)
     {
-        if (next != Screen.ProfileEditor)
+        if (next != Screen.Discovery)
             discovery?.Cancel();
 
         screen = next;
@@ -166,11 +168,13 @@ public partial class MainPage : ContentPage
         ProfileNameEntry.Text = profile?.Name;
         selectedDevice = profile is null ? null : new DiscoveredTv(profile.Name, profile.Address);
         discoveredDevices = selectedDevice is null ? [] : [selectedDevice];
-        RefreshDevicePicker();
+        RefreshSelectedDevice();
 
         EditorError.IsVisible = false;
-        ShowScreen(Screen.ProfileEditor);
-        _ = FindDevicesAsync();
+        if (profile is null)
+            OpenDiscovery();
+        else
+            ShowScreen(Screen.ProfileEditor);
     }
 
     private async void OnSaveProfile(object? sender, EventArgs e)
@@ -237,6 +241,22 @@ public partial class MainPage : ContentPage
 
     private async void OnCheck(object? sender, EventArgs e) =>
         await RunAsync(async tv => Text("Connected", await tv.GetVolumeAsync()));
+
+    private async void OnInputs(object? sender, EventArgs e)
+    {
+        if (busy || CurrentProfile is null)
+            return;
+        var inputs = new[] { "HDMI 1", "HDMI 2", "HDMI 3", "HDMI 4", Text("InputMenu") };
+        var choice = await DisplayActionSheetAsync(Text("Inputs"), Text("Cancel"), null, inputs);
+        var index = Array.IndexOf(inputs, choice);
+        if (index < 0)
+            return;
+        await RunAsync(async tv =>
+        {
+            await tv.PressAsync(index < 4 ? 101 + index : 1);
+            return null;
+        });
+    }
 
     private async void OnKey(object? sender, EventArgs e)
     {

@@ -1,19 +1,15 @@
-## BRAVIA Remote v0.3.5
+## BRAVIA Remote v0.4.0
 
 ### English
 
-- Profiles now use Google TV pairing for remote keys, volume, app shortcuts, and the active-app indicator. Existing profiles and their saved pairing credentials are reset on first launch of this version.
-- The profile editor discovers Google TV devices on the home network. Select your TV by name and enter its pairing code. The profile is saved after pairing succeeds.
-- An app icon next to volume shows the current TV app. Quick app launches verify the foreground package before reporting success.
-- Remote buttons adapt their height to the number of quick-button rows.
-- Buttons highlight and shrink slightly while pressed, with a visible hover state on Windows.
-- Simple IP Control and Bluetooth connection options have been removed.
+- A circular direction pad, icon controls, colored accents, and a TV Settings button.
+- The Inputs button offers direct selection of HDMI 1–4 and the TV's input menu.
+- Device discovery has a dedicated screen with a loading indicator and selectable TV cards.
+- The microphone button dictates text, shows a preview, and sends confirmed text to the TV's focused input field. Windows requires an installed speech recognition language. iPhone requires microphone and speech permissions.
 
 ### Українська
 
-- Профілі використовують спарування Google TV для кнопок пульта, гучності, запуску застосунків та індикатора активного застосунку. Під час першого запуску цієї версії попередні профілі та збережені дані їхнього спарування скидаються.
-- Редактор профілю знаходить пристрої Google TV у домашній мережі. Обери ТВ за назвою та введи код спарування. Профіль зберігається після успішного спарування.
-- Біля гучності відображається іконка активного застосунку. Швидкий запуск перевіряє активний пакет перед повідомленням про успіх.
-- Висота кнопок пульта адаптується до кількості рядів швидких кнопок.
-- Під час натискання кнопки підсвічуються й трохи зменшуються. На Windows є підсвічування під курсором.
-- Варіанти підключення Simple IP Control і Bluetooth прибрано.
+- Круглий блок навігації, кнопки з іконками, кольорові акценти та кнопка налаштувань телевізора.
+- Кнопка входів пропонує прямий вибір HDMI 1–4 та меню входів телевізора.
+- Пошук пристроїв має окремий екран з індикатором пошуку й картками телевізорів для вибору.
+- Кнопка мікрофона розпізнає текст, показує його для перевірки та передає підтверджений текст у відкрите поле на ТВ. На Windows потрібна встановлена мова розпізнавання. На iPhone потрібні дозволи на мікрофон і розпізнавання мовлення.

@@ -1,1 +1,3 @@
 "NSLocalNetworkUsageDescription" = "Потрібен доступ до домашньої мережі, щоб керувати телевізором Sony BRAVIA.";
+"NSMicrophoneUsageDescription" = "Мікрофон використовується для диктування тексту на телевізор.";
+"NSSpeechRecognitionUsageDescription" = "Розпізнавання мовлення перетворює твій голос на текст для телевізора.";

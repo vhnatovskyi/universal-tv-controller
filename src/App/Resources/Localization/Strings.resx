@@ -94,4 +94,16 @@
   <data name="SearchingTvs" xml:space="preserve"><value>Searching the home network…</value></data>
   <data name="TvsFound" xml:space="preserve"><value>Found {0} device(s).</value></data>
   <data name="NoTvsFound" xml:space="preserve"><value>No Google TV found. Check that the TV is on and connected to the same network.</value></data>
+  <data name="FindGoogleTv" xml:space="preserve"><value>Find a Google TV</value></data>
+  <data name="DiscoveryHelp" xml:space="preserve"><value>Turn on your TV and connect it to the same home network. Choose the device below to pair.</value></data>
+  <data name="VoiceInput" xml:space="preserve"><value>Voice input</value></data>
+  <data name="TvSettings" xml:space="preserve"><value>TV settings</value></data>
+  <data name="VoiceListening" xml:space="preserve"><value>Listening… Speak a short phrase. Open a text field on the TV first.</value></data>
+  <data name="VoiceConfirm" xml:space="preserve"><value>Review the text before sending it to the TV.</value></data>
+  <data name="SendText" xml:space="preserve"><value>Send to TV</value></data>
+  <data name="VoiceNoSpeech" xml:space="preserve"><value>No speech was recognized. Try again.</value></data>
+  <data name="VoiceOpenField" xml:space="preserve"><value>Open a search or text field on the TV, then try voice input again.</value></data>
+  <data name="VoiceUnavailable" xml:space="preserve"><value>Speech recognition is unavailable. Check microphone access and installed speech languages.</value></data>
+  <data name="VoiceTextSent" xml:space="preserve"><value>Text sent to the TV.</value></data>
+  <data name="InputMenu" xml:space="preserve"><value>Open TV input menu</value></data>
 </root>
