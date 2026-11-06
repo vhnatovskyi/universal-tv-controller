@@ -26,7 +26,7 @@ public partial class MainPage
         for (var index = 0; index < shortcuts.Length; index++)
         {
             var shortcut = shortcuts[index];
-            if (index % 2 == 0)
+            if (index % 3 == 0)
                 QuickButtons.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             var button = new Button { Text = shortcut.Name };
             button.Clicked += async (_, _) => await RunAsync(async tv =>
@@ -39,7 +39,7 @@ public partial class MainPage
                 }
                 return $"Виконано швидку кнопку «{shortcut.Name}».";
             });
-            QuickButtons.Add(button, index % 2, index / 2);
+            QuickButtons.Add(button, index % 3, index / 3);
         }
     }
 
@@ -48,18 +48,11 @@ public partial class MainPage
         if (CurrentProfile is null)
             return;
 
-        ProfileControls.IsVisible = RemoteButtons.IsVisible = StatusLabel.IsVisible = false;
-        ShortcutEditor.IsVisible = true;
         RefreshShortcutPicker(-1);
-        RestartVolumeTracking(resetValue: true);
+        ShowScreen(Screen.ShortcutEditor);
     }
 
-    private void OnCloseShortcuts(object? sender, EventArgs e)
-    {
-        ShortcutEditor.IsVisible = false;
-        ProfileControls.IsVisible = StatusLabel.IsVisible = true;
-        RefreshRemote();
-    }
+    private void OnCloseShortcuts(object? sender, EventArgs e) => ShowScreen(Screen.Settings);
 
     private void OnNewShortcut(object? sender, EventArgs e)
     {

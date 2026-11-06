@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net10.0-ios</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(BraviaWindowsOnly)' == 'true'">net10.0-windows10.0.19041.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <UseMaui>true</UseMaui>
     <SingleProject>true</SingleProject>
@@ -11,6 +12,7 @@
     <ApplicationTitle>BRAVIA Remote</ApplicationTitle>
     <ApplicationId>app.braviaremote.controller</ApplicationId>
     <ApplicationDisplayVersion>0.2.0</ApplicationDisplayVersion>
+    <Version>$(ApplicationDisplayVersion)</Version>
     <ApplicationVersion>2</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
@@ -21,11 +23,13 @@
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <MauiIcon Include="Resources/AppIcon/appicon.svg" Color="#121C30" />
     <MauiSplashScreen Include="Resources/Splash/splash.svg" Color="#121C30" BaseSize="128,128" />
     <MauiFont Include="Resources/Fonts/*" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.20" />
+    <ProjectReference Include="../Shared/BraviaRemote.Shared.csproj" />
   </ItemGroup>
 </Project>

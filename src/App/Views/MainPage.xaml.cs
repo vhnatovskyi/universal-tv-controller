@@ -7,9 +7,13 @@ public partial class MainPage : ContentPage
 {
     private TelevisionProfiles profiles;
     private Guid? editingId;
+    private Screen screen;
+    private Screen editorReturnScreen;
     private bool busy;
     private bool volumeTrackingActive;
     private CancellationTokenSource? volumePolling;
+
+    private enum Screen { Remote, Settings, ProfileEditor, ShortcutEditor }
 
     private TelevisionProfile? CurrentProfile =>
         ProfilePicker.SelectedIndex is var index && index >= 0 && index < profiles.Items.Count
@@ -20,6 +24,7 @@ public partial class MainPage : ContentPage
     {
         profiles = TelevisionProfiles.Load(Preferences.Default);
         InitializeComponent();
+        VersionLabel.Text = $"BRAVIA Remote v{AppInfo.Current.VersionString}";
         RefreshProfiles(profiles.DefaultId);
     }
 
@@ -38,14 +43,48 @@ public partial class MainPage : ContentPage
     {
         var profile = CurrentProfile;
         var isDefault = profile is not null && profile.Id == profiles.DefaultId;
-        ProfileActions.IsVisible = RemoteButtons.IsVisible = profile is not null;
+        ProfileControls.IsVisible = screen == Screen.Settings;
+        ProfileEditor.IsVisible = screen == Screen.ProfileEditor;
+        ShortcutEditor.IsVisible = screen == Screen.ShortcutEditor;
+        Onboarding.IsVisible = screen == Screen.Remote && profile is null;
+        RemoteButtons.IsVisible = screen == Screen.Remote && profile is not null;
+        ProfileActions.IsVisible = ShortcutSettingsButton.IsVisible = profile is not null;
         DefaultLabel.IsVisible = isDefault;
         DefaultLabel.Text = isDefault ? "Профіль за замовчуванням" : "";
         DefaultButton.IsEnabled = !isDefault;
-        StatusLabel.Text = profile is null ? "Додай профіль телевізора, щоб почати." : "";
+        ToolbarTitle.Text = screen switch
+        {
+            Screen.Settings => "Налаштування",
+            Screen.ProfileEditor => editingId is null ? "Новий профіль" : "Редагування профілю",
+            Screen.ShortcutEditor => "Швидкі кнопки",
+            _ => profile?.Name ?? "Пульт"
+        };
+        StatusLabel.IsVisible = false;
         RefreshShortcuts();
         RestartVolumeTracking(resetValue: true);
     }
+
+    private void ShowScreen(Screen next)
+    {
+        screen = next;
+        MenuOverlay.IsVisible = false;
+        RefreshRemote();
+        _ = ScreenScroll.ScrollToAsync(0, 0, animated: false);
+    }
+
+    private void OnToggleMenu(object? sender, EventArgs e)
+    {
+        var onRemote = screen == Screen.Remote;
+        RemoteMenuButton.BackgroundColor = Color.FromArgb(onRemote ? "#304664" : "#18243A");
+        SettingsMenuButton.BackgroundColor = Color.FromArgb(onRemote ? "#18243A" : "#304664");
+        MenuOverlay.IsVisible = !MenuOverlay.IsVisible;
+    }
+
+    private void OnCloseMenu(object? sender, EventArgs e) => MenuOverlay.IsVisible = false;
+
+    private void OnShowRemote(object? sender, EventArgs e) => ShowScreen(Screen.Remote);
+
+    private void OnShowSettings(object? sender, EventArgs e) => ShowScreen(Screen.Settings);
 
     private void OnAddProfile(object? sender, EventArgs e) => OpenEditor(null);
 
@@ -53,14 +92,13 @@ public partial class MainPage : ContentPage
 
     private void OpenEditor(TelevisionProfile? profile)
     {
+        editorReturnScreen = screen;
         editingId = profile?.Id;
         EditorTitle.Text = profile is null ? "Новий профіль" : "Редагування профілю";
         ProfileNameEntry.Text = profile?.Name;
         AddressEntry.Text = profile?.Address;
         EditorError.IsVisible = false;
-        ProfileControls.IsVisible = RemoteButtons.IsVisible = StatusLabel.IsVisible = false;
-        ProfileEditor.IsVisible = true;
-        RestartVolumeTracking(resetValue: true);
+        ShowScreen(Screen.ProfileEditor);
     }
 
     private void OnSaveProfile(object? sender, EventArgs e)
@@ -98,17 +136,12 @@ public partial class MainPage : ContentPage
         EditorError.IsVisible = true;
     }
 
-    private void OnCancelProfile(object? sender, EventArgs e)
-    {
-        CloseEditor();
-        RefreshRemote();
-    }
+    private void OnCancelProfile(object? sender, EventArgs e) => CloseEditor();
 
     private void CloseEditor()
     {
-        ProfileEditor.IsVisible = false;
         ProfileNameEntry.Text = AddressEntry.Text = null;
-        ProfileControls.IsVisible = StatusLabel.IsVisible = true;
+        ShowScreen(editorReturnScreen);
     }
 
     private void OnSetDefault(object? sender, EventArgs e)
@@ -156,13 +189,15 @@ public partial class MainPage : ContentPage
         if (!TelevisionProfiles.TryParseAddress(profile.Address, out var address))
         {
             StatusLabel.Text = "Перевір IP-адресу в налаштуваннях профілю.";
+            StatusLabel.IsVisible = true;
             return;
         }
 
         busy = true;
         RestartVolumeTracking(resetValue: false);
-        ProfileControls.IsEnabled = RemoteButtons.IsEnabled = false;
+        MenuButton.IsEnabled = RemoteButtons.IsEnabled = false;
         StatusLabel.Text = "Очікуємо відповідь телевізора…";
+        StatusLabel.IsVisible = true;
 
         try
         {
@@ -187,7 +222,7 @@ public partial class MainPage : ContentPage
         finally
         {
             busy = false;
-            ProfileControls.IsEnabled = RemoteButtons.IsEnabled = true;
+            MenuButton.IsEnabled = RemoteButtons.IsEnabled = true;
             RestartVolumeTracking(resetValue: false);
         }
     }

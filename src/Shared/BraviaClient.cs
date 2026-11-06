@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BraviaRemote;
 
-internal sealed class BraviaClient(IPAddress address, int port = 20060)
+public sealed class BraviaClient(IPAddress address, int port = 20060)
 {
     private const int FrameLength = 24;
 

@@ -7,30 +7,38 @@
             <Setter Property="BackgroundColor" Value="#253757" />
             <Setter Property="TextColor" Value="#F3F7FF" />
             <Setter Property="FontSize" Value="15" />
-            <Setter Property="CornerRadius" Value="14" />
-            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="MinimumHeightRequest" Value="44" />
             <Setter Property="Padding" Value="8,4" />
         </Style>
     </ContentPage.Resources>
-    <ScrollView>
-        <VerticalStackLayout Padding="20,24" Spacing="16" MaximumWidthRequest="480" HorizontalOptions="Fill">
-            <VerticalStackLayout Spacing="4">
-                <Label Text="BRAVIA Remote" FontSize="32" FontAttributes="Bold" TextColor="#F3F7FF" />
-                <Label Text="Пульт для Sony BRAVIA у домашній мережі" TextColor="#ABBDD8" />
-            </VerticalStackLayout>
-            <VerticalStackLayout x:Name="ProfileControls" Spacing="8">
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                    <Label Text="Профіль телевізора" TextColor="#E4EDF9" VerticalOptions="Center" />
-                    <Border x:Name="VolumeChip" Grid.Column="1" BackgroundColor="#1C354A"
-                            Stroke="#396077" StrokeShape="RoundRectangle 14" Padding="12,5"
-                            IsVisible="False">
-                        <HorizontalStackLayout Spacing="7">
-                            <Label Text="Гучність" TextColor="#B4D6E8" FontSize="13" VerticalOptions="Center" />
-                            <Label x:Name="VolumeValue" Text="—" TextColor="#83DFF6"
-                                   FontAttributes="Bold" FontSize="16" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
-                    </Border>
-                </Grid>
+    <Grid RowDefinitions="Auto,Auto,*" SafeAreaEdges="Container">
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="8,4,12,4" BackgroundColor="#18243A">
+            <Button x:Name="MenuButton" Text="☰" FontSize="20" WidthRequest="44"
+                    BackgroundColor="Transparent" Clicked="OnToggleMenu" SemanticProperties.Description="Меню" />
+            <Label x:Name="ToolbarTitle" Grid.Column="1" Text="Пульт" FontSize="16" FontAttributes="Bold"
+                   TextColor="#F3F7FF" VerticalOptions="Center" LineBreakMode="TailTruncation" />
+            <Border x:Name="VolumeChip" Grid.Column="2" BackgroundColor="#1C354A"
+                    Stroke="#396077" StrokeShape="RoundRectangle 13" Padding="10,4"
+                    VerticalOptions="Center" IsVisible="False">
+                <HorizontalStackLayout Spacing="7">
+                    <Label Text="Гучність" TextColor="#B4D6E8" FontSize="13" VerticalOptions="Center" />
+                    <Label x:Name="VolumeValue" Text="—" TextColor="#83DFF6"
+                           FontAttributes="Bold" FontSize="16" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Border>
+        </Grid>
+        <Border x:Name="UpdateBanner" Grid.Row="1" Margin="12,8,12,0" Padding="10,4"
+                Stroke="#396077" StrokeShape="RoundRectangle 9" BackgroundColor="#1C354A" IsVisible="False">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <Label x:Name="UpdateLabel" TextColor="#E4EDF9" VerticalOptions="Center" />
+                <Button Grid.Column="1" Text="Відкрити реліз" Clicked="OnOpenRelease" />
+            </Grid>
+        </Border>
+        <ScrollView x:Name="ScreenScroll" Grid.Row="2">
+          <VerticalStackLayout Padding="12,12" Spacing="8" MaximumWidthRequest="480" HorizontalOptions="Fill">
+            <VerticalStackLayout x:Name="ProfileControls" Spacing="8" IsVisible="False">
+                <Label Text="Профілі телевізорів" FontSize="20" FontAttributes="Bold" TextColor="#F3F7FF" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <Picker x:Name="ProfilePicker" Title="Обери профіль" TitleColor="#ABBDD8"
                             TextColor="White" BackgroundColor="#253757" MinimumHeightRequest="48"
@@ -42,6 +50,12 @@
                     <Button Text="Редагувати" Clicked="OnEditProfile" />
                     <Button x:Name="DefaultButton" Grid.Column="1" Text="За замовчуванням" Clicked="OnSetDefault" />
                 </Grid>
+                <Button x:Name="ShortcutSettingsButton" Text="Налаштувати швидкі кнопки" Clicked="OnOpenShortcuts" />
+                <Label x:Name="VersionLabel" TextColor="#ABBDD8" FontSize="13" />
+            </VerticalStackLayout>
+            <VerticalStackLayout x:Name="Onboarding" Spacing="8" IsVisible="False">
+                <Label Text="Додай профіль телевізора, щоб почати." TextColor="#ABBDD8" />
+                <Button Text="Додати профіль" Clicked="OnAddProfile" />
             </VerticalStackLayout>
             <VerticalStackLayout x:Name="ShortcutEditor" IsVisible="False" Spacing="8">
                 <Label Text="Швидкі кнопки" FontSize="20" FontAttributes="Bold" TextColor="#F3F7FF" />
@@ -66,7 +80,7 @@
                     <Button Text="Зберегти" Clicked="OnSaveShortcut" />
                     <Button x:Name="RemoveShortcutButton" Grid.Column="1" Text="Видалити" Clicked="OnRemoveShortcut" />
                 </Grid>
-                <Button Text="До пульта" Clicked="OnCloseShortcuts" />
+                <Button Text="До налаштувань" Clicked="OnCloseShortcuts" />
             </VerticalStackLayout>
             <VerticalStackLayout x:Name="ProfileEditor" IsVisible="False" Spacing="8">
                 <Label x:Name="EditorTitle" FontSize="20" FontAttributes="Bold" TextColor="#F3F7FF" />
@@ -85,11 +99,9 @@
                     <Button Grid.Column="1" Text="Скасувати" Clicked="OnCancelProfile" />
                 </Grid>
             </VerticalStackLayout>
-            <Label x:Name="StatusLabel" TextColor="#ABBDD8" MinimumHeightRequest="32" />
-            <VerticalStackLayout x:Name="RemoteButtons" Spacing="12">
-                <Button Text="Перевірити з’єднання" Clicked="OnCheck" />
-                <Grid x:Name="QuickButtons" ColumnDefinitions="*,*" ColumnSpacing="8" RowSpacing="8" />
-                <Button Text="Налаштувати швидкі кнопки" Clicked="OnOpenShortcuts" />
+            <Label x:Name="StatusLabel" TextColor="#ABBDD8" IsVisible="False" />
+            <VerticalStackLayout x:Name="RemoteButtons" Spacing="8">
+                <Grid x:Name="QuickButtons" ColumnDefinitions="*,*,*" ColumnSpacing="8" RowSpacing="8" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <Button Text="Увімкнути" CommandParameter="on" Clicked="OnPower" />
                     <Button Grid.Column="1" Text="Вимкнути" CommandParameter="off" Clicked="OnPower" />
@@ -107,7 +119,20 @@
                     <Button Grid.Column="1" Grid.Row="4" Text="Без звуку" CommandParameter="32" Clicked="OnKey" />
                     <Button Grid.Column="2" Grid.Row="4" Text="Гучн. +" CommandParameter="30" Clicked="OnKey" SemanticProperties.Description="Збільшити гучність" />
                 </Grid>
+                <Button Text="Перевірити з’єднання" Clicked="OnCheck" BackgroundColor="#1C2A43" />
             </VerticalStackLayout>
-        </VerticalStackLayout>
-    </ScrollView>
+          </VerticalStackLayout>
+        </ScrollView>
+        <Grid x:Name="MenuOverlay" Grid.Row="1" Grid.RowSpan="2" ColumnDefinitions="176,*" IsVisible="False">
+            <BoxView Grid.ColumnSpan="2" Color="#70070D18" SemanticProperties.Description="Закрити меню">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnCloseMenu" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+            <VerticalStackLayout Padding="5" Spacing="4" BackgroundColor="#18243A">
+                <Button x:Name="RemoteMenuButton" Text="Пульт" Clicked="OnShowRemote" />
+                <Button x:Name="SettingsMenuButton" Text="Налаштування" Clicked="OnShowSettings" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
 </ContentPage>

@@ -9,6 +9,7 @@ public partial class MainPage
     {
         base.OnAppearing();
         SetVolumeTracking(true);
+        CheckForRelease();
     }
 
     protected override void OnDisappearing()
@@ -31,11 +32,11 @@ public partial class MainPage
         volumePolling = null;
         previous?.Cancel();
 
-        VolumeChip.IsVisible = CurrentProfile is not null;
+        VolumeChip.IsVisible = RemoteButtons.IsVisible;
         if (resetValue)
             VolumeValue.Text = "—";
 
-        if (!volumeTrackingActive || busy || !ProfileControls.IsVisible
+        if (!volumeTrackingActive || busy || !RemoteButtons.IsVisible
             || CurrentProfile is not { } profile
             || !TelevisionProfiles.TryParseAddress(profile.Address, out var address))
             return;
