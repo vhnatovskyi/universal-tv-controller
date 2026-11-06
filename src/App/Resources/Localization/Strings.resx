@@ -64,24 +64,27 @@
   <data name="UpdateAvailable" xml:space="preserve"><value>Version {0} is available</value></data>
   <data name="Updates" xml:space="preserve"><value>Updates</value></data>
   <data name="About" xml:space="preserve"><value>About</value></data>
-  <data name="InstalledVersion" xml:space="preserve"><value>Installed version: {0}</value></data>
-  <data name="CheckUpdates" xml:space="preserve"><value>Check for updates</value></data>
-  <data name="OpenReleases" xml:space="preserve"><value>Open GitHub Releases</value></data>
   <data name="UpdatesIdle" xml:space="preserve"><value>Check for a newer version on GitHub.</value></data>
-  <data name="UpdatesChecking" xml:space="preserve"><value>Checking GitHub…</value></data>
-  <data name="UpdatesCurrent" xml:space="preserve"><value>You have the latest version.</value></data>
   <data name="UpdatesUnavailable" xml:space="preserve"><value>Could not check for updates. Try again later.</value></data>
   <data name="AboutDescription" xml:space="preserve"><value>A local-network remote for Sony BRAVIA on Windows and iPhone.</value></data>
   <data name="Developer" xml:space="preserve"><value>Developer</value></data>
-  <data name="ProjectRepository" xml:space="preserve"><value>Project on GitHub</value></data>
   <data name="ChooseTvApp" xml:space="preserve"><value>TV app</value></data>
   <data name="SelectAnApp" xml:space="preserve"><value>Choose a TV app for this button.</value></data>
   <data name="PairingHelp" xml:space="preserve"><value>Pair this profile with Google TV once to open apps directly.</value></data>
   <data name="PairTv" xml:space="preserve"><value>Pair with Google TV</value></data>
-  <data name="PairTvFirst" xml:space="preserve"><value>Pair with Google TV in quick-button settings first.</value></data>
   <data name="EnterTvCode" xml:space="preserve"><value>Enter the six-character code shown on the TV.</value></data>
   <data name="IncorrectTvCode" xml:space="preserve"><value>That code did not match. Check the TV and try again.</value></data>
   <data name="TvPaired" xml:space="preserve"><value>Google TV paired. App shortcuts are ready.</value></data>
   <data name="GoogleTvFailed" xml:space="preserve"><value>Google TV did not accept the connection or command. Check the TV and pair again if needed.</value></data>
   <data name="AppLaunchSent" xml:space="preserve"><value>Sent the request to open {0}.</value></data>
+  <data name="SystemLanguage" xml:space="preserve"><value>System language</value></data>
+  <data name="ChooseRelease" xml:space="preserve"><value>Choose a release</value></data>
+  <data name="UpdatesEmpty" xml:space="preserve"><value>No releases found.</value></data>
+  <data name="AboutHeading" xml:space="preserve"><value>Your BRAVIA remote</value></data>
+  <data name="ConnectionMethod" xml:space="preserve"><value>Connection method</value></data>
+  <data name="BluetoothUnavailable" xml:space="preserve"><value>Direct Bluetooth control of BRAVIA is not available. Choose IP to save and use this profile.</value></data>
+  <data name="CheckUpdates" xml:space="preserve"><value>Check releases</value></data>
+  <data name="UpdatesChecking" xml:space="preserve"><value>Loading releases…</value></data>
+  <data name="PairTvFirst" xml:space="preserve"><value>Pair with Google TV in this TV profile’s settings first.</value></data>
+  <data name="InstalledVersion" xml:space="preserve"><value>Current version: {0}</value></data>
 </root>

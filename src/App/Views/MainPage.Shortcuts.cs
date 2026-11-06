@@ -201,7 +201,7 @@ public partial class MainPage
 
         busy = true;
         SetRemoteEnabled(false);
-        ShortcutEditor.IsEnabled = false;
+        ShortcutEditor.IsEnabled = ProfileControls.IsEnabled = false;
         RestartVolumeTracking(resetValue: false);
         try
         {
@@ -216,7 +216,7 @@ public partial class MainPage
         finally
         {
             busy = false;
-            ShortcutEditor.IsEnabled = true;
+            ShortcutEditor.IsEnabled = ProfileControls.IsEnabled = true;
             SetRemoteEnabled(true);
             RestartVolumeTracking(resetValue: false);
         }

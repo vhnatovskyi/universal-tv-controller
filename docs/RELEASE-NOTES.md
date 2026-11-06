@@ -1,23 +1,17 @@
-## BRAVIA Remote v0.3.2
+## BRAVIA Remote v0.3.3
 
 ### English
 
-- A single Windows title bar with the menu, app icon, version, and window controls. The remote uses a compact layout with consistent buttons and a grouped direction pad.
-- The Windows menu button uses a visible hamburger glyph in the leading slot of the title bar.
-- The Windows remote opens at a fixed size, with minimize and close controls.
-- An Updates page for manual checks and an About page with the developer’s GitHub profile.
-- Quick buttons can open YouTube, Netflix, or Kyivstar TV after pairing with Google TV. Existing saved navigation sequences still work.
-- The Windows release includes a bilingual installer, a portable ZIP, and SHA-256 checksums. The release workflow verifies installation and uninstallation before publishing.
-
-The interface is available in English and Ukrainian. English is the default. The iPhone version requires an Apple-signed build for a physical device.
+- Updates and About follow the Battery Monitor layout, with a release picker, notes card, and developer card. Updates open in the browser for manual installation.
+- The app follows the system language by default, with an English fallback and a manual override.
+- Google TV pairing is configured in TV profile settings. The quick-button editor only asks for the app and button name.
+- New profiles show IP and Bluetooth connection options. Direct Bluetooth control is currently unavailable.
+- The fixed Windows window is taller so the editor controls fit. Duplicate headings have been removed.
 
 ### Українська
 
-- Єдина панель заголовка Windows з меню, іконкою, версією та кнопками вікна. Пульт має компактний вигляд, узгоджені кнопки й окремий блок навігації.
-- Кнопка меню Windows відображається як значок ☰ ліворуч у панелі заголовка.
-- Пульт Windows відкривається у вікні фіксованого розміру з кнопками згортання й закриття.
-- Розділ «Оновлення» для ручної перевірки й розділ «Про програму» з профілем розробника на GitHub.
-- Швидкі кнопки можуть відкривати YouTube, Netflix або Kyivstar TV після спарування з Google TV. Раніше збережені послідовності натискань продовжують працювати.
-- До Windows-релізу входять двомовний інсталятор, портативний ZIP і контрольні суми SHA-256. Перед публікацією workflow перевіряє встановлення та видалення.
-
-Інтерфейс доступний англійською й українською. За замовчуванням використовується англійська. Для встановлення на фізичний iPhone потрібна підписана Apple збірка.
+- «Оновлення» й «Про програму» оформлено за зразком Battery Monitor, зі списком релізів, карткою нотаток і карткою розробника. Оновлення відкриваються в браузері для ручного встановлення.
+- Застосунок за замовчуванням використовує мову системи, а для непідтримуваних мов — англійську. Мову можна обрати вручну.
+- Спарування Google TV перенесено до налаштувань профілю телевізора. У редакторі швидкої кнопки залишилися вибір застосунку та назва.
+- У новому профілі видно способи підключення IP і Bluetooth. Пряме керування через Bluetooth наразі недоступне.
+- Фіксоване вікно Windows стало вищим, щоб уміщалися кнопки редактора. Повторні заголовки прибрано.

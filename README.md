@@ -13,10 +13,10 @@ A .NET MAUI remote for Sony BRAVIA on Windows and iPhone. It connects to the TV 
 ## Use the remote
 
 1. Connect the TV and your Windows PC or iPhone to the same home network. Turn on **Simple IP Control** on the TV. On iPhone, allow local network access when prompted.
-2. Add a TV profile with a name and the TV’s IPv4 address. The first profile becomes the default. To change it, open **☰ → Settings**, select another profile, and choose **Set as default**. The app opens the default profile next time.
+2. Add a TV profile, select **IP**, and enter a name and the TV’s IPv4 address. The profile editor shows whether the connection method is available. Direct Bluetooth control is currently unavailable. The first profile becomes the default. To change it, open **☰ → Settings**, select another profile, and choose **Set as default**.
 3. The volume chip updates about every three seconds while the remote is open. **Check connection** shows the result in a temporary notification.
-4. In **Settings → Configure quick buttons**, choose **Pair with Google TV** and enter the six-character code on the TV. Then select YouTube, Netflix, or Kyivstar TV and save the button. You can add up to six buttons per profile. The app must be installed on the TV for the shortcut to open it.
-5. To switch languages, open **Settings → App language**. English is the default.
+4. In **Settings**, select the TV profile, choose **Pair with Google TV**, and enter the six-character code shown on the TV. Then open **Configure quick buttons** to select YouTube, Netflix, or Kyivstar TV and save the button. You can add up to six buttons per profile. The app must be installed on the TV for the shortcut to open it.
+5. The interface follows the system language, with English as the fallback. Choose **Settings → App language** to override it.
 
 Wake from standby depends on the TV’s Remote Start setting and whether Simple IP Control remains reachable in standby.
 

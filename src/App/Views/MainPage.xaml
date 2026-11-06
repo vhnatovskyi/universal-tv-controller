@@ -45,18 +45,37 @@
         </Border>
         <ScrollView x:Name="ScreenScroll" Grid.Row="2">
           <VerticalStackLayout Padding="12,12" Spacing="8" MaximumWidthRequest="480" HorizontalOptions="Fill">
-            <VerticalStackLayout x:Name="UpdatesPanel" Spacing="8" IsVisible="False">
-                <Label x:Name="InstalledVersionLabel" TextColor="#F3F6FA" FontAttributes="Bold" />
-                <Label x:Name="ReleaseStatusLabel" TextColor="#A9BACF" />
-                <Button x:Name="CheckUpdatesButton" Text="{DynamicResource Loc.CheckUpdates}" Clicked="OnCheckUpdates" />
-                <Button Text="{DynamicResource Loc.OpenReleases}" Clicked="OnOpenReleases" />
+            <VerticalStackLayout x:Name="UpdatesPanel" Padding="12" Spacing="10" IsVisible="False">
+                <Label x:Name="InstalledVersionLabel" TextColor="#95A3B8" FontSize="11" />
+                <Picker x:Name="ReleasePicker" Title="{DynamicResource Loc.ChooseRelease}" TitleColor="#95A3B8"
+                        TextColor="White" BackgroundColor="#1B2635" SelectedIndexChanged="OnReleaseSelected" />
+                <Label x:Name="ReleaseStatusLabel" TextColor="#95A3B8" FontSize="11" />
+                <HorizontalStackLayout Spacing="12">
+                    <Button x:Name="SelectedReleaseButton" Text="{DynamicResource Loc.OpenRelease}" Clicked="OnOpenSelectedRelease" IsEnabled="False" />
+                    <Button x:Name="CheckUpdatesButton" Text="{DynamicResource Loc.CheckUpdates}" Clicked="OnCheckUpdates" />
+                </HorizontalStackLayout>
+                <Border BackgroundColor="#1B2635" Stroke="#2C3A4D" StrokeShape="RoundRectangle 12" Padding="14">
+                    <Label x:Name="ReleaseNotesLabel" TextColor="#F3F6FA" FontSize="14" LineBreakMode="WordWrap" />
+                </Border>
             </VerticalStackLayout>
-            <VerticalStackLayout x:Name="AboutPanel" Spacing="8" IsVisible="False">
-                <Label x:Name="AboutVersionLabel" FontSize="20" FontAttributes="Bold" TextColor="#F3F6FA" />
-                <Label Text="{DynamicResource Loc.AboutDescription}" TextColor="#A9BACF" />
-                <Label Text="{DynamicResource Loc.Developer}" FontAttributes="Bold" TextColor="#F3F6FA" />
-                <Button Text="@vhnatovskyi" Clicked="OnOpenDeveloper" />
-                <Button Text="{DynamicResource Loc.ProjectRepository}" Clicked="OnOpenRepository" />
+            <VerticalStackLayout x:Name="AboutPanel" Padding="4" Spacing="10" IsVisible="False">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                    <Image Source="remote_mark.png" WidthRequest="72" HeightRequest="72" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                        <Label Text="{DynamicResource Loc.AboutHeading}" FontSize="22" FontAttributes="Bold" TextColor="#F3F6FA" />
+                        <Label x:Name="AboutVersionLabel" FontSize="11" TextColor="#95A3B8" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Border BackgroundColor="#1B2635" Stroke="#2C3A4D" StrokeShape="RoundRectangle 12" Padding="14">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{DynamicResource Loc.Developer}" TextColor="#95A3B8" FontSize="11" />
+                        <Label Text="Vladyslav Hnatovskyi" FontSize="20" FontAttributes="Bold" TextColor="#F3F6FA" />
+                        <Button Text="GitHub" Clicked="OnOpenRepository" />
+                        <Button Text="LinkedIn" Clicked="OnOpenLinkedIn" />
+                        <Button Text="vhnatovskyi@hotmail.com" Clicked="OnOpenEmail" />
+                    </VerticalStackLayout>
+                </Border>
+                <Label Text="{DynamicResource Loc.AboutDescription}" TextColor="#95A3B8" FontSize="11" />
             </VerticalStackLayout>
             <VerticalStackLayout x:Name="ProfileControls" Spacing="8" IsVisible="False">
                 <Label Text="{DynamicResource Loc.Profiles}" FontSize="20" FontAttributes="Bold" TextColor="#F3F7FF" />
@@ -71,6 +90,10 @@
                     <Button Text="{DynamicResource Loc.Edit}" Clicked="OnEditProfile" />
                     <Button x:Name="DefaultButton" Grid.Column="1" Text="{DynamicResource Loc.SetDefault}" Clicked="OnSetDefault" />
                 </Grid>
+                <VerticalStackLayout x:Name="ProfilePairingControls" Spacing="6" Margin="0,4,0,0">
+                    <Label Text="{DynamicResource Loc.PairingHelp}" TextColor="#95A3B8" FontSize="12" />
+                    <Button Text="{DynamicResource Loc.PairTv}" Clicked="OnPairTv" />
+                </VerticalStackLayout>
                 <Button x:Name="ShortcutSettingsButton" Text="{DynamicResource Loc.ConfigureShortcuts}" Clicked="OnOpenShortcuts" />
                 <Label Text="{DynamicResource Loc.Language}" TextColor="#E4EDF9" Margin="0,8,0,0" />
                 <Picker x:Name="LanguagePicker" TextColor="White" BackgroundColor="#1B2635"
@@ -82,22 +105,18 @@
                 <Button Text="{DynamicResource Loc.AddProfile}" Clicked="OnAddProfile" />
             </VerticalStackLayout>
             <VerticalStackLayout x:Name="ShortcutEditor" IsVisible="False" Spacing="8">
-                <Label Text="{DynamicResource Loc.Shortcuts}" FontSize="20" FontAttributes="Bold" TextColor="#F3F7FF" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <Picker x:Name="ShortcutPicker" Title="{DynamicResource Loc.ChooseShortcut}" TitleColor="#ABBDD8"
                             TextColor="White" BackgroundColor="#1B2635"
                             SelectedIndexChanged="OnShortcutSelected" />
                     <Button Grid.Column="1" Text="{DynamicResource Loc.NewShortcut}" Clicked="OnNewShortcut" />
                 </Grid>
-                <Label Text="{DynamicResource Loc.ChooseTvApp}" TextColor="#E4EDF9" />
                 <Picker x:Name="AppPicker" Title="{DynamicResource Loc.ChooseTvApp}" TitleColor="#ABBDD8"
                         TextColor="White" BackgroundColor="#1B2635" SelectedIndexChanged="OnAppSelected"
                         SemanticProperties.Description="{DynamicResource Loc.ChooseTvApp}" />
                 <Label Text="{DynamicResource Loc.ShortcutName}" TextColor="#E4EDF9" />
                 <Entry x:Name="ShortcutName" Placeholder="Netflix, YouTube, Kyivstar TV…" MaxLength="40"
                        TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#1B2635" />
-                <Label Text="{DynamicResource Loc.PairingHelp}" TextColor="#ABBDD8" />
-                <Button Text="{DynamicResource Loc.PairTv}" Clicked="OnPairTv" />
                 <Label x:Name="ShortcutError" IsVisible="False" TextColor="#FFB8B8" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <Button Text="{DynamicResource Loc.Save}" Clicked="OnSaveShortcut" />
@@ -106,19 +125,25 @@
                 <Button Text="{DynamicResource Loc.BackToSettings}" Clicked="OnCloseShortcuts" />
             </VerticalStackLayout>
             <VerticalStackLayout x:Name="ProfileEditor" IsVisible="False" Spacing="8">
-                <Label x:Name="EditorTitle" FontSize="20" FontAttributes="Bold" TextColor="#F3F7FF" />
                 <Label Text="{DynamicResource Loc.ProfileName}" TextColor="#E4EDF9" />
                 <Entry x:Name="ProfileNameEntry" Placeholder="{DynamicResource Loc.ProfileExample}" MaxLength="60"
                        TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#1B2635"
                        SemanticProperties.Description="{DynamicResource Loc.ProfileName}" />
-                <Label Text="{DynamicResource Loc.TvAddress}" TextColor="#E4EDF9" />
-                <Entry x:Name="AddressEntry" Placeholder="{DynamicResource Loc.AddressExample}"
-                       TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#1B2635"
-                       IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"
-                       SemanticProperties.Description="{DynamicResource Loc.TvAddress}" />
+                <Picker x:Name="ConnectionPicker" Title="{DynamicResource Loc.ConnectionMethod}" TitleColor="#95A3B8"
+                        TextColor="White" BackgroundColor="#1B2635" SelectedIndexChanged="OnConnectionMethodChanged"
+                        SemanticProperties.Description="{DynamicResource Loc.ConnectionMethod}" />
+                <VerticalStackLayout x:Name="AddressFields" Spacing="8">
+                    <Label Text="{DynamicResource Loc.TvAddress}" TextColor="#E4EDF9" />
+                    <Entry x:Name="AddressEntry" Placeholder="{DynamicResource Loc.AddressExample}"
+                           TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#1B2635"
+                           IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"
+                           SemanticProperties.Description="{DynamicResource Loc.TvAddress}" />
+                </VerticalStackLayout>
+                <Label x:Name="BluetoothNotice" Text="{DynamicResource Loc.BluetoothUnavailable}" TextColor="#95A3B8"
+                       IsVisible="False" />
                 <Label x:Name="EditorError" IsVisible="False" TextColor="#FFB8B8" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                    <Button Text="{DynamicResource Loc.Save}" Clicked="OnSaveProfile" />
+                    <Button x:Name="SaveProfileButton" Text="{DynamicResource Loc.Save}" Clicked="OnSaveProfile" />
                     <Button Grid.Column="1" Text="{DynamicResource Loc.Cancel}" Clicked="OnCancelProfile" />
                 </Grid>
             </VerticalStackLayout>

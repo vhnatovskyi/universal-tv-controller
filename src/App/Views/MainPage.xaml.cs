@@ -28,8 +28,8 @@ public partial class MainPage : ContentPage
         profiles = TelevisionProfiles.Load(Preferences.Default);
         InitializeComponent();
         VersionLabel.Text = $"BRAVIA Remote v{DisplayVersion}";
-        LanguagePicker.ItemsSource = new[] { "English", "Українська" };
-        LanguagePicker.SelectedIndex = IsUkrainian ? 1 : 0;
+        ConnectionPicker.ItemsSource = new[] { "IP", "Bluetooth" };
+        RefreshLanguageChoices();
         RefreshProfiles(profiles.DefaultId);
     }
 
@@ -56,7 +56,7 @@ public partial class MainPage : ContentPage
         Onboarding.IsVisible = screen == Screen.Remote && profile is null;
         RemoteButtons.IsVisible = screen == Screen.Remote && profile is not null;
         CheckButton.IsVisible = RemoteButtons.IsVisible;
-        ProfileActions.IsVisible = ShortcutSettingsButton.IsVisible = profile is not null;
+        ProfileActions.IsVisible = ShortcutSettingsButton.IsVisible = ProfilePairingControls.IsVisible = profile is not null;
         DefaultLabel.IsVisible = isDefault;
         DefaultLabel.Text = isDefault ? Text("DefaultProfile") : "";
         DefaultButton.IsEnabled = !isDefault;
@@ -71,7 +71,7 @@ public partial class MainPage : ContentPage
         };
         toastVersion++;
         Toast.IsVisible = false;
-        AboutVersionLabel.Text = $"BRAVIA Remote v{DisplayVersion}";
+        AboutVersionLabel.Text = $"v{DisplayVersion} · .NET MAUI";
         RefreshUpdateText();
         RefreshShortcuts();
         RestartVolumeTracking(resetValue: true);
@@ -102,7 +102,12 @@ public partial class MainPage : ContentPage
 
     private void OnShowSettings(object? sender, EventArgs e) => ShowScreen(Screen.Settings);
 
-    private void OnShowUpdates(object? sender, EventArgs e) => ShowScreen(Screen.Updates);
+    private async void OnShowUpdates(object? sender, EventArgs e)
+    {
+        ShowScreen(Screen.Updates);
+        if (!releaseListLoaded)
+            await LoadReleaseListAsync();
+    }
 
     private void OnShowAbout(object? sender, EventArgs e) => ShowScreen(Screen.About);
 
@@ -111,12 +116,20 @@ public partial class MainPage : ContentPage
         if (LanguagePicker.SelectedIndex < 0 || Application.Current is not { } app)
             return;
 
-        var ukrainian = LanguagePicker.SelectedIndex == 1;
-        if (ukrainian == IsUkrainian)
+        var mode = LanguagePicker.SelectedIndex switch { 1 => "en", 2 => "uk", _ => "system" };
+        if (mode == Mode)
             return;
 
-        SetLanguage(app.Resources, ukrainian);
+        SetLanguage(app.Resources, mode);
+        RefreshLanguageChoices();
+        RefreshReleasePicker();
         RefreshRemote();
+    }
+
+    private void RefreshLanguageChoices()
+    {
+        LanguagePicker.ItemsSource = new[] { Text("SystemLanguage"), "English", "Українська" };
+        LanguagePicker.SelectedIndex = Mode switch { "en" => 1, "uk" => 2, _ => 0 };
     }
 
     private void OnAddProfile(object? sender, EventArgs e) => OpenEditor(null);
@@ -127,15 +140,19 @@ public partial class MainPage : ContentPage
     {
         editorReturnScreen = screen;
         editingId = profile?.Id;
-        EditorTitle.Text = Text(profile is null ? "NewProfile" : "EditProfile");
         ProfileNameEntry.Text = profile?.Name;
         AddressEntry.Text = profile?.Address;
+        ConnectionPicker.SelectedIndex = 0;
+        OnConnectionMethodChanged(null, EventArgs.Empty);
         EditorError.IsVisible = false;
         ShowScreen(Screen.ProfileEditor);
     }
 
     private void OnSaveProfile(object? sender, EventArgs e)
     {
+        if (ConnectionPicker.SelectedIndex != 0)
+            return;
+
         var name = ProfileNameEntry.Text?.Trim();
         if (string.IsNullOrEmpty(name))
         {
@@ -161,6 +178,17 @@ public partial class MainPage : ContentPage
         profiles.Save(Preferences.Default);
         CloseEditor();
         RefreshProfiles(profile.Id);
+    }
+
+    private void OnConnectionMethodChanged(object? sender, EventArgs e)
+    {
+        if (ConnectionPicker.SelectedIndex < 0)
+            return;
+
+        var useIp = ConnectionPicker.SelectedIndex == 0;
+        AddressFields.IsVisible = SaveProfileButton.IsEnabled = useIp;
+        BluetoothNotice.IsVisible = !useIp;
+        EditorError.IsVisible = false;
     }
 
     private void ShowEditorError(string message)

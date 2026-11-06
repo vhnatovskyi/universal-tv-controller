@@ -10,15 +10,16 @@ internal static class Localization
     private static readonly ResourceManager Strings = new("BraviaRemote.Resources.Localization.Strings", typeof(Localization).Assembly);
     private static CultureInfo culture = CultureInfo.GetCultureInfo("en");
 
+    public static string Mode { get; private set; } = "system";
     public static bool IsUkrainian => culture.Name == "uk";
 
     public static void Initialize(ResourceDictionary resources) =>
-        Apply(resources, Preferences.Default.Get(PreferenceKey, "en") == "uk");
+        Apply(resources, Preferences.Default.Get(PreferenceKey, "system"));
 
-    public static void SetLanguage(ResourceDictionary resources, bool ukrainian)
+    public static void SetLanguage(ResourceDictionary resources, string mode)
     {
-        Apply(resources, ukrainian);
-        Preferences.Default.Set(PreferenceKey, culture.Name);
+        Apply(resources, mode);
+        Preferences.Default.Set(PreferenceKey, Mode);
     }
 
     public static string Text(string key, params object[] arguments)
@@ -27,9 +28,13 @@ internal static class Localization
         return arguments.Length == 0 ? value : string.Format(culture, value, arguments);
     }
 
-    private static void Apply(ResourceDictionary resources, bool ukrainian)
+    public static string Date(DateTimeOffset date) => date.ToLocalTime().ToString("d", culture);
+
+    private static void Apply(ResourceDictionary resources, string mode)
     {
-        culture = CultureInfo.GetCultureInfo(ukrainian ? "uk" : "en");
+        Mode = mode is "en" or "uk" ? mode : "system";
+        var language = Mode == "system" ? CultureInfo.CurrentUICulture.TwoLetterISOLanguageName : Mode;
+        culture = CultureInfo.GetCultureInfo(language == "uk" ? "uk" : "en");
         var neutral = Strings.GetResourceSet(CultureInfo.InvariantCulture, true, false)!;
         foreach (DictionaryEntry item in neutral)
         {

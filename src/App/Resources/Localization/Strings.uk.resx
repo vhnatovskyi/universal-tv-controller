@@ -64,24 +64,27 @@
   <data name="UpdateAvailable" xml:space="preserve"><value>Доступна версія {0}</value></data>
   <data name="Updates" xml:space="preserve"><value>Оновлення</value></data>
   <data name="About" xml:space="preserve"><value>Про програму</value></data>
-  <data name="InstalledVersion" xml:space="preserve"><value>Встановлена версія: {0}</value></data>
-  <data name="CheckUpdates" xml:space="preserve"><value>Перевірити оновлення</value></data>
-  <data name="OpenReleases" xml:space="preserve"><value>Відкрити GitHub Releases</value></data>
   <data name="UpdatesIdle" xml:space="preserve"><value>Перевір наявність новішої версії на GitHub.</value></data>
-  <data name="UpdatesChecking" xml:space="preserve"><value>Перевіряємо GitHub…</value></data>
-  <data name="UpdatesCurrent" xml:space="preserve"><value>Установлено останню версію.</value></data>
   <data name="UpdatesUnavailable" xml:space="preserve"><value>Не вдалося перевірити оновлення. Спробуй пізніше.</value></data>
   <data name="AboutDescription" xml:space="preserve"><value>Пульт для Sony BRAVIA на Windows та iPhone, що працює в локальній мережі.</value></data>
   <data name="Developer" xml:space="preserve"><value>Розробник</value></data>
-  <data name="ProjectRepository" xml:space="preserve"><value>Проєкт на GitHub</value></data>
   <data name="ChooseTvApp" xml:space="preserve"><value>Застосунок на ТВ</value></data>
   <data name="SelectAnApp" xml:space="preserve"><value>Обери застосунок на телевізорі для цієї кнопки.</value></data>
   <data name="PairingHelp" xml:space="preserve"><value>Для прямого запуску застосунків один раз спаруй цей профіль із Google TV.</value></data>
   <data name="PairTv" xml:space="preserve"><value>Спарувати з Google TV</value></data>
-  <data name="PairTvFirst" xml:space="preserve"><value>Спочатку спаруйся з Google TV у налаштуваннях швидких кнопок.</value></data>
   <data name="EnterTvCode" xml:space="preserve"><value>Введи шестисимвольний код з екрана телевізора.</value></data>
   <data name="IncorrectTvCode" xml:space="preserve"><value>Код не збігається. Перевір екран телевізора та спробуй ще раз.</value></data>
   <data name="TvPaired" xml:space="preserve"><value>Google TV спаровано. Швидкі кнопки готові.</value></data>
   <data name="GoogleTvFailed" xml:space="preserve"><value>Google TV не прийняв з’єднання або команду. Перевір телевізор і за потреби виконай спарування ще раз.</value></data>
   <data name="AppLaunchSent" xml:space="preserve"><value>Надіслано запит на відкриття {0}.</value></data>
+  <data name="SystemLanguage" xml:space="preserve"><value>Мова системи</value></data>
+  <data name="ChooseRelease" xml:space="preserve"><value>Обери реліз</value></data>
+  <data name="UpdatesEmpty" xml:space="preserve"><value>Релізів не знайдено.</value></data>
+  <data name="AboutHeading" xml:space="preserve"><value>Пульт BRAVIA під рукою</value></data>
+  <data name="ConnectionMethod" xml:space="preserve"><value>Спосіб підключення</value></data>
+  <data name="BluetoothUnavailable" xml:space="preserve"><value>Пряме керування BRAVIA через Bluetooth недоступне. Обери IP, щоб зберегти й використовувати цей профіль.</value></data>
+  <data name="CheckUpdates" xml:space="preserve"><value>Перевірити релізи</value></data>
+  <data name="UpdatesChecking" xml:space="preserve"><value>Завантажуємо релізи…</value></data>
+  <data name="PairTvFirst" xml:space="preserve"><value>Спочатку спаруйся з Google TV у налаштуваннях профілю телевізора.</value></data>
+  <data name="InstalledVersion" xml:space="preserve"><value>Поточна версія: {0}</value></data>
 </root>

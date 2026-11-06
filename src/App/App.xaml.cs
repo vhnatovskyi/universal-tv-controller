@@ -17,7 +17,7 @@ public partial class App : Application
         window.Destroying += (_, _) => page.SetVolumeTracking(false);
 #if WINDOWS
         window.Width = 420;
-        window.Height = 430;
+        window.Height = 520;
         page.ConfigureWindowsTitleBar(window);
 #endif
         return window;
