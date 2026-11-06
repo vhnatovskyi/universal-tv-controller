@@ -7,9 +7,7 @@ permissions:
   contents: read
 jobs:
   dependencies:
-    runs-on:
-  push:
-    branches: [fix/runtime-install-ci] windows-2025
+    runs-on: windows-2025
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
