@@ -1,0 +1,18 @@
+name: Runtime diagnostics
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dependencies:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        shell: powershell
+        run: |
+          & ./installer/Install-Dependencies.ps1
+          $result = $LASTEXITCODE
+          Get-Content "$env:TEMP/UniversalTvController-dependencies.log" -ErrorAction SilentlyContinue
+          Get-AppxPackage Microsoft.WindowsAppRuntime.1.7 | Format-List Name,Version,Architecture
+          exit $result
