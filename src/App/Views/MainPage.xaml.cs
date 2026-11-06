@@ -11,7 +11,7 @@ public partial class MainPage : ContentPage
     private Screen screen;
     private Screen editorReturnScreen;
     private bool busy;
-    private ImageButton? desktopMenu;
+    private Button? desktopMenu;
     private int toastVersion;
     private bool volumeTrackingActive;
     private CancellationTokenSource? volumePolling;

@@ -4,13 +4,14 @@ public partial class MainPage
 {
     internal void ConfigureWindowsTitleBar(Window window)
     {
-        var iconFont = OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000)
-            ? "Segoe Fluent Icons"
-            : "Segoe MDL2 Assets";
-        var menu = new ImageButton
+        var menu = new Button
         {
-            Source = new FontImageSource { Glyph = "\uE700", FontFamily = iconFont, Size = 15, Color = Colors.White },
+            Text = "☰",
+            TextColor = Colors.White,
+            FontFamily = "Segoe UI Symbol",
+            FontSize = 16,
             BackgroundColor = Color.FromArgb("#141E2B"),
+            BorderWidth = 0,
             WidthRequest = 46,
             HeightRequest = 32,
             MinimumHeightRequest = 0,
@@ -35,8 +36,15 @@ public partial class MainPage
         };
         window.Created += (_, _) =>
         {
-            if (window.Handler?.PlatformView is Microsoft.UI.Xaml.Window native)
-                native.AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "remote.ico"));
+            if (window.Handler?.PlatformView is not Microsoft.UI.Xaml.Window native)
+                return;
+
+            native.AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "remote.ico"));
+            if (native.AppWindow.Presenter is Microsoft.UI.Windowing.OverlappedPresenter presenter)
+            {
+                presenter.IsResizable = false;
+                presenter.IsMaximizable = false;
+            }
         };
     }
 }
