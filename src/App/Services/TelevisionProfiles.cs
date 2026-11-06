@@ -5,17 +5,33 @@ using System.Text.Json.Serialization;
 
 namespace BraviaRemote;
 
-internal sealed record QuickButton(string Name, int[]? Keys = null, string? AppPackage = null);
+internal sealed record QuickButton(string Name, string AppPackage);
 
 internal sealed record TelevisionProfile(Guid Id, string Name, string Address, QuickButton[]? Shortcuts = null);
 
 internal sealed record TelevisionProfiles(List<TelevisionProfile> Items, Guid? DefaultId)
 {
-    private const string ProfilesKey = "television-profiles";
+    private const string ProfilesKey = "google-tv-profiles-v2";
     private const string LegacyAddressKey = "television-address";
 
     public static TelevisionProfiles Load(IPreferences preferences)
     {
+        if (preferences.ContainsKey("television-profiles"))
+        {
+            try
+            {
+                using var legacy = JsonDocument.Parse(preferences.Get("television-profiles", ""));
+                if (legacy.RootElement.TryGetProperty("Items", out var items) && items.ValueKind == JsonValueKind.Array)
+                    foreach (var item in items.EnumerateArray())
+                        if (item.TryGetProperty("Id", out var id) && id.TryGetGuid(out var profileId))
+                            SecureStorage.Default.Remove($"google-tv-pair-{profileId:N}");
+            }
+            catch (JsonException)
+            {
+            }
+            preferences.Remove("television-profiles");
+        }
+        preferences.Remove(LegacyAddressKey);
         if (preferences.ContainsKey(ProfilesKey))
         {
             try
@@ -27,18 +43,11 @@ internal sealed record TelevisionProfiles(List<TelevisionProfile> Items, Guid? D
             }
             catch (JsonException)
             {
-                // Fall back to the previous address if the saved profile data cannot be read.
+                // An unreadable profile list opens the setup screen.
             }
         }
 
-        if (!TryParseAddress(preferences.Get(LegacyAddressKey, ""), out var address))
-            return new([], null);
-
-        var profile = new TelevisionProfile(Guid.NewGuid(), "BRAVIA 3", address.ToString());
-        var migrated = new TelevisionProfiles([profile], profile.Id);
-        migrated.Save(preferences);
-        preferences.Remove(LegacyAddressKey);
-        return migrated;
+        return new([], null);
     }
 
     public void Save(IPreferences preferences) =>

@@ -3,7 +3,7 @@
 [Українська](DEVELOPMENT.uk.md)
 
 - `src/App` holds the MAUI interface, local settings, localization, and platform code.
-- `src/Shared` contains the Sony Simple IP Control client.
+- `src/Shared` contains the Google TV pairing and remote client.
 - `installer` contains the Windows setup definition, `scripts` builds and verifies the release, and `.github/workflows` runs CI and publishes tagged releases.
 
 For Windows builds, install the .NET 10 SDK, the `maui-windows` workload, and Inno Setup 6. From the repository root:
@@ -24,7 +24,7 @@ dotnet build src/App/BraviaRemote.csproj -f net10.0-ios -t:Run -p:RuntimeIdentif
 
 Select a development certificate and provisioning profile for the physical iPhone. Windows development can also use [Pair to Mac](https://learn.microsoft.com/dotnet/maui/ios/pair-to-mac?view=net-maui-10.0).
 
-App shortcuts use the [Android TV Remote protocol](https://github.com/sonalder-darlene/libremote-android-tv/blob/main/PROTOCOL.md) alongside Sony Simple IP Control. Pairing uses port 6467, and app launches use port 6466. The pairing credential is stored locally in the app’s secure storage.
+App shortcuts use the [Android TV Remote protocol](https://github.com/sonalder-darlene/libremote-android-tv/blob/main/PROTOCOL.md). Pairing uses port 6467, and app launches use port 6466. The pairing credential is stored locally in the app’s secure storage.
 
 To release a version:
 

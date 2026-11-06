@@ -5,17 +5,72 @@ using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using static BraviaRemote.GoogleTvWire;
 
 namespace BraviaRemote;
 
 public sealed record GoogleTvPairing(string Fingerprint, string Certificate);
+public sealed class AppLaunchUnconfirmedException() : IOException("The TV did not confirm the requested app in the foreground.");
 
 public static class GoogleTvApps
 {
     private const uint Ping = 1;
     private const uint Power = 32;
     private const uint AppLinks = 512;
+    private const uint CurrentApp = 4;
+    private const uint Keys = 2;
+    private const uint Volume = 64;
+
+    public static async Task<int> ControlAsync(IPAddress address, GoogleTvPairing pairing, int? sonyKey = null, bool? power = null)
+    {
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var token = timeout.Token;
+        using var certificate = X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(pairing.Certificate), "");
+        using var client = new TcpClient(address.AddressFamily);
+        await client.ConnectAsync(address, 6466, token);
+        using var tls = new SslStream(client.GetStream(), false, (_, peer, _, _) =>
+            peer is not null && string.Equals(pairing.Fingerprint,
+                Convert.ToHexString(peer.GetCertHash(HashAlgorithmName.SHA256)), StringComparison.Ordinal));
+        await AuthenticateAsync(tls, address, certificate, token);
+        int? volume = null;
+        bool? screenOn = null;
+        await ConfigureAsync(tls, Ping | Keys | Power | Volume, Keys | Volume, token, message =>
+        {
+            volume = ReadVolume(message) ?? volume;
+            var powerData = message.FirstOrDefault(field => field.Number == 40).Data;
+            if (powerData is not null)
+                screenOn = ReadFields(powerData).FirstOrDefault(field => field.Number == 1).Value != 0;
+        });
+        if (sonyKey is null && power is null)
+        {
+            while (volume is null)
+                volume = ReadVolume(await ReadRemoteAsync(tls, token));
+            return volume.Value;
+        }
+        if (power is not null && screenOn == power)
+            return volume ?? 0;
+        var key = power switch
+        {
+            true => 224u,
+            false => 223u,
+            _ => sonyKey switch
+            {
+                1 => 178u, 6 => 3u, 8 => 4u, 9 => 19u, 10 => 20u, 11 => 22u, 12 => 21u,
+                13 => 23u, 30 => 24u, 31 => 25u, 32 => 164u,
+                _ => throw new IOException("Unsupported remote key.")
+            }
+        };
+        await SendAsync(tls, Bytes(10, Message(Number(1, key), Number(2, 3))), token);
+        await Task.Delay(120, token);
+        return volume ?? 0;
+    }
+
+    private static int? ReadVolume(List<Field> fields)
+    {
+        var data = fields.FirstOrDefault(field => field.Number == 50).Data;
+        return data is null ? null : (int)ReadFields(data).FirstOrDefault(field => field.Number == 7).Value;
+    }
 
     public static async Task<GoogleTvPairing?> PairAsync(
         IPAddress address, Func<bool, Task<string?>> readCode)
@@ -60,7 +115,25 @@ public static class GoogleTvApps
 
     public static async Task LaunchAsync(IPAddress address, GoogleTvPairing pairing, string package)
     {
-        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(8));
+        foreach (var useLegacyLink in new[] { true, false })
+        {
+            try
+            {
+                if (await LaunchAttemptAsync(address, pairing, package, useLegacyLink))
+                    return;
+            }
+            catch (AppLaunchUnconfirmedException)
+            {
+                // Older services and Play Store versions accept different launch URIs.
+            }
+        }
+        throw new AppLaunchUnconfirmedException();
+    }
+
+    private static async Task<bool> LaunchAttemptAsync(
+        IPAddress address, GoogleTvPairing pairing, string package, bool useLegacyLink)
+    {
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(12));
         var token = timeout.Token;
         using var certificate = X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(pairing.Certificate), "");
         using var client = new TcpClient(address.AddressFamily);
@@ -70,52 +143,117 @@ public static class GoogleTvApps
                 Convert.ToHexString(peer.GetCertHash(HashAlgorithmName.SHA256)), StringComparison.Ordinal));
         await AuthenticateAsync(tls, address, certificate, token);
 
+        var currentApp = await ConfigureAsync(tls, AppLinks | Ping | Power | CurrentApp, AppLinks, token);
+        if (currentApp == package)
+            return true;
+
+        var launch = package == "com.google.android.youtube.tv"
+            ? Text(1, "vnd.youtube://")
+            : useLegacyLink
+                ? Text(1, $"market://launch?id={Uri.EscapeDataString(package)}")
+                : Message(Text(1, $"https://play.google.com/apps/launch?id={Uri.EscapeDataString(package)}"),
+                Text(2, "com.android.vending"), Number(3, 1));
+        await SendAsync(tls, Bytes(90, launch), token);
+
+        // Confirm the foreground package, rather than treating a successful write as a launch.
+        using var response = CancellationTokenSource.CreateLinkedTokenSource(token);
+        response.CancelAfter(TimeSpan.FromSeconds(4));
+        try
+        {
+            while (true)
+            {
+                var message = await ReadRemoteAsync(tls, response.Token);
+                if (ReadActiveApp(message) == package)
+                    return true;
+            }
+        }
+        catch (OperationCanceledException) when (!token.IsCancellationRequested)
+        {
+            return false;
+        }
+    }
+
+    public static async Task WatchAppAsync(IPAddress address, GoogleTvPairing pairing,
+        Action<string> appChanged, Action<int> volumeChanged, CancellationToken token)
+    {
+        using var certificate = X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(pairing.Certificate), "");
+        using var client = new TcpClient(address.AddressFamily);
+        using var handshake = CancellationTokenSource.CreateLinkedTokenSource(token);
+        handshake.CancelAfter(TimeSpan.FromSeconds(8));
+        await client.ConnectAsync(address, 6466, handshake.Token);
+        using var tls = new SslStream(client.GetStream(), false, (_, peer, _, _) =>
+            peer is not null && string.Equals(pairing.Fingerprint,
+                Convert.ToHexString(peer.GetCertHash(HashAlgorithmName.SHA256)), StringComparison.Ordinal));
+        await AuthenticateAsync(tls, address, certificate, handshake.Token);
+        var initialApp = await ConfigureAsync(tls, Ping | Power | CurrentApp | Volume, CurrentApp, handshake.Token, message =>
+        {
+            if (ReadVolume(message) is { } volume)
+                volumeChanged(volume);
+        });
+        if (initialApp is not null)
+            appChanged(initialApp);
+        while (true)
+        {
+            using var heartbeat = CancellationTokenSource.CreateLinkedTokenSource(token);
+            heartbeat.CancelAfter(TimeSpan.FromSeconds(135));
+            var message = await ReadRemoteAsync(tls, heartbeat.Token);
+            if (ReadActiveApp(message) is { } package)
+                appChanged(package);
+            if (ReadVolume(message) is { } volume)
+                volumeChanged(volume);
+        }
+    }
+
+    private static async Task<string?> ConfigureAsync(SslStream tls, uint requested, uint required,
+        CancellationToken token, Action<List<Field>>? received = null)
+    {
         uint features = 0;
+        string? activeApp = null;
+        var activated = false;
         while (true)
         {
             var message = await ReadRemoteAsync(tls, token);
+            received?.Invoke(message);
+            activeApp = ReadActiveApp(message) ?? activeApp;
             var configuration = message.FirstOrDefault(field => field.Number == 1).Data;
             if (configuration is not null)
             {
                 var offered = ReadFields(configuration).FirstOrDefault(field => field.Number == 1).Value;
-                features = offered & (AppLinks | Ping | Power);
-                if ((features & AppLinks) == 0)
-                    throw new IOException("The TV does not support app links.");
+                features = offered & requested;
+                if ((features & required) != required)
+                    throw new IOException("The TV does not support the required remote feature.");
                 var info = Message(Number(3, 1), Text(4, "1"), Text(5, "BRAVIA Remote"), Text(6, "1.0"));
                 await SendAsync(tls, Bytes(1, Message(Number(1, features), Bytes(2, info))), token);
             }
 
-            if (features != 0 && message.Any(field => field.Number == 2))
+            if (!activated && features != 0 && message.Any(field => field.Number == 2))
             {
                 await SendAsync(tls, Bytes(2, Number(1, features)), token);
-                break;
+                activated = true;
             }
+            if (activated && message.Any(field => field.Number == 40))
+                return activeApp;
         }
 
-        var launch = package == "com.google.android.youtube.tv"
-            ? Text(1, "vnd.youtube://")
-            : Message(Text(1, $"https://play.google.com/apps/launch?id={Uri.EscapeDataString(package)}"),
-                Text(2, "com.android.vending"), Number(3, 1));
-        await SendAsync(tls, Bytes(90, launch), token);
+    }
 
-        // There is no positive launch response. Listen briefly for rejection or a ping.
-        using var response = CancellationTokenSource.CreateLinkedTokenSource(token);
-        response.CancelAfter(TimeSpan.FromMilliseconds(850));
-        try
-        {
-            while (true)
-                await ReadRemoteAsync(tls, response.Token);
-        }
-        catch (OperationCanceledException) when (!token.IsCancellationRequested)
-        {
-        }
+    private static string? ReadActiveApp(List<Field> message)
+    {
+        var editor = message.FirstOrDefault(field => field.Number == 20).Data;
+        if (editor is null)
+            return null;
+        var app = ReadFields(editor).FirstOrDefault(field => field.Number == 1).Data;
+        if (app is null)
+            return null;
+        var package = ReadFields(app).FirstOrDefault(field => field.Number == 12).Data;
+        return package is null ? null : Encoding.UTF8.GetString(package);
     }
 
     private static async Task<List<Field>> ReadRemoteAsync(SslStream tls, CancellationToken token)
     {
         var fields = ReadFields(await ReceiveAsync(tls, token));
         if (fields.Any(field => field.Number == 3))
-            throw new IOException("The TV rejected a Google TV message.");
+            throw new AppLaunchUnconfirmedException();
         var ping = fields.FirstOrDefault(field => field.Number == 8).Data;
         if (ping is not null)
         {

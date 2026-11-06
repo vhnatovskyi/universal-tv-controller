@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BraviaRemote.MainPage" BackgroundColor="#101820">
     <ContentPage.Resources>
-        <Style TargetType="Button">
+        <Style x:Key="StandardButtonStyle" TargetType="Button">
             <Setter Property="BackgroundColor" Value="#1B2635" />
             <Setter Property="BorderColor" Value="#2C3A4D" />
             <Setter Property="BorderWidth" Value="1" />
@@ -12,17 +12,47 @@
             <Setter Property="CornerRadius" Value="8" />
             <Setter Property="MinimumHeightRequest" Value="{OnPlatform 44, WinUI=36}" />
             <Setter Property="Padding" Value="10,4" />
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup Name="CommonStates">
+                        <VisualState Name="Normal" />
+                        <VisualState Name="PointerOver">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="#293E52" />
+                                <Setter Property="BorderColor" Value="#5885A0" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState Name="Pressed">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="#38627F" />
+                                <Setter Property="BorderColor" Value="#9BDBF9" />
+                                <Setter Property="Scale" Value="0.94" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState Name="Disabled">
+                            <VisualState.Setters>
+                                <Setter Property="Opacity" Value="0.6" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
         </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource StandardButtonStyle}" />
     </ContentPage.Resources>
     <Grid RowDefinitions="Auto,Auto,*" SafeAreaEdges="Container">
-        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8" Padding="12,6" BackgroundColor="#141E2B">
+        <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" ColumnSpacing="8" Padding="12,6" BackgroundColor="#141E2B">
             <Button x:Name="MenuButton" Text="☰" FontSize="19" WidthRequest="40"
                     BackgroundColor="Transparent" BorderWidth="0" Clicked="OnToggleMenu"
                     SemanticProperties.Description="{DynamicResource Loc.Menu}" />
             <Label x:Name="ToolbarTitle" Grid.Column="1" Text="{DynamicResource Loc.Remote}"
                    FontSize="18" FontAttributes="Bold" TextColor="#F3F6FA"
                    VerticalOptions="Center" LineBreakMode="TailTruncation" />
-            <Border x:Name="VolumeChip" Grid.Column="2" BackgroundColor="#1B2635"
+            <Border x:Name="ActiveAppChip" Grid.Column="2" IsVisible="False" Padding="5" VerticalOptions="Center"
+                    BackgroundColor="#1B2635" Stroke="#2C3A4D" StrokeShape="RoundRectangle 8">
+                <Image x:Name="ActiveAppIcon" WidthRequest="24" HeightRequest="24" />
+            </Border>
+            <Border x:Name="VolumeChip" Grid.Column="3" BackgroundColor="#1B2635"
                     Stroke="#2C3A4D" StrokeShape="RoundRectangle 8" Padding="9,4"
                     VerticalOptions="Center" IsVisible="False">
                 <HorizontalStackLayout Spacing="7">
@@ -31,7 +61,7 @@
                            FontAttributes="Bold" FontSize="16" VerticalOptions="Center" />
                 </HorizontalStackLayout>
             </Border>
-            <Button x:Name="CheckButton" Grid.Column="3" Text="⟳" FontSize="19" WidthRequest="38"
+            <Button x:Name="CheckButton" Grid.Column="4" Text="⟳" FontSize="19" WidthRequest="38"
                     Padding="0" Clicked="OnCheck" IsVisible="False"
                     ToolTipProperties.Text="{DynamicResource Loc.CheckConnection}"
                     SemanticProperties.Description="{DynamicResource Loc.CheckConnection}" />
@@ -43,7 +73,7 @@
                 <Button Grid.Column="1" Text="{DynamicResource Loc.OpenRelease}" Clicked="OnOpenRelease" />
             </Grid>
         </Border>
-        <ScrollView x:Name="ScreenScroll" Grid.Row="2">
+        <ScrollView x:Name="ScreenScroll" Grid.Row="2" SizeChanged="OnRemoteViewportChanged">
           <VerticalStackLayout Padding="12,12" Spacing="8" MaximumWidthRequest="480" HorizontalOptions="Fill">
             <VerticalStackLayout x:Name="UpdatesPanel" Padding="12" Spacing="10" IsVisible="False">
                 <Label x:Name="InstalledVersionLabel" TextColor="#95A3B8" FontSize="11" />
@@ -129,9 +159,6 @@
                 <Entry x:Name="ProfileNameEntry" Placeholder="{DynamicResource Loc.ProfileExample}" MaxLength="60"
                        TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#1B2635"
                        SemanticProperties.Description="{DynamicResource Loc.ProfileName}" />
-                <Picker x:Name="ConnectionPicker" Title="{DynamicResource Loc.ConnectionMethod}" TitleColor="#95A3B8"
-                        TextColor="White" BackgroundColor="#1B2635" SelectedIndexChanged="OnConnectionMethodChanged"
-                        SemanticProperties.Description="{DynamicResource Loc.ConnectionMethod}" />
                 <VerticalStackLayout x:Name="AddressFields" Spacing="8">
                     <Label Text="{DynamicResource Loc.TvAddress}" TextColor="#E4EDF9" />
                     <Entry x:Name="AddressEntry" Placeholder="{DynamicResource Loc.AddressExample}"
@@ -139,15 +166,18 @@
                            IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"
                            SemanticProperties.Description="{DynamicResource Loc.TvAddress}" />
                 </VerticalStackLayout>
-                <Label x:Name="BluetoothNotice" Text="{DynamicResource Loc.BluetoothUnavailable}" TextColor="#95A3B8"
-                       IsVisible="False" />
                 <Label x:Name="EditorError" IsVisible="False" TextColor="#FFB8B8" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                    <Button x:Name="SaveProfileButton" Text="{DynamicResource Loc.Save}" Clicked="OnSaveProfile" />
+                    <Button x:Name="SaveProfileButton" Text="{DynamicResource Loc.PairAndSave}" Clicked="OnSaveProfile" />
                     <Button Grid.Column="1" Text="{DynamicResource Loc.Cancel}" Clicked="OnCancelProfile" />
                 </Grid>
             </VerticalStackLayout>
             <VerticalStackLayout x:Name="RemoteButtons" Spacing="8">
+                <VerticalStackLayout.Resources>
+                    <Style TargetType="Button" BasedOn="{StaticResource StandardButtonStyle}">
+                        <Setter Property="HeightRequest" Value="{DynamicResource RemoteButtonHeight}" />
+                    </Style>
+                </VerticalStackLayout.Resources>
                 <Grid x:Name="QuickButtons" ColumnDefinitions="*,*,*" ColumnSpacing="8" RowSpacing="8" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <Button Text="{DynamicResource Loc.PowerOn}" CommandParameter="on" Clicked="OnPower" />

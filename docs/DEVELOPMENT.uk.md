@@ -3,7 +3,7 @@
 [English](DEVELOPMENT.md)
 
 - `src/App` містить інтерфейс MAUI, локальні налаштування, переклади та код платформ.
-- `src/Shared` містить клієнт Sony Simple IP Control.
+- `src/Shared` містить клієнт спарування й керування Google TV.
 - У `installer` є опис інсталятора Windows, у `scripts` — сценарії збірки та перевірки, а в `.github/workflows` — CI та публікація за тегами.
 
 Для Windows потрібні .NET 10 SDK, навантаження `maui-windows` та Inno Setup 6. Виконай із кореня репозиторію:
@@ -24,7 +24,7 @@ dotnet build src/App/BraviaRemote.csproj -f net10.0-ios -t:Run -p:RuntimeIdentif
 
 Для фізичного iPhone обери сертифікат розробника та профіль підпису. Під час розробки з Windows можна використати [Pair to Mac](https://learn.microsoft.com/dotnet/maui/ios/pair-to-mac?view=net-maui-10.0).
 
-Швидкі кнопки запуску працюють через [протокол Android TV Remote](https://github.com/sonalder-darlene/libremote-android-tv/blob/main/PROTOCOL.md) паралельно із Sony Simple IP Control. Спарування використовує порт 6467, а запуск застосунків — 6466. Дані спарування залишаються в захищеному сховищі застосунку.
+Швидкі кнопки запуску працюють через [протокол Android TV Remote](https://github.com/sonalder-darlene/libremote-android-tv/blob/main/PROTOCOL.md). Спарування використовує порт 6467, а запуск застосунків — 6466. Дані спарування залишаються в захищеному сховищі застосунку.
 
 Щоб випустити нову версію:
 

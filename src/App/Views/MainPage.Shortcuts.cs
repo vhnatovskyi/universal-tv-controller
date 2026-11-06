@@ -8,7 +8,8 @@ namespace BraviaRemote;
 public partial class MainPage
 {
     private const int MaxShortcuts = 6;
-    private const int HomeKey = 6;
+    private const int ShortcutColumns = 3;
+
     private sealed record TvApp(string Name, string Package);
 
     private static readonly TvApp[] TvApps =
@@ -29,12 +30,13 @@ public partial class MainPage
         for (var index = 0; index < shortcuts.Length; index++)
         {
             var shortcut = shortcuts[index];
-            if (index % 3 == 0)
+            if (index % ShortcutColumns == 0)
                 QuickButtons.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             var button = new Button { Text = shortcut.Name };
             button.Clicked += async (_, _) => await LaunchShortcutAsync(shortcut);
-            QuickButtons.Add(button, index % 3, index / 3);
+            QuickButtons.Add(button, index % ShortcutColumns, index / ShortcutColumns);
         }
+        ResizeRemoteButtons();
     }
 
     private async Task LaunchShortcutAsync(QuickButton shortcut)
@@ -56,25 +58,11 @@ public partial class MainPage
                 if (!TelevisionProfiles.TryParseAddress(profile.Address, out var address))
                     throw new IOException("Missing TV address.");
                 await GoogleTvApps.LaunchAsync(address, new GoogleTvPairing(fingerprint, certificate), package);
-                return Text("AppLaunchSent", shortcut.Name);
+                return Text("AppOpened", shortcut.Name);
             });
             return;
         }
 
-        // Retain quick buttons saved before direct app launches were added.
-        if (shortcut.Keys is { Length: > 0 } keys)
-        {
-            await RunAsync(async tv =>
-            {
-                for (var step = 0; step < keys.Length; step++)
-                {
-                    await tv.PressAsync(keys[step]);
-                    if (step + 1 < keys.Length)
-                        await Task.Delay(keys[step] == HomeKey ? 1400 : 350);
-                }
-                return Text("ShortcutDone", shortcut.Name);
-            });
-        }
     }
 
     private void OnOpenShortcuts(object? sender, EventArgs e)
@@ -201,12 +189,16 @@ public partial class MainPage
 
         busy = true;
         SetRemoteEnabled(false);
-        ShortcutEditor.IsEnabled = ProfileControls.IsEnabled = false;
+        ShortcutEditor.IsEnabled = ProfileControls.IsEnabled = ProfileEditor.IsEnabled = false;
         RestartVolumeTracking(resetValue: false);
         try
         {
             if (await operation() is { } message)
                 ShowToast(message, success: true);
+        }
+        catch (AppLaunchUnconfirmedException)
+        {
+            ShowToast(Text("AppLaunchUnconfirmed"), success: false);
         }
         catch (Exception error) when (error is IOException or SocketException or AuthenticationException
             or CryptographicException or FormatException or InvalidOperationException or OperationCanceledException)
@@ -216,7 +208,7 @@ public partial class MainPage
         finally
         {
             busy = false;
-            ShortcutEditor.IsEnabled = ProfileControls.IsEnabled = true;
+            ShortcutEditor.IsEnabled = ProfileControls.IsEnabled = ProfileEditor.IsEnabled = true;
             SetRemoteEnabled(true);
             RestartVolumeTracking(resetValue: false);
         }

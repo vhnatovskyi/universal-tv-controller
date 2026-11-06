@@ -11,9 +11,9 @@
     <MauiXamlInflator>SourceGen</MauiXamlInflator>
     <ApplicationTitle>BRAVIA Remote</ApplicationTitle>
     <ApplicationId>app.braviaremote.controller</ApplicationId>
-    <ApplicationDisplayVersion>0.3.3</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>0.3.4</ApplicationDisplayVersion>
     <Version>$(ApplicationDisplayVersion)</Version>
-    <ApplicationVersion>6</ApplicationVersion>
+    <ApplicationVersion>7</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
     <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
@@ -33,6 +33,7 @@
     <MauiSplashScreen Include="Resources/Splash/splash.svg" Color="#121C30" BaseSize="128,128" />
     <MauiFont Include="Resources/Fonts/*" />
     <MauiImage Include="Resources/Images/remote_mark.svg" BaseSize="72,72" />
+    <MauiImage Include="Resources/Images/active_*.svg" BaseSize="24,24" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.20" />
     <ProjectReference Include="../Shared/BraviaRemote.Shared.csproj" />
   </ItemGroup>

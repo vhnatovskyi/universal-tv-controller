@@ -54,8 +54,8 @@
   <data name="InvalidAddress" xml:space="preserve"><value>Введи IPv4-адресу телевізора, наприклад 192.168.1.50.</value></data>
   <data name="Connected" xml:space="preserve"><value>З’єднання встановлено. Гучність: {0}.</value></data>
   <data name="CheckProfileAddress" xml:space="preserve"><value>Перевір IP-адресу в налаштуваннях профілю.</value></data>
-  <data name="TvTimeout" xml:space="preserve"><value>Телевізор не відповів. Перевір мережу та керування IP.</value></data>
-  <data name="ConnectionFailed" xml:space="preserve"><value>Не вдалося під’єднатися. Перевір мережу та просте управління IP.</value></data>
+  <data name="TvTimeout" xml:space="preserve"><value>Телевізор не відповів. Перевір домашню мережу та спарування Google TV.</value></data>
+  <data name="ConnectionFailed" xml:space="preserve"><value>Не вдалося під’єднатися до Google TV. Перевір мережу та спарування.</value></data>
   <data name="ConnectionClosed" xml:space="preserve"><value>Телевізор закрив з’єднання до підтвердження команди.</value></data>
   <data name="CommandRejected" xml:space="preserve"><value>Телевізор відхилив команду або не підтримує її.</value></data>
   <data name="InvalidReply" xml:space="preserve"><value>Телевізор надіслав неочікувану відповідь.</value></data>
@@ -66,11 +66,11 @@
   <data name="About" xml:space="preserve"><value>Про програму</value></data>
   <data name="UpdatesIdle" xml:space="preserve"><value>Перевір наявність новішої версії на GitHub.</value></data>
   <data name="UpdatesUnavailable" xml:space="preserve"><value>Не вдалося перевірити оновлення. Спробуй пізніше.</value></data>
-  <data name="AboutDescription" xml:space="preserve"><value>Пульт для Sony BRAVIA на Windows та iPhone, що працює в локальній мережі.</value></data>
+  <data name="AboutDescription" xml:space="preserve"><value>Пульт Google TV для Sony BRAVIA на Windows та iPhone у домашній мережі.</value></data>
   <data name="Developer" xml:space="preserve"><value>Розробник</value></data>
   <data name="ChooseTvApp" xml:space="preserve"><value>Застосунок на ТВ</value></data>
   <data name="SelectAnApp" xml:space="preserve"><value>Обери застосунок на телевізорі для цієї кнопки.</value></data>
-  <data name="PairingHelp" xml:space="preserve"><value>Для прямого запуску застосунків один раз спаруй цей профіль із Google TV.</value></data>
+  <data name="PairingHelp" xml:space="preserve"><value>Спаруй цей профіль із Google TV для керування пультом і запуску застосунків.</value></data>
   <data name="PairTv" xml:space="preserve"><value>Спарувати з Google TV</value></data>
   <data name="EnterTvCode" xml:space="preserve"><value>Введи шестисимвольний код з екрана телевізора.</value></data>
   <data name="IncorrectTvCode" xml:space="preserve"><value>Код не збігається. Перевір екран телевізора та спробуй ще раз.</value></data>
@@ -81,10 +81,12 @@
   <data name="ChooseRelease" xml:space="preserve"><value>Обери реліз</value></data>
   <data name="UpdatesEmpty" xml:space="preserve"><value>Релізів не знайдено.</value></data>
   <data name="AboutHeading" xml:space="preserve"><value>Пульт BRAVIA під рукою</value></data>
-  <data name="ConnectionMethod" xml:space="preserve"><value>Спосіб підключення</value></data>
-  <data name="BluetoothUnavailable" xml:space="preserve"><value>Пряме керування BRAVIA через Bluetooth недоступне. Обери IP, щоб зберегти й використовувати цей профіль.</value></data>
   <data name="CheckUpdates" xml:space="preserve"><value>Перевірити релізи</value></data>
   <data name="UpdatesChecking" xml:space="preserve"><value>Завантажуємо релізи…</value></data>
   <data name="PairTvFirst" xml:space="preserve"><value>Спочатку спаруйся з Google TV у налаштуваннях профілю телевізора.</value></data>
   <data name="InstalledVersion" xml:space="preserve"><value>Поточна версія: {0}</value></data>
+  <data name="AppOpened" xml:space="preserve"><value>Відкрито {0}.</value></data>
+  <data name="AppLaunchUnconfirmed" xml:space="preserve"><value>Телевізор не підтвердив відкриття застосунку. Перевір, чи він встановлений, і спробуй ще раз.</value></data>
+  <data name="PairAndSave" xml:space="preserve"><value>Спарувати та зберегти</value></data>
+  <data name="IpService" xml:space="preserve"><value>Google TV</value></data>
 </root>

@@ -27,8 +27,10 @@ public partial class MainPage : ContentPage
     {
         profiles = TelevisionProfiles.Load(Preferences.Default);
         InitializeComponent();
+        Resources["RemoteButtonHeight"] = DeviceInfo.Platform == DevicePlatform.WinUI ? 36d : 44d;
         VersionLabel.Text = $"BRAVIA Remote v{DisplayVersion}";
-        ConnectionPicker.ItemsSource = new[] { "IP", "Bluetooth" };
+
+
         RefreshLanguageChoices();
         RefreshProfiles(profiles.DefaultId);
     }
@@ -44,6 +46,22 @@ public partial class MainPage : ContentPage
 
     private void OnProfileChanged(object? sender, EventArgs e) => RefreshRemote();
 
+    private void OnRemoteViewportChanged(object? sender, EventArgs e) => ResizeRemoteButtons();
+
+    private void ResizeRemoteButtons()
+    {
+        if (ScreenScroll.Height <= 0)
+            return;
+
+        var shortcutRows = (Shortcuts.Length + ShortcutColumns - 1) / ShortcutColumns;
+        var minimum = DeviceInfo.Platform == DevicePlatform.WinUI ? 36d : 44d;
+        // The remote has six control rows, 24px of outer padding, and 44px of borders and gaps.
+        var available = ScreenScroll.Height - 68 - shortcutRows * 8;
+        var height = Math.Clamp(Math.Floor(available / (6 + shortcutRows)), minimum, 58);
+        if (!Resources.TryGetValue("RemoteButtonHeight", out var previous) || !Equals(previous, height))
+            Resources["RemoteButtonHeight"] = height;
+    }
+
     private void RefreshRemote()
     {
         var profile = CurrentProfile;
@@ -57,9 +75,11 @@ public partial class MainPage : ContentPage
         RemoteButtons.IsVisible = screen == Screen.Remote && profile is not null;
         CheckButton.IsVisible = RemoteButtons.IsVisible;
         ProfileActions.IsVisible = ShortcutSettingsButton.IsVisible = ProfilePairingControls.IsVisible = profile is not null;
+
         DefaultLabel.IsVisible = isDefault;
         DefaultLabel.Text = isDefault ? Text("DefaultProfile") : "";
         DefaultButton.IsEnabled = !isDefault;
+
         ToolbarTitle.Text = screen switch
         {
             Screen.Settings => Text("Settings"),
@@ -79,6 +99,7 @@ public partial class MainPage : ContentPage
 
     private void ShowScreen(Screen next)
     {
+
         screen = next;
         MenuOverlay.IsVisible = false;
         RefreshRemote();
@@ -142,55 +163,48 @@ public partial class MainPage : ContentPage
         editingId = profile?.Id;
         ProfileNameEntry.Text = profile?.Name;
         AddressEntry.Text = profile?.Address;
-        ConnectionPicker.SelectedIndex = 0;
-        OnConnectionMethodChanged(null, EventArgs.Empty);
+
         EditorError.IsVisible = false;
         ShowScreen(Screen.ProfileEditor);
     }
 
-    private void OnSaveProfile(object? sender, EventArgs e)
+    private async void OnSaveProfile(object? sender, EventArgs e)
     {
-        if (ConnectionPicker.SelectedIndex != 0)
-            return;
-
         var name = ProfileNameEntry.Text?.Trim();
         if (string.IsNullOrEmpty(name))
         {
             ShowEditorError(Text("MissingProfileName"));
             return;
         }
-
         if (!TelevisionProfiles.TryParseAddress(AddressEntry.Text, out var address))
         {
             ShowEditorError(Text("InvalidAddress"));
             return;
         }
-
         var index = profiles.Items.FindIndex(profile => profile.Id == editingId);
         var profile = index < 0
             ? new TelevisionProfile(Guid.NewGuid(), name, address.ToString())
             : profiles.Items[index] with { Name = name, Address = address.ToString() };
-        if (index < 0)
-            profiles.Items.Add(profile);
-        else
-            profiles.Items[index] = profile;
-        profiles = profiles with { DefaultId = profiles.DefaultId ?? profile.Id };
-        profiles.Save(Preferences.Default);
-        CloseEditor();
-        RefreshProfiles(profile.Id);
+
+        await RunGoogleTvAsync(async () =>
+        {
+            var pairing = await GoogleTvApps.PairAsync(address, incorrect =>
+                DisplayPromptAsync(Text("PairTv"), Text(incorrect ? "IncorrectTvCode" : "EnterTvCode"),
+                    Text("Confirm"), Text("Cancel"), maxLength: 6));
+            if (pairing is null)
+                return null;
+            await SecureStorage.Default.SetAsync(PairingKey(profile.Id), $"{pairing.Fingerprint}|{pairing.Certificate}");
+            if (index < 0)
+                profiles.Items.Add(profile);
+            else
+                profiles.Items[index] = profile;
+            profiles = profiles with { DefaultId = profiles.DefaultId ?? profile.Id };
+            profiles.Save(Preferences.Default);
+            CloseEditor();
+            RefreshProfiles(profile.Id);
+            return Text("TvPaired");
+        });
     }
-
-    private void OnConnectionMethodChanged(object? sender, EventArgs e)
-    {
-        if (ConnectionPicker.SelectedIndex < 0)
-            return;
-
-        var useIp = ConnectionPicker.SelectedIndex == 0;
-        AddressFields.IsVisible = SaveProfileButton.IsEnabled = useIp;
-        BluetoothNotice.IsVisible = !useIp;
-        EditorError.IsVisible = false;
-    }
-
     private void ShowEditorError(string message)
     {
         EditorError.Text = message;
@@ -201,6 +215,7 @@ public partial class MainPage : ContentPage
 
     private void CloseEditor()
     {
+
         ProfileNameEntry.Text = AddressEntry.Text = null;
         ShowScreen(editorReturnScreen);
     }
@@ -222,6 +237,7 @@ public partial class MainPage : ContentPage
         if (sender is Button { CommandParameter: string code }
             && int.TryParse(code, NumberStyles.None, CultureInfo.InvariantCulture, out var key))
         {
+
             await RunAsync(async tv =>
             {
                 await tv.PressAsync(key);
@@ -234,6 +250,7 @@ public partial class MainPage : ContentPage
     {
         if (sender is Button { CommandParameter: string state })
         {
+
             await RunAsync(async tv =>
             {
                 await tv.SetPowerAsync(state == "on");
@@ -242,7 +259,7 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private async Task RunAsync(Func<BraviaClient, Task<string?>> operation)
+    private async Task RunAsync(Func<TvControl, Task<string?>> operation)
     {
         if (busy || CurrentProfile is not { } profile)
             return;
@@ -258,7 +275,13 @@ public partial class MainPage : ContentPage
         SetRemoteEnabled(false);
         try
         {
-            var message = await operation(new BraviaClient(address));
+            var pairing = await TvControl.GetPairingAsync(profile.Id);
+            if (pairing is null)
+            {
+                ShowToast(Text("PairTvFirst"), success: false);
+                return;
+            }
+            var message = await operation(new TvControl(address, pairing));
             if (message is not null)
                 ShowToast(message, success: true);
         }
@@ -274,13 +297,13 @@ public partial class MainPage : ContentPage
         {
             ShowToast(Text("ConnectionClosed"), success: false);
         }
-        catch (BraviaProtocolException error)
-        {
-            ShowToast(Text(error.CommandRejected ? "CommandRejected" : "InvalidReply"), success: false);
-        }
         catch (IOException)
         {
             ShowToast(Text("ConnectionFailed"), success: false);
+        }
+        catch (System.Security.Authentication.AuthenticationException)
+        {
+            ShowToast(Text("PairTvFirst"), success: false);
         }
         finally
         {
