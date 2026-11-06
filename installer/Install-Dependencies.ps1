@@ -24,6 +24,8 @@ function Install-MicrosoftRuntime($url, $name, $arguments, $elevate) {
     } finally { if (Test-Path -LiteralPath $file) { Remove-Item -LiteralPath $file -Force } }
 }
 try {
+    # Windows PowerShell can inherit PowerShell 7 module paths from its parent.
+    Import-Module (Join-Path $PSHOME 'Modules/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.psd1') -Force
     $dotnet = Test-DotNet
     $windows = Test-WindowsRuntime
     if ($CheckOnly) { if ($dotnet -and $windows) { exit 0 } else { exit 1 } }
