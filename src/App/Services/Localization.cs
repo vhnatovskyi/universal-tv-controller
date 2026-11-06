@@ -27,9 +27,6 @@ internal static class Localization
         return arguments.Length == 0 ? value : string.Format(culture, value, arguments);
     }
 
-    public static string StepName(string key, string language) =>
-        Strings.GetString(key, CultureInfo.GetCultureInfo(language)) ?? key;
-
     private static void Apply(ResourceDictionary resources, bool ukrainian)
     {
         culture = CultureInfo.GetCultureInfo(ukrainian ? "uk" : "en");

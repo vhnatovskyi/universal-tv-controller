@@ -24,6 +24,8 @@ dotnet build src/App/BraviaRemote.csproj -f net10.0-ios -t:Run -p:RuntimeIdentif
 
 Для фізичного iPhone обери сертифікат розробника та профіль підпису. Під час розробки з Windows можна використати [Pair to Mac](https://learn.microsoft.com/dotnet/maui/ios/pair-to-mac?view=net-maui-10.0).
 
+Швидкі кнопки запуску працюють через [протокол Android TV Remote](https://github.com/sonalder-darlene/libremote-android-tv/blob/main/PROTOCOL.md) паралельно із Sony Simple IP Control. Спарування використовує порт 6467, а запуск застосунків — 6466. Дані спарування залишаються в захищеному сховищі застосунку.
+
 Щоб випустити нову версію:
 
 1. Вкажи однакову тричастинну версію у `version.json` і `ApplicationDisplayVersion` проєкту MAUI. Збільш `ApplicationVersion` для iOS.

@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace BraviaRemote;
 
-internal sealed record QuickButton(string Name, int[] Keys);
+internal sealed record QuickButton(string Name, int[]? Keys = null, string? AppPackage = null);
 
 internal sealed record TelevisionProfile(Guid Id, string Name, string Address, QuickButton[]? Shortcuts = null);
 

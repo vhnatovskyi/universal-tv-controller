@@ -5,18 +5,27 @@ namespace BraviaRemote;
 public partial class MainPage
 {
     private const string Repository = "vhnatovskyi/tv-controller";
+    private const string RepositoryUrl = "https://github.com/" + Repository;
     private static readonly HttpClient GitHub = new() { Timeout = TimeSpan.FromSeconds(6) };
     private bool releaseChecked;
-    private Uri? updatePage;
+    private string releaseStatus = "UpdatesIdle";
     private Version? updateVersion;
 
-    internal static string DisplayVersion => AppInfo.Current.Version.ToString(3);
+    internal static string DisplayVersion => typeof(MainPage).Assembly.GetName().Version!.ToString(3);
 
-    private async void CheckForRelease()
+    private void CheckForRelease()
     {
-        if (releaseChecked)
+        if (!releaseChecked)
+            _ = LoadReleaseAsync();
+    }
+
+    private async Task LoadReleaseAsync()
+    {
+        if (releaseStatus == "UpdatesChecking")
             return;
         releaseChecked = true;
+        releaseStatus = "UpdatesChecking";
+        RefreshUpdateText();
 
         try
         {
@@ -24,8 +33,7 @@ public partial class MainPage
             request.Headers.UserAgent.ParseAdd($"BraviaRemote/{DisplayVersion}");
             request.Headers.Accept.ParseAdd("application/vnd.github+json");
             using var response = await GitHub.SendAsync(request);
-            if (!response.IsSuccessStatusCode)
-                return;
+            response.EnsureSuccessStatusCode();
 
             using var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
             if (payload.RootElement.ValueKind != JsonValueKind.Object
@@ -35,30 +43,47 @@ public partial class MainPage
                 || tag[0] != 'v'
                 || !Version.TryParse(tag[1..], out var release)
                 || release.Build < 0 || release.Revision >= 0
-                || tag != $"v{release.ToString(3)}"
-                || release <= Version.Parse(DisplayVersion))
-                return;
+                || tag != $"v{release.ToString(3)}")
+                throw new JsonException("Invalid stable release version.");
 
-            updatePage = new Uri($"https://github.com/{Repository}/releases/tag/{tag}");
-            updateVersion = release;
-            RefreshUpdateText();
-            UpdateBanner.IsVisible = true;
+            updateVersion = release > Version.Parse(DisplayVersion) ? release : null;
+            releaseStatus = updateVersion is null ? "UpdatesCurrent" : "UpdateAvailable";
         }
         catch (Exception error) when (error is HttpRequestException or JsonException or OperationCanceledException)
         {
-            // The remote remains usable without GitHub or internet access.
+            releaseStatus = "UpdatesUnavailable";
         }
+
+        RefreshUpdateText();
     }
 
     private void RefreshUpdateText()
     {
-        if (updateVersion is { } release)
-            UpdateLabel.Text = Localization.Text("UpdateAvailable", release.ToString(3));
+        InstalledVersionLabel.Text = Localization.Text("InstalledVersion", DisplayVersion);
+        CheckUpdatesButton.IsEnabled = releaseStatus != "UpdatesChecking";
+        var latest = updateVersion?.ToString(3);
+        UpdateBanner.IsVisible = latest is not null;
+        if (latest is not null)
+            UpdateLabel.Text = Localization.Text("UpdateAvailable", latest);
+        ReleaseStatusLabel.Text = releaseStatus == "UpdateAvailable" && latest is not null
+            ? Localization.Text("UpdateAvailable", latest)
+            : Localization.Text(releaseStatus);
     }
+
+    private async void OnCheckUpdates(object? sender, EventArgs e) => await LoadReleaseAsync();
 
     private async void OnOpenRelease(object? sender, EventArgs e)
     {
-        if (updatePage is { } page)
-            await Launcher.Default.OpenAsync(page);
+        if (updateVersion is { } release)
+            await Launcher.Default.OpenAsync(new Uri($"{RepositoryUrl}/releases/tag/v{release.ToString(3)}"));
     }
+
+    private async void OnOpenReleases(object? sender, EventArgs e) =>
+        await Launcher.Default.OpenAsync(new Uri(RepositoryUrl + "/releases"));
+
+    private async void OnOpenRepository(object? sender, EventArgs e) =>
+        await Launcher.Default.OpenAsync(new Uri(RepositoryUrl));
+
+    private async void OnOpenDeveloper(object? sender, EventArgs e) =>
+        await Launcher.Default.OpenAsync(new Uri("https://github.com/vhnatovskyi"));
 }

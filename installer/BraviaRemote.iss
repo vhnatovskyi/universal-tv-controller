@@ -12,6 +12,7 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0.17763
 UninstallDisplayIcon={app}\BraviaRemote.exe
+SetupIconFile={#PayloadDirectory}\remote.ico
 OutputDir={#OutputDirectory}
 OutputBaseFilename=BraviaRemote-Setup-{#AppVersion}
 Compression=lzma2

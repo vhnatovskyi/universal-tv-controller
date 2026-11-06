@@ -10,9 +10,12 @@ $uninstaller = Join-Path $target 'unins000.exe'
 try {
     $arguments = '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LANG=uk /DIR="' + $target + '"'
     $result = Start-Process -FilePath $installer -ArgumentList $arguments -WindowStyle Hidden -Wait -PassThru
-    if ($result.ExitCode -ne 0 -or -not (Test-Path -LiteralPath $app -PathType Leaf)
-        -or -not (Test-Path -LiteralPath (Join-Path $target 'uk/BraviaRemote.resources.dll') -PathType Leaf)) {
-        throw 'Windows installation or Ukrainian language payload check failed.'
+    $localizedAssembly = Join-Path $target 'uk/BraviaRemote.resources.dll'
+    if ($result.ExitCode -ne 0) {
+        throw "Windows installer exited with code $($result.ExitCode)."
+    }
+    if (-not (Test-Path -LiteralPath $app -PathType Leaf) -or -not (Test-Path -LiteralPath $localizedAssembly -PathType Leaf)) {
+        throw 'Windows installation is missing the executable or the Ukrainian language payload.'
     }
 }
 finally {

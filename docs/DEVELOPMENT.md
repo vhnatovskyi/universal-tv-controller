@@ -24,6 +24,8 @@ dotnet build src/App/BraviaRemote.csproj -f net10.0-ios -t:Run -p:RuntimeIdentif
 
 Select a development certificate and provisioning profile for the physical iPhone. Windows development can also use [Pair to Mac](https://learn.microsoft.com/dotnet/maui/ios/pair-to-mac?view=net-maui-10.0).
 
+App shortcuts use the [Android TV Remote protocol](https://github.com/sonalder-darlene/libremote-android-tv/blob/main/PROTOCOL.md) alongside Sony Simple IP Control. Pairing uses port 6467, and app launches use port 6466. The pairing credential is stored locally in the app’s secure storage.
+
 To release a version:
 
 1. Set the same three-part version in `version.json` and `ApplicationDisplayVersion` in the MAUI project. Increase `ApplicationVersion` for iOS.

@@ -7,9 +7,6 @@
   <data name="Menu" xml:space="preserve"><value>Меню</value></data>
   <data name="Remote" xml:space="preserve"><value>Пульт</value></data>
   <data name="Volume" xml:space="preserve"><value>Гучність</value></data>
-  <data name="Minimize" xml:space="preserve"><value>Згорнути вікно</value></data>
-  <data name="Maximize" xml:space="preserve"><value>Розгорнути або відновити вікно</value></data>
-  <data name="CloseWindow" xml:space="preserve"><value>Закрити вікно</value></data>
   <data name="OpenRelease" xml:space="preserve"><value>Відкрити реліз</value></data>
   <data name="Profiles" xml:space="preserve"><value>Профілі телевізорів</value></data>
   <data name="ChooseProfile" xml:space="preserve"><value>Обери профіль</value></data>
@@ -23,9 +20,6 @@
   <data name="ChooseShortcut" xml:space="preserve"><value>Обери кнопку</value></data>
   <data name="NewShortcut" xml:space="preserve"><value>Нова кнопка</value></data>
   <data name="ShortcutName" xml:space="preserve"><value>Назва кнопки</value></data>
-  <data name="ShortcutHelp" xml:space="preserve"><value>Запиши шлях від «Додому» до потрібної плитки. Команди відокремлюй комами.</value></data>
-  <data name="ShortcutCommands" xml:space="preserve"><value>Команди: Додому, Вгору, Вниз, Ліворуч, Праворуч, Назад, OK</value></data>
-  <data name="ShortcutExample" xml:space="preserve"><value>Додому, Вниз, Праворуч, OK</value></data>
   <data name="Save" xml:space="preserve"><value>Зберегти</value></data>
   <data name="Delete" xml:space="preserve"><value>Видалити</value></data>
   <data name="BackToSettings" xml:space="preserve"><value>До налаштувань</value></data>
@@ -66,8 +60,28 @@
   <data name="CommandRejected" xml:space="preserve"><value>Телевізор відхилив команду або не підтримує її.</value></data>
   <data name="InvalidReply" xml:space="preserve"><value>Телевізор надіслав неочікувану відповідь.</value></data>
   <data name="ShortcutDone" xml:space="preserve"><value>Виконано швидку кнопку «{0}».</value></data>
-  <data name="MissingShortcutName" xml:space="preserve"><value>Введи назву швидкої кнопки.</value></data>
-  <data name="InvalidShortcutSteps" xml:space="preserve"><value>Введи від 1 до {0} команд зі списку через кому.</value></data>
   <data name="ShortcutLimit" xml:space="preserve"><value>Можна додати до {0} швидких кнопок на профіль.</value></data>
   <data name="UpdateAvailable" xml:space="preserve"><value>Доступна версія {0}</value></data>
+  <data name="Updates" xml:space="preserve"><value>Оновлення</value></data>
+  <data name="About" xml:space="preserve"><value>Про програму</value></data>
+  <data name="InstalledVersion" xml:space="preserve"><value>Встановлена версія: {0}</value></data>
+  <data name="CheckUpdates" xml:space="preserve"><value>Перевірити оновлення</value></data>
+  <data name="OpenReleases" xml:space="preserve"><value>Відкрити GitHub Releases</value></data>
+  <data name="UpdatesIdle" xml:space="preserve"><value>Перевір наявність новішої версії на GitHub.</value></data>
+  <data name="UpdatesChecking" xml:space="preserve"><value>Перевіряємо GitHub…</value></data>
+  <data name="UpdatesCurrent" xml:space="preserve"><value>Установлено останню версію.</value></data>
+  <data name="UpdatesUnavailable" xml:space="preserve"><value>Не вдалося перевірити оновлення. Спробуй пізніше.</value></data>
+  <data name="AboutDescription" xml:space="preserve"><value>Пульт для Sony BRAVIA на Windows та iPhone, що працює в локальній мережі.</value></data>
+  <data name="Developer" xml:space="preserve"><value>Розробник</value></data>
+  <data name="ProjectRepository" xml:space="preserve"><value>Проєкт на GitHub</value></data>
+  <data name="ChooseTvApp" xml:space="preserve"><value>Застосунок на ТВ</value></data>
+  <data name="SelectAnApp" xml:space="preserve"><value>Обери застосунок на телевізорі для цієї кнопки.</value></data>
+  <data name="PairingHelp" xml:space="preserve"><value>Для прямого запуску застосунків один раз спаруй цей профіль із Google TV.</value></data>
+  <data name="PairTv" xml:space="preserve"><value>Спарувати з Google TV</value></data>
+  <data name="PairTvFirst" xml:space="preserve"><value>Спочатку спаруйся з Google TV у налаштуваннях швидких кнопок.</value></data>
+  <data name="EnterTvCode" xml:space="preserve"><value>Введи шестисимвольний код з екрана телевізора.</value></data>
+  <data name="IncorrectTvCode" xml:space="preserve"><value>Код не збігається. Перевір екран телевізора та спробуй ще раз.</value></data>
+  <data name="TvPaired" xml:space="preserve"><value>Google TV спаровано. Швидкі кнопки готові.</value></data>
+  <data name="GoogleTvFailed" xml:space="preserve"><value>Google TV не прийняв з’єднання або команду. Перевір телевізор і за потреби виконай спарування ще раз.</value></data>
+  <data name="AppLaunchSent" xml:space="preserve"><value>Надіслано запит на відкриття {0}.</value></data>
 </root>

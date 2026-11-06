@@ -1,17 +1,19 @@
-## BRAVIA Remote v0.3.0
+## BRAVIA Remote v0.3.1
 
 ### English
 
-- English and Ukrainian interface. English is the default and the app remembers the selected language.
-- Windows x64 installer with English and Ukrainian setup, Start menu entry, and an uninstaller.
-- The portable ZIP and SHA-256 checksums are available alongside the installer.
+- A single Windows title bar with the menu, app icon, version, and window controls. The remote uses a compact layout with consistent buttons and a grouped direction pad.
+- An Updates page for manual checks and an About page with the developer’s GitHub profile.
+- Quick buttons can open YouTube, Netflix, or Kyivstar TV after pairing with Google TV. Existing saved navigation sequences still work.
+- The Windows release includes a bilingual installer, a portable ZIP, and SHA-256 checksums. The release workflow verifies installation and uninstallation before publishing.
 
-To install on Windows, download and run `BraviaRemote-Setup-0.3.0.exe`. The iPhone version is available as MAUI source and requires an Apple-signed build for a physical device.
+The interface is available in English and Ukrainian. English is the default. The iPhone version requires an Apple-signed build for a physical device.
 
 ### Українська
 
-- Англійський та український інтерфейс. За замовчуванням використовується англійська, вибір мови зберігається.
-- Інсталятор Windows x64 з англійською й українською мовами, ярликом у меню «Пуск» і можливістю видалення.
-- Портативний ZIP і контрольні суми SHA-256 доступні поруч з інсталятором.
+- Єдина панель заголовка Windows з меню, іконкою, версією та кнопками вікна. Пульт має компактний вигляд, узгоджені кнопки й окремий блок навігації.
+- Розділ «Оновлення» для ручної перевірки й розділ «Про програму» з профілем розробника на GitHub.
+- Швидкі кнопки можуть відкривати YouTube, Netflix або Kyivstar TV після спарування з Google TV. Раніше збережені послідовності натискань продовжують працювати.
+- До Windows-релізу входять двомовний інсталятор, портативний ZIP і контрольні суми SHA-256. Перед публікацією workflow перевіряє встановлення та видалення.
 
-Для встановлення на Windows завантаж і запусти `BraviaRemote-Setup-0.3.0.exe`. Для iPhone доступний вихідний код MAUI. Для встановлення на пристрій потрібна підписана Apple збірка.
+Інтерфейс доступний англійською й українською. За замовчуванням використовується англійська. Для встановлення на фізичний iPhone потрібна підписана Apple збірка.

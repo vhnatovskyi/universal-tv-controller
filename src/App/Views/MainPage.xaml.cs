@@ -11,11 +11,12 @@ public partial class MainPage : ContentPage
     private Screen screen;
     private Screen editorReturnScreen;
     private bool busy;
+    private ImageButton? desktopMenu;
     private int toastVersion;
     private bool volumeTrackingActive;
     private CancellationTokenSource? volumePolling;
 
-    private enum Screen { Remote, Settings, ProfileEditor, ShortcutEditor }
+    private enum Screen { Remote, Settings, ProfileEditor, ShortcutEditor, Updates, About }
 
     private TelevisionProfile? CurrentProfile =>
         ProfilePicker.SelectedIndex is var index && index >= 0 && index < profiles.Items.Count
@@ -50,8 +51,11 @@ public partial class MainPage : ContentPage
         ProfileControls.IsVisible = screen == Screen.Settings;
         ProfileEditor.IsVisible = screen == Screen.ProfileEditor;
         ShortcutEditor.IsVisible = screen == Screen.ShortcutEditor;
+        UpdatesPanel.IsVisible = screen == Screen.Updates;
+        AboutPanel.IsVisible = screen == Screen.About;
         Onboarding.IsVisible = screen == Screen.Remote && profile is null;
         RemoteButtons.IsVisible = screen == Screen.Remote && profile is not null;
+        CheckButton.IsVisible = RemoteButtons.IsVisible;
         ProfileActions.IsVisible = ShortcutSettingsButton.IsVisible = profile is not null;
         DefaultLabel.IsVisible = isDefault;
         DefaultLabel.Text = isDefault ? Text("DefaultProfile") : "";
@@ -61,10 +65,14 @@ public partial class MainPage : ContentPage
             Screen.Settings => Text("Settings"),
             Screen.ProfileEditor => Text(editingId is null ? "NewProfile" : "EditProfile"),
             Screen.ShortcutEditor => Text("Shortcuts"),
+            Screen.Updates => Text("Updates"),
+            Screen.About => Text("About"),
             _ => profile?.Name ?? Text("Remote")
         };
         toastVersion++;
         Toast.IsVisible = false;
+        AboutVersionLabel.Text = $"BRAVIA Remote v{DisplayVersion}";
+        RefreshUpdateText();
         RefreshShortcuts();
         RestartVolumeTracking(resetValue: true);
     }
@@ -79,17 +87,24 @@ public partial class MainPage : ContentPage
 
     private void OnToggleMenu(object? sender, EventArgs e)
     {
-        var onRemote = screen == Screen.Remote;
-        RemoteMenuButton.BackgroundColor = Color.FromArgb(onRemote ? "#304664" : "#18243A");
-        SettingsMenuButton.BackgroundColor = Color.FromArgb(onRemote ? "#18243A" : "#304664");
+        RemoteMenuButton.BackgroundColor = MenuColor(screen == Screen.Remote);
+        SettingsMenuButton.BackgroundColor = MenuColor(screen is Screen.Settings or Screen.ProfileEditor or Screen.ShortcutEditor);
+        UpdatesMenuButton.BackgroundColor = MenuColor(screen == Screen.Updates);
+        AboutMenuButton.BackgroundColor = MenuColor(screen == Screen.About);
         MenuOverlay.IsVisible = !MenuOverlay.IsVisible;
     }
+
+    private static Color MenuColor(bool selected) => Color.FromArgb(selected ? "#243347" : "#141E2B");
 
     private void OnCloseMenu(object? sender, EventArgs e) => MenuOverlay.IsVisible = false;
 
     private void OnShowRemote(object? sender, EventArgs e) => ShowScreen(Screen.Remote);
 
     private void OnShowSettings(object? sender, EventArgs e) => ShowScreen(Screen.Settings);
+
+    private void OnShowUpdates(object? sender, EventArgs e) => ShowScreen(Screen.Updates);
+
+    private void OnShowAbout(object? sender, EventArgs e) => ShowScreen(Screen.About);
 
     private void OnLanguageChanged(object? sender, EventArgs e)
     {
@@ -101,7 +116,6 @@ public partial class MainPage : ContentPage
             return;
 
         SetLanguage(app.Resources, ukrainian);
-        RefreshUpdateText();
         RefreshRemote();
     }
 
@@ -213,7 +227,7 @@ public partial class MainPage : ContentPage
 
         busy = true;
         RestartVolumeTracking(resetValue: false);
-        MenuButton.IsEnabled = RemoteButtons.IsEnabled = false;
+        SetRemoteEnabled(false);
         try
         {
             var message = await operation(new BraviaClient(address));
@@ -243,9 +257,16 @@ public partial class MainPage : ContentPage
         finally
         {
             busy = false;
-            MenuButton.IsEnabled = RemoteButtons.IsEnabled = true;
+            SetRemoteEnabled(true);
             RestartVolumeTracking(resetValue: false);
         }
+    }
+
+    private void SetRemoteEnabled(bool enabled)
+    {
+        MenuButton.IsEnabled = RemoteButtons.IsEnabled = CheckButton.IsEnabled = enabled;
+        if (desktopMenu is not null)
+            desktopMenu.IsEnabled = enabled;
     }
 
     private async void ShowToast(string message, bool success)

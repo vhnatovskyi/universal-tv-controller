@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BraviaRemote.MainPage" BackgroundColor="#121C30">
+             x:Class="BraviaRemote.MainPage" BackgroundColor="#101820">
     <ContentPage.Resources>
         <Style TargetType="Button">
-            <Setter Property="BackgroundColor" Value="#253757" />
-            <Setter Property="TextColor" Value="#F3F7FF" />
-            <Setter Property="FontSize" Value="15" />
-            <Setter Property="CornerRadius" Value="9" />
-            <Setter Property="MinimumHeightRequest" Value="44" />
-            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="BackgroundColor" Value="#1B2635" />
+            <Setter Property="BorderColor" Value="#2C3A4D" />
+            <Setter Property="BorderWidth" Value="1" />
+            <Setter Property="TextColor" Value="#F3F6FA" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="MinimumHeightRequest" Value="{OnPlatform 44, WinUI=36}" />
+            <Setter Property="Padding" Value="10,4" />
         </Style>
     </ContentPage.Resources>
     <Grid RowDefinitions="Auto,Auto,*" SafeAreaEdges="Container">
-        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="6" Padding="6,4,6,4" BackgroundColor="#18243A">
-            <Button x:Name="MenuButton" Text="☰" FontSize="20" WidthRequest="44"
-                    BackgroundColor="Transparent" Clicked="OnToggleMenu" SemanticProperties.Description="{DynamicResource Loc.Menu}" />
-            <Grid x:Name="TitleDragArea" Grid.Column="1" BackgroundColor="Transparent">
-                <Label x:Name="ToolbarTitle" Text="{DynamicResource Loc.Remote}" FontSize="16" FontAttributes="Bold"
-                       TextColor="#F3F7FF" VerticalOptions="Center" LineBreakMode="TailTruncation" />
-            </Grid>
-            <Border x:Name="VolumeChip" Grid.Column="2" BackgroundColor="#1C354A"
-                    Stroke="#396077" StrokeShape="RoundRectangle 13" Padding="10,4"
+        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8" Padding="12,6" BackgroundColor="#141E2B">
+            <Button x:Name="MenuButton" Text="☰" FontSize="19" WidthRequest="40"
+                    BackgroundColor="Transparent" BorderWidth="0" Clicked="OnToggleMenu"
+                    SemanticProperties.Description="{DynamicResource Loc.Menu}" />
+            <Label x:Name="ToolbarTitle" Grid.Column="1" Text="{DynamicResource Loc.Remote}"
+                   FontSize="18" FontAttributes="Bold" TextColor="#F3F6FA"
+                   VerticalOptions="Center" LineBreakMode="TailTruncation" />
+            <Border x:Name="VolumeChip" Grid.Column="2" BackgroundColor="#1B2635"
+                    Stroke="#2C3A4D" StrokeShape="RoundRectangle 8" Padding="9,4"
                     VerticalOptions="Center" IsVisible="False">
                 <HorizontalStackLayout Spacing="7">
                     <Label Text="{DynamicResource Loc.Volume}" TextColor="#B4D6E8" FontSize="13" VerticalOptions="Center" />
@@ -29,14 +31,10 @@
                            FontAttributes="Bold" FontSize="16" VerticalOptions="Center" />
                 </HorizontalStackLayout>
             </Border>
-            <HorizontalStackLayout x:Name="CaptionButtons" Grid.Column="3" IsVisible="False" Spacing="2">
-                <Button x:Name="MinimizeWindowButton" Text="−" WidthRequest="34" BackgroundColor="Transparent"
-                        SemanticProperties.Description="{DynamicResource Loc.Minimize}" />
-                <Button x:Name="MaximizeWindowButton" Text="□" WidthRequest="34" BackgroundColor="Transparent"
-                        SemanticProperties.Description="{DynamicResource Loc.Maximize}" />
-                <Button x:Name="CloseWindowButton" Text="×" WidthRequest="34" BackgroundColor="Transparent"
-                        FontSize="20" SemanticProperties.Description="{DynamicResource Loc.CloseWindow}" />
-            </HorizontalStackLayout>
+            <Button x:Name="CheckButton" Grid.Column="3" Text="⟳" FontSize="19" WidthRequest="38"
+                    Padding="0" Clicked="OnCheck" IsVisible="False"
+                    ToolTipProperties.Text="{DynamicResource Loc.CheckConnection}"
+                    SemanticProperties.Description="{DynamicResource Loc.CheckConnection}" />
         </Grid>
         <Border x:Name="UpdateBanner" Grid.Row="1" Margin="12,8,12,0" Padding="10,4"
                 Stroke="#396077" StrokeShape="RoundRectangle 9" BackgroundColor="#1C354A" IsVisible="False">
@@ -47,11 +45,24 @@
         </Border>
         <ScrollView x:Name="ScreenScroll" Grid.Row="2">
           <VerticalStackLayout Padding="12,12" Spacing="8" MaximumWidthRequest="480" HorizontalOptions="Fill">
+            <VerticalStackLayout x:Name="UpdatesPanel" Spacing="8" IsVisible="False">
+                <Label x:Name="InstalledVersionLabel" TextColor="#F3F6FA" FontAttributes="Bold" />
+                <Label x:Name="ReleaseStatusLabel" TextColor="#A9BACF" />
+                <Button x:Name="CheckUpdatesButton" Text="{DynamicResource Loc.CheckUpdates}" Clicked="OnCheckUpdates" />
+                <Button Text="{DynamicResource Loc.OpenReleases}" Clicked="OnOpenReleases" />
+            </VerticalStackLayout>
+            <VerticalStackLayout x:Name="AboutPanel" Spacing="8" IsVisible="False">
+                <Label x:Name="AboutVersionLabel" FontSize="20" FontAttributes="Bold" TextColor="#F3F6FA" />
+                <Label Text="{DynamicResource Loc.AboutDescription}" TextColor="#A9BACF" />
+                <Label Text="{DynamicResource Loc.Developer}" FontAttributes="Bold" TextColor="#F3F6FA" />
+                <Button Text="@vhnatovskyi" Clicked="OnOpenDeveloper" />
+                <Button Text="{DynamicResource Loc.ProjectRepository}" Clicked="OnOpenRepository" />
+            </VerticalStackLayout>
             <VerticalStackLayout x:Name="ProfileControls" Spacing="8" IsVisible="False">
                 <Label Text="{DynamicResource Loc.Profiles}" FontSize="20" FontAttributes="Bold" TextColor="#F3F7FF" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <Picker x:Name="ProfilePicker" Title="{DynamicResource Loc.ChooseProfile}" TitleColor="#ABBDD8"
-                            TextColor="White" BackgroundColor="#253757" MinimumHeightRequest="48"
+                            TextColor="White" BackgroundColor="#1B2635" MinimumHeightRequest="48"
                             SelectedIndexChanged="OnProfileChanged" SemanticProperties.Description="{DynamicResource Loc.Profile}" />
                     <Button Grid.Column="1" Text="{DynamicResource Loc.AddProfile}" Clicked="OnAddProfile" />
                 </Grid>
@@ -62,7 +73,7 @@
                 </Grid>
                 <Button x:Name="ShortcutSettingsButton" Text="{DynamicResource Loc.ConfigureShortcuts}" Clicked="OnOpenShortcuts" />
                 <Label Text="{DynamicResource Loc.Language}" TextColor="#E4EDF9" Margin="0,8,0,0" />
-                <Picker x:Name="LanguagePicker" TextColor="White" BackgroundColor="#253757"
+                <Picker x:Name="LanguagePicker" TextColor="White" BackgroundColor="#1B2635"
                         SelectedIndexChanged="OnLanguageChanged" SemanticProperties.Description="{DynamicResource Loc.Language}" />
                 <Label x:Name="VersionLabel" TextColor="#ABBDD8" FontSize="13" />
             </VerticalStackLayout>
@@ -74,20 +85,19 @@
                 <Label Text="{DynamicResource Loc.Shortcuts}" FontSize="20" FontAttributes="Bold" TextColor="#F3F7FF" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <Picker x:Name="ShortcutPicker" Title="{DynamicResource Loc.ChooseShortcut}" TitleColor="#ABBDD8"
-                            TextColor="White" BackgroundColor="#253757"
+                            TextColor="White" BackgroundColor="#1B2635"
                             SelectedIndexChanged="OnShortcutSelected" />
                     <Button Grid.Column="1" Text="{DynamicResource Loc.NewShortcut}" Clicked="OnNewShortcut" />
                 </Grid>
+                <Label Text="{DynamicResource Loc.ChooseTvApp}" TextColor="#E4EDF9" />
+                <Picker x:Name="AppPicker" Title="{DynamicResource Loc.ChooseTvApp}" TitleColor="#ABBDD8"
+                        TextColor="White" BackgroundColor="#1B2635" SelectedIndexChanged="OnAppSelected"
+                        SemanticProperties.Description="{DynamicResource Loc.ChooseTvApp}" />
                 <Label Text="{DynamicResource Loc.ShortcutName}" TextColor="#E4EDF9" />
                 <Entry x:Name="ShortcutName" Placeholder="Netflix, YouTube, Kyivstar TV…" MaxLength="40"
-                       TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#253757" />
-                <Label Text="{DynamicResource Loc.ShortcutHelp}"
-                       TextColor="#ABBDD8" />
-                <Label Text="{DynamicResource Loc.ShortcutCommands}"
-                       TextColor="#ABBDD8" />
-                <Editor x:Name="ShortcutSequence" Placeholder="{DynamicResource Loc.ShortcutExample}"
-                        TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#253757"
-                        HeightRequest="84" MaxLength="256" IsSpellCheckEnabled="False" />
+                       TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#1B2635" />
+                <Label Text="{DynamicResource Loc.PairingHelp}" TextColor="#ABBDD8" />
+                <Button Text="{DynamicResource Loc.PairTv}" Clicked="OnPairTv" />
                 <Label x:Name="ShortcutError" IsVisible="False" TextColor="#FFB8B8" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                     <Button Text="{DynamicResource Loc.Save}" Clicked="OnSaveShortcut" />
@@ -99,11 +109,11 @@
                 <Label x:Name="EditorTitle" FontSize="20" FontAttributes="Bold" TextColor="#F3F7FF" />
                 <Label Text="{DynamicResource Loc.ProfileName}" TextColor="#E4EDF9" />
                 <Entry x:Name="ProfileNameEntry" Placeholder="{DynamicResource Loc.ProfileExample}" MaxLength="60"
-                       TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#253757"
+                       TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#1B2635"
                        SemanticProperties.Description="{DynamicResource Loc.ProfileName}" />
                 <Label Text="{DynamicResource Loc.TvAddress}" TextColor="#E4EDF9" />
                 <Entry x:Name="AddressEntry" Placeholder="{DynamicResource Loc.AddressExample}"
-                       TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#253757"
+                       TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#1B2635"
                        IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"
                        SemanticProperties.Description="{DynamicResource Loc.TvAddress}" />
                 <Label x:Name="EditorError" IsVisible="False" TextColor="#FFB8B8" />
@@ -118,20 +128,25 @@
                     <Button Text="{DynamicResource Loc.PowerOn}" CommandParameter="on" Clicked="OnPower" />
                     <Button Grid.Column="1" Text="{DynamicResource Loc.PowerOff}" CommandParameter="off" Clicked="OnPower" />
                 </Grid>
-                <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
-                    <Button Grid.Column="1" Grid.Row="0" Text="▲" CommandParameter="9" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Up}" />
-                    <Button Grid.Column="0" Grid.Row="1" Text="◀" CommandParameter="12" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Left}" />
-                    <Button Grid.Column="1" Grid.Row="1" Text="OK" CommandParameter="13" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Confirm}" BackgroundColor="#83DFF6" TextColor="#121C30" />
-                    <Button Grid.Column="2" Grid.Row="1" Text="▶" CommandParameter="11" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Right}" />
-                    <Button Grid.Column="1" Grid.Row="2" Text="▼" CommandParameter="10" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Down}" />
-                    <Button Grid.Column="0" Grid.Row="3" Text="{DynamicResource Loc.Back}" CommandParameter="8" Clicked="OnKey" />
-                    <Button Grid.Column="1" Grid.Row="3" Text="{DynamicResource Loc.Home}" CommandParameter="6" Clicked="OnKey" />
-                    <Button Grid.Column="2" Grid.Row="3" Text="{DynamicResource Loc.Inputs}" CommandParameter="1" Clicked="OnKey" />
-                    <Button Grid.Column="0" Grid.Row="4" Text="{DynamicResource Loc.VolumeDownShort}" CommandParameter="31" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.VolumeDown}" />
-                    <Button Grid.Column="1" Grid.Row="4" Text="{DynamicResource Loc.Mute}" CommandParameter="32" Clicked="OnKey" />
-                    <Button Grid.Column="2" Grid.Row="4" Text="{DynamicResource Loc.VolumeUpShort}" CommandParameter="30" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.VolumeUp}" />
+                <Border HorizontalOptions="Center" WidthRequest="204" Padding="6"
+                        BackgroundColor="#141E2B" Stroke="#2C3A4D" StrokeShape="RoundRectangle 10">
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="4" RowSpacing="4">
+                        <Button Grid.Column="1" Text="↑" FontSize="18" Padding="0" CommandParameter="9" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Up}" />
+                        <Button Grid.Row="1" Text="←" FontSize="18" Padding="0" CommandParameter="12" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Left}" />
+                        <Button Grid.Column="1" Grid.Row="1" Text="OK" Padding="0" CommandParameter="13" Clicked="OnKey"
+                                SemanticProperties.Description="{DynamicResource Loc.Confirm}" BackgroundColor="#243548" BorderColor="#4E8CAA" TextColor="#9BDBF9" />
+                        <Button Grid.Column="2" Grid.Row="1" Text="→" FontSize="18" Padding="0" CommandParameter="11" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Right}" />
+                        <Button Grid.Column="1" Grid.Row="2" Text="↓" FontSize="18" Padding="0" CommandParameter="10" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Down}" />
+                    </Grid>
+                </Border>
+                <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                    <Button Text="{DynamicResource Loc.Back}" CommandParameter="8" Clicked="OnKey" />
+                    <Button Grid.Column="1" Text="{DynamicResource Loc.Home}" CommandParameter="6" Clicked="OnKey" />
+                    <Button Grid.Column="2" Text="{DynamicResource Loc.Inputs}" CommandParameter="1" Clicked="OnKey" />
+                    <Button Grid.Row="1" Text="{DynamicResource Loc.VolumeDownShort}" CommandParameter="31" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.VolumeDown}" />
+                    <Button Grid.Column="1" Grid.Row="1" Text="{DynamicResource Loc.Mute}" CommandParameter="32" Clicked="OnKey" />
+                    <Button Grid.Column="2" Grid.Row="1" Text="{DynamicResource Loc.VolumeUpShort}" CommandParameter="30" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.VolumeUp}" />
                 </Grid>
-                <Button Text="{DynamicResource Loc.CheckConnection}" Clicked="OnCheck" BackgroundColor="#1C2A43" />
             </VerticalStackLayout>
           </VerticalStackLayout>
         </ScrollView>
@@ -142,15 +157,17 @@
                 <Label x:Name="ToastText" Grid.Column="1" TextColor="White" VerticalOptions="Center" />
             </Grid>
         </Border>
-        <Grid x:Name="MenuOverlay" Grid.Row="1" Grid.RowSpan="2" ColumnDefinitions="176,*" IsVisible="False">
+        <Grid x:Name="MenuOverlay" Grid.Row="1" Grid.RowSpan="2" ColumnDefinitions="170,*" IsVisible="False">
             <BoxView Grid.ColumnSpan="2" Color="#70070D18" SemanticProperties.Description="{DynamicResource Loc.CloseMenu}">
                 <BoxView.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnCloseMenu" />
                 </BoxView.GestureRecognizers>
             </BoxView>
-            <VerticalStackLayout Padding="5" Spacing="4" BackgroundColor="#18243A">
-                <Button x:Name="RemoteMenuButton" Text="{DynamicResource Loc.Remote}" Clicked="OnShowRemote" />
-                <Button x:Name="SettingsMenuButton" Text="{DynamicResource Loc.Settings}" Clicked="OnShowSettings" />
+            <VerticalStackLayout Padding="5" Spacing="4" BackgroundColor="#141E2B">
+                <Button x:Name="RemoteMenuButton" Text="{DynamicResource Loc.Remote}" Clicked="OnShowRemote" BorderWidth="0" />
+                <Button x:Name="SettingsMenuButton" Text="{DynamicResource Loc.Settings}" Clicked="OnShowSettings" BorderWidth="0" />
+                <Button x:Name="UpdatesMenuButton" Text="{DynamicResource Loc.Updates}" Clicked="OnShowUpdates" BorderWidth="0" />
+                <Button x:Name="AboutMenuButton" Text="{DynamicResource Loc.About}" Clicked="OnShowAbout" BorderWidth="0" />
             </VerticalStackLayout>
         </Grid>
     </Grid>
