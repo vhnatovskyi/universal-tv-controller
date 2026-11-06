@@ -38,7 +38,7 @@ public partial class MainPage
                         await Task.Delay(shortcut.Keys[step] == ShortcutKeys["Додому"] ? 1400 : 350);
                 }
                 return $"Виконано швидку кнопку «{shortcut.Name}».";
-            });
+            }, showSuccess: true);
             QuickButtons.Add(button, index % 3, index / 3);
         }
     }

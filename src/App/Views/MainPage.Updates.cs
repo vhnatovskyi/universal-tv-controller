@@ -9,6 +9,8 @@ public partial class MainPage
     private bool releaseChecked;
     private Uri? updatePage;
 
+    internal static string DisplayVersion => AppInfo.Current.Version.ToString(3);
+
     private async void CheckForRelease()
     {
         if (releaseChecked)
@@ -18,7 +20,7 @@ public partial class MainPage
         try
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.github.com/repos/{Repository}/releases/latest");
-            request.Headers.UserAgent.ParseAdd($"BraviaRemote/{AppInfo.Current.VersionString}");
+            request.Headers.UserAgent.ParseAdd($"BraviaRemote/{DisplayVersion}");
             request.Headers.Accept.ParseAdd("application/vnd.github+json");
             using var response = await GitHub.SendAsync(request);
             if (!response.IsSuccessStatusCode)
@@ -33,8 +35,7 @@ public partial class MainPage
                 || !Version.TryParse(tag[1..], out var release)
                 || release.Build < 0 || release.Revision >= 0
                 || tag != $"v{release.ToString(3)}"
-                || !Version.TryParse(AppInfo.Current.VersionString, out var current)
-                || release <= new Version(current.Major, current.Minor, Math.Max(current.Build, 0)))
+                || release <= Version.Parse(DisplayVersion))
                 return;
 
             updatePage = new Uri($"https://github.com/{Repository}/releases/tag/{tag}");

@@ -10,6 +10,7 @@ public partial class MainPage : ContentPage
     private Screen screen;
     private Screen editorReturnScreen;
     private bool busy;
+    private int toastVersion;
     private bool volumeTrackingActive;
     private CancellationTokenSource? volumePolling;
 
@@ -24,7 +25,7 @@ public partial class MainPage : ContentPage
     {
         profiles = TelevisionProfiles.Load(Preferences.Default);
         InitializeComponent();
-        VersionLabel.Text = $"BRAVIA Remote v{AppInfo.Current.VersionString}";
+        VersionLabel.Text = $"BRAVIA Remote v{DisplayVersion}";
         RefreshProfiles(profiles.DefaultId);
     }
 
@@ -59,7 +60,8 @@ public partial class MainPage : ContentPage
             Screen.ShortcutEditor => "Швидкі кнопки",
             _ => profile?.Name ?? "Пульт"
         };
-        StatusLabel.IsVisible = false;
+        toastVersion++;
+        Toast.IsVisible = false;
         RefreshShortcuts();
         RestartVolumeTracking(resetValue: true);
     }
@@ -154,7 +156,7 @@ public partial class MainPage : ContentPage
     }
 
     private async void OnCheck(object? sender, EventArgs e) =>
-        await RunAsync(async tv => $"З’єднання є. Гучність: {await tv.GetVolumeAsync()}.");
+        await RunAsync(async tv => $"З’єднання встановлено. Гучність: {await tv.GetVolumeAsync()}.", showSuccess: true);
 
     private async void OnKey(object? sender, EventArgs e)
     {
@@ -181,43 +183,41 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private async Task RunAsync(Func<BraviaClient, Task<string>> operation)
+    private async Task RunAsync(Func<BraviaClient, Task<string>> operation, bool showSuccess = false)
     {
         if (busy || CurrentProfile is not { } profile)
             return;
 
         if (!TelevisionProfiles.TryParseAddress(profile.Address, out var address))
         {
-            StatusLabel.Text = "Перевір IP-адресу в налаштуваннях профілю.";
-            StatusLabel.IsVisible = true;
+            ShowToast("Перевір IP-адресу в налаштуваннях профілю.", success: false);
             return;
         }
 
         busy = true;
         RestartVolumeTracking(resetValue: false);
         MenuButton.IsEnabled = RemoteButtons.IsEnabled = false;
-        StatusLabel.Text = "Очікуємо відповідь телевізора…";
-        StatusLabel.IsVisible = true;
-
         try
         {
-            StatusLabel.Text = await operation(new BraviaClient(address));
+            var message = await operation(new BraviaClient(address));
+            if (showSuccess)
+                ShowToast(message, success: true);
         }
         catch (OperationCanceledException)
         {
-            StatusLabel.Text = "Телевізор не відповів. Перевір мережу та керування IP.";
+            ShowToast("Телевізор не відповів. Перевір мережу та керування IP.", success: false);
         }
         catch (SocketException)
         {
-            StatusLabel.Text = "Не вдалося під’єднатися. Перевір мережу та просте управління IP.";
+            ShowToast("Не вдалося під’єднатися. Перевір мережу та просте управління IP.", success: false);
         }
         catch (EndOfStreamException)
         {
-            StatusLabel.Text = "Телевізор закрив з’єднання до підтвердження команди.";
+            ShowToast("Телевізор закрив з’єднання до підтвердження команди.", success: false);
         }
         catch (IOException error)
         {
-            StatusLabel.Text = error.Message;
+            ShowToast(error.Message, success: false);
         }
         finally
         {
@@ -225,5 +225,20 @@ public partial class MainPage : ContentPage
             MenuButton.IsEnabled = RemoteButtons.IsEnabled = true;
             RestartVolumeTracking(resetValue: false);
         }
+    }
+
+    private async void ShowToast(string message, bool success)
+    {
+        var version = ++toastVersion;
+        Toast.BackgroundColor = Color.FromArgb(success ? "#195139" : "#742E38");
+        Toast.Stroke = new SolidColorBrush(Color.FromArgb(success ? "#56A886" : "#EA8C96"));
+        ToastIcon.Text = success ? "✓" : "!";
+        ToastText.Text = message;
+        Toast.IsVisible = true;
+        SemanticScreenReader.Default.Announce(message);
+
+        await Task.Delay(TimeSpan.FromSeconds(4));
+        if (version == toastVersion)
+            Toast.IsVisible = false;
     }
 }

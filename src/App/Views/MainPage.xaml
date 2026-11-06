@@ -13,11 +13,13 @@
         </Style>
     </ContentPage.Resources>
     <Grid RowDefinitions="Auto,Auto,*" SafeAreaEdges="Container">
-        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="8,4,12,4" BackgroundColor="#18243A">
+        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="6" Padding="6,4,6,4" BackgroundColor="#18243A">
             <Button x:Name="MenuButton" Text="☰" FontSize="20" WidthRequest="44"
                     BackgroundColor="Transparent" Clicked="OnToggleMenu" SemanticProperties.Description="Меню" />
-            <Label x:Name="ToolbarTitle" Grid.Column="1" Text="Пульт" FontSize="16" FontAttributes="Bold"
-                   TextColor="#F3F7FF" VerticalOptions="Center" LineBreakMode="TailTruncation" />
+            <Grid x:Name="TitleDragArea" Grid.Column="1" BackgroundColor="Transparent">
+                <Label x:Name="ToolbarTitle" Text="Пульт" FontSize="16" FontAttributes="Bold"
+                       TextColor="#F3F7FF" VerticalOptions="Center" LineBreakMode="TailTruncation" />
+            </Grid>
             <Border x:Name="VolumeChip" Grid.Column="2" BackgroundColor="#1C354A"
                     Stroke="#396077" StrokeShape="RoundRectangle 13" Padding="10,4"
                     VerticalOptions="Center" IsVisible="False">
@@ -27,6 +29,14 @@
                            FontAttributes="Bold" FontSize="16" VerticalOptions="Center" />
                 </HorizontalStackLayout>
             </Border>
+            <HorizontalStackLayout x:Name="CaptionButtons" Grid.Column="3" IsVisible="False" Spacing="2">
+                <Button x:Name="MinimizeWindowButton" Text="−" WidthRequest="34" BackgroundColor="Transparent"
+                        SemanticProperties.Description="Згорнути вікно" />
+                <Button x:Name="MaximizeWindowButton" Text="□" WidthRequest="34" BackgroundColor="Transparent"
+                        SemanticProperties.Description="Розгорнути або відновити вікно" />
+                <Button x:Name="CloseWindowButton" Text="×" WidthRequest="34" BackgroundColor="Transparent"
+                        FontSize="20" SemanticProperties.Description="Закрити вікно" />
+            </HorizontalStackLayout>
         </Grid>
         <Border x:Name="UpdateBanner" Grid.Row="1" Margin="12,8,12,0" Padding="10,4"
                 Stroke="#396077" StrokeShape="RoundRectangle 9" BackgroundColor="#1C354A" IsVisible="False">
@@ -99,7 +109,6 @@
                     <Button Grid.Column="1" Text="Скасувати" Clicked="OnCancelProfile" />
                 </Grid>
             </VerticalStackLayout>
-            <Label x:Name="StatusLabel" TextColor="#ABBDD8" IsVisible="False" />
             <VerticalStackLayout x:Name="RemoteButtons" Spacing="8">
                 <Grid x:Name="QuickButtons" ColumnDefinitions="*,*,*" ColumnSpacing="8" RowSpacing="8" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
@@ -123,6 +132,13 @@
             </VerticalStackLayout>
           </VerticalStackLayout>
         </ScrollView>
+        <Border x:Name="Toast" Grid.Row="2" IsVisible="False" InputTransparent="True"
+                VerticalOptions="End" Margin="12,0,12,12" Padding="12,10" StrokeShape="RoundRectangle 10">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                <Label x:Name="ToastIcon" FontSize="16" FontAttributes="Bold" TextColor="White" VerticalOptions="Center" />
+                <Label x:Name="ToastText" Grid.Column="1" TextColor="White" VerticalOptions="Center" />
+            </Grid>
+        </Border>
         <Grid x:Name="MenuOverlay" Grid.Row="1" Grid.RowSpan="2" ColumnDefinitions="176,*" IsVisible="False">
             <BoxView Grid.ColumnSpan="2" Color="#70070D18" SemanticProperties.Description="Закрити меню">
                 <BoxView.GestureRecognizers>
