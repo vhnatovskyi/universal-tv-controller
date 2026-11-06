@@ -1,26 +1,39 @@
-# BRAVIA Remote for iPhone
+# BRAVIA Remote
 
-Проєкт iOS-застосунку для керування Sony BRAVIA з iPhone. За основу набору кнопок беремо пульт Sony RMF-TX820U.
+Один застосунок .NET MAUI для Windows і iPhone. Обидві версії підключаються напряму до Sony BRAVIA через Simple IP Control (TCP 20060). Перша цільова модель — BRAVIA 3. Для роботи потрібна спільна домашня мережа й увімкнене «Просте управління IP» на телевізорі.
 
-## Перевірка сумісності
+## Користування
 
-1. Знайти точну модель телевізора в розділі «Про пристрій» або на наклейці. Sony комплектує пультом RMF-TX820U кілька серій BRAVIA.
-2. Під’єднати iPhone і телевізор до однієї локальної мережі. На телевізорі перевірити наявність налаштувань IP Control та Pre-Shared Key.
-3. На ввімкненому телевізорі перевірити `getRemoteControllerInfo` та одну команду IRCC-IP, наприклад VolumeUp. Документація Sony описує IRCC-IP для професійних дисплеїв, тому підтримку на конкретній побутовій моделі потрібно перевірити окремо.
-4. Окремо перевірити ввімкнення зі standby. Воно залежить від мережевих налаштувань і режиму очікування телевізора.
+1. Увімкни телевізор і відкрий BRAVIA Remote.
+2. Натисни «Додати профіль» і введи назву та IPv4-адресу телевізора. IP-адреса доступна у формі створення або редагування. Якщо попередня версія зберегла адресу, вона стане профілем «BRAVIA 3».
+3. Перший профіль стає профілем за замовчуванням. Щоб змінити його, обери інший профіль і натисни «За замовчуванням». Наступного разу застосунок відкриє цей профіль.
+4. Індикатор «Гучність» оновлюється приблизно кожні три секунди, поки відкрито пульт. Якщо телевізор не відповідає, показується тире. На iPhone дозволь доступ до локальної мережі, коли iOS запитає.
+5. Використовуй стрілки, OK, «Назад», «Додому», вибір входу, гучність і вимкнення звуку. Увімкнення з режиму очікування залежить від параметра «Віддалений пуск» і від того, чи доступний TCP-порт у цьому режимі.
 
-Якщо IRCC-IP недоступний, для моделі з Google TV наступна перевірка — чи працює мережевий пульт Google Home. Підтримку цього способу у власному застосунку потрібно дослідити окремо.
+У «Налаштувати швидкі кнопки» можна зберегти до шести кнопок на профіль. Наприклад, назви кнопку «YouTube» та запиши послідовність `Додому, Вниз, Праворуч, OK`, якщо саме так ти переходиш до плитки на своєму телевізорі. Те саме можна налаштувати для Netflix, Kyivstar TV та інших плиток. Якщо їхній порядок або початковий фокус зміниться, відредагуй послідовність.
 
-## Перша версія
+## Windows
 
-- SwiftUI та URLSession, введення IP-адреси телевізора вручну.
-- Дозвіл iOS на доступ до локальної мережі. Ключ телевізора, якщо він потрібен, зберігати в Keychain.
-- Стрілки, OK, Home, Back, гучність, Mute та вибір входу. Кнопку живлення додати після перевірки standby.
-- Для збірки та тестування нативного застосунку потрібні Mac із Xcode та iPhone. Apple Account із Personal Team дозволяє тестувати без платної підписки. Профіль підпису діє сім днів.
+Розпакуй увесь архів Windows x64 і запусти `BraviaRemote.exe` з розпакованої папки.
 
-## Документація
+Для збірки з коду потрібні .NET 10 SDK та інструменти .NET MAUI для Windows. З кореня репозиторію:
 
-- [Моделі BRAVIA та комплектні пульти Sony](https://www.sony.com/electronics/support/articles/00343536)
-- [Sony IRCC-IP](https://pro-bravia.sony.net/remote-display-control/ircc-ip/)
-- [Доступ до локальної мережі на iOS](https://developer.apple.com/documentation/technotes/tn3179-understanding-local-network-privacy)
-- [Тестування з Personal Team](https://developer.apple.com/help/account/basics/about-your-developer-account)
+```powershell
+dotnet publish src/BraviaRemote/BraviaRemote.csproj -c Release -f net10.0-windows10.0.19041.0 -p:TargetFrameworks=net10.0-windows10.0.19041.0 -r win-x64 --self-contained -o work/publish
+```
+
+## iPhone
+
+Потрібні Mac із сумісною версією Xcode, .NET 10 SDK, навантаження `maui-ios` та налаштований підпис для Apple Account. З Windows можна використати Pair to Mac. На Mac збірку для симулятора Apple Silicon можна запустити так:
+
+```sh
+dotnet workload install maui-ios
+dotnet build src/BraviaRemote/BraviaRemote.csproj -f net10.0-ios -t:Run -p:RuntimeIdentifier=iossimulator-arm64
+```
+
+Для фізичного iPhone обери під’єднаний пристрій, сертифікат розробника та профіль для `app.braviaremote.controller` в інструментах MAUI. За потреби задай унікальний ідентифікатор застосунку, зареєстрований у твоїй команді Apple. Тестування з Personal Team безкоштовне, профіль діє сім днів.
+
+- [Sony Simple IP Control](https://pro-bravia.sony.net/remote-display-control/simple-ip-control/)
+- [Інструкція Microsoft для iOS на Mac](https://learn.microsoft.com/dotnet/maui/ios/cli?view=net-maui-10.0)
+- [Підключення до Mac з Windows](https://learn.microsoft.com/dotnet/maui/ios/pair-to-mac?view=net-maui-10.0)
+- [Apple Personal Team](https://developer.apple.com/help/account/basics/about-your-developer-account)

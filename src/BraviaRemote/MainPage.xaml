@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BraviaRemote.MainPage" BackgroundColor="#121C30">
+    <ContentPage.Resources>
+        <Style TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#253757" />
+            <Setter Property="TextColor" Value="#F3F7FF" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="8,4" />
+        </Style>
+    </ContentPage.Resources>
+    <ScrollView>
+        <VerticalStackLayout Padding="20,24" Spacing="16" MaximumWidthRequest="480" HorizontalOptions="Fill">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="BRAVIA Remote" FontSize="32" FontAttributes="Bold" TextColor="#F3F7FF" />
+                <Label Text="Пульт для Sony BRAVIA у домашній мережі" TextColor="#ABBDD8" />
+            </VerticalStackLayout>
+            <VerticalStackLayout x:Name="ProfileControls" Spacing="8">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <Label Text="Профіль телевізора" TextColor="#E4EDF9" VerticalOptions="Center" />
+                    <Border x:Name="VolumeChip" Grid.Column="1" BackgroundColor="#1C354A"
+                            Stroke="#396077" StrokeShape="RoundRectangle 14" Padding="12,5"
+                            IsVisible="False">
+                        <HorizontalStackLayout Spacing="7">
+                            <Label Text="Гучність" TextColor="#B4D6E8" FontSize="13" VerticalOptions="Center" />
+                            <Label x:Name="VolumeValue" Text="—" TextColor="#83DFF6"
+                                   FontAttributes="Bold" FontSize="16" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Border>
+                </Grid>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Picker x:Name="ProfilePicker" Title="Обери профіль" TitleColor="#ABBDD8"
+                            TextColor="White" BackgroundColor="#253757" MinimumHeightRequest="48"
+                            SelectedIndexChanged="OnProfileChanged" SemanticProperties.Description="Профіль телевізора" />
+                    <Button Grid.Column="1" Text="Додати профіль" Clicked="OnAddProfile" />
+                </Grid>
+                <Label x:Name="DefaultLabel" TextColor="#83DFF6" />
+                <Grid x:Name="ProfileActions" ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Button Text="Редагувати" Clicked="OnEditProfile" />
+                    <Button x:Name="DefaultButton" Grid.Column="1" Text="За замовчуванням" Clicked="OnSetDefault" />
+                </Grid>
+            </VerticalStackLayout>
+            <VerticalStackLayout x:Name="ShortcutEditor" IsVisible="False" Spacing="8">
+                <Label Text="Швидкі кнопки" FontSize="20" FontAttributes="Bold" TextColor="#F3F7FF" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Picker x:Name="ShortcutPicker" Title="Обери кнопку" TitleColor="#ABBDD8"
+                            TextColor="White" BackgroundColor="#253757"
+                            SelectedIndexChanged="OnShortcutSelected" />
+                    <Button Grid.Column="1" Text="Нова кнопка" Clicked="OnNewShortcut" />
+                </Grid>
+                <Label Text="Назва кнопки" TextColor="#E4EDF9" />
+                <Entry x:Name="ShortcutName" Placeholder="Netflix, YouTube, Kyivstar TV…" MaxLength="40"
+                       TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#253757" />
+                <Label Text="Запиши шлях від «Додому» до потрібної плитки. Команди відокремлюй комами."
+                       TextColor="#ABBDD8" />
+                <Label Text="Команди: Додому, Вгору, Вниз, Ліворуч, Праворуч, Назад, OK"
+                       TextColor="#ABBDD8" />
+                <Editor x:Name="ShortcutSequence" Placeholder="Додому, Вниз, Праворуч, OK"
+                        TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#253757"
+                        HeightRequest="84" MaxLength="256" IsSpellCheckEnabled="False" />
+                <Label x:Name="ShortcutError" IsVisible="False" TextColor="#FFB8B8" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Button Text="Зберегти" Clicked="OnSaveShortcut" />
+                    <Button x:Name="RemoveShortcutButton" Grid.Column="1" Text="Видалити" Clicked="OnRemoveShortcut" />
+                </Grid>
+                <Button Text="До пульта" Clicked="OnCloseShortcuts" />
+            </VerticalStackLayout>
+            <VerticalStackLayout x:Name="ProfileEditor" IsVisible="False" Spacing="8">
+                <Label x:Name="EditorTitle" FontSize="20" FontAttributes="Bold" TextColor="#F3F7FF" />
+                <Label Text="Назва профілю" TextColor="#E4EDF9" />
+                <Entry x:Name="ProfileNameEntry" Placeholder="Наприклад, Вітальня" MaxLength="60"
+                       TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#253757"
+                       SemanticProperties.Description="Назва профілю" />
+                <Label Text="IP-адреса телевізора" TextColor="#E4EDF9" />
+                <Entry x:Name="AddressEntry" Placeholder="Наприклад, 192.168.1.50"
+                       TextColor="White" PlaceholderColor="#ABBDD8" BackgroundColor="#253757"
+                       IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"
+                       SemanticProperties.Description="IP-адреса телевізора" />
+                <Label x:Name="EditorError" IsVisible="False" TextColor="#FFB8B8" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Button Text="Зберегти" Clicked="OnSaveProfile" />
+                    <Button Grid.Column="1" Text="Скасувати" Clicked="OnCancelProfile" />
+                </Grid>
+            </VerticalStackLayout>
+            <Label x:Name="StatusLabel" TextColor="#ABBDD8" MinimumHeightRequest="32" />
+            <VerticalStackLayout x:Name="RemoteButtons" Spacing="12">
+                <Button Text="Перевірити з’єднання" Clicked="OnCheck" />
+                <Grid x:Name="QuickButtons" ColumnDefinitions="*,*" ColumnSpacing="8" RowSpacing="8" />
+                <Button Text="Налаштувати швидкі кнопки" Clicked="OnOpenShortcuts" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Button Text="Увімкнути" CommandParameter="on" Clicked="OnPower" />
+                    <Button Grid.Column="1" Text="Вимкнути" CommandParameter="off" Clicked="OnPower" />
+                </Grid>
+                <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                    <Button Grid.Column="1" Grid.Row="0" Text="▲" CommandParameter="9" Clicked="OnKey" SemanticProperties.Description="Вгору" />
+                    <Button Grid.Column="0" Grid.Row="1" Text="◀" CommandParameter="12" Clicked="OnKey" SemanticProperties.Description="Ліворуч" />
+                    <Button Grid.Column="1" Grid.Row="1" Text="OK" CommandParameter="13" Clicked="OnKey" SemanticProperties.Description="Підтвердити" BackgroundColor="#83DFF6" TextColor="#121C30" />
+                    <Button Grid.Column="2" Grid.Row="1" Text="▶" CommandParameter="11" Clicked="OnKey" SemanticProperties.Description="Праворуч" />
+                    <Button Grid.Column="1" Grid.Row="2" Text="▼" CommandParameter="10" Clicked="OnKey" SemanticProperties.Description="Вниз" />
+                    <Button Grid.Column="0" Grid.Row="3" Text="Назад" CommandParameter="8" Clicked="OnKey" />
+                    <Button Grid.Column="1" Grid.Row="3" Text="Додому" CommandParameter="6" Clicked="OnKey" />
+                    <Button Grid.Column="2" Grid.Row="3" Text="Входи" CommandParameter="1" Clicked="OnKey" />
+                    <Button Grid.Column="0" Grid.Row="4" Text="Гучн. −" CommandParameter="31" Clicked="OnKey" SemanticProperties.Description="Зменшити гучність" />
+                    <Button Grid.Column="1" Grid.Row="4" Text="Без звуку" CommandParameter="32" Clicked="OnKey" />
+                    <Button Grid.Column="2" Grid.Row="4" Text="Гучн. +" CommandParameter="30" Clicked="OnKey" SemanticProperties.Description="Збільшити гучність" />
+                </Grid>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
