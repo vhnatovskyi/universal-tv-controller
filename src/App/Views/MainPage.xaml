@@ -61,7 +61,7 @@
                            FontAttributes="Bold" FontSize="16" VerticalOptions="Center" />
                 </HorizontalStackLayout>
             </Border>
-            <Button x:Name="CheckButton" Grid.Column="4" Text="⟳" FontSize="19" WidthRequest="38"
+            <Button x:Name="CheckButton" Grid.Column="4" ImageSource="control_refresh.png" WidthRequest="38"
                     Padding="0" Clicked="OnCheck" IsVisible="False"
                     ToolTipProperties.Text="{DynamicResource Loc.CheckConnection}"
                     SemanticProperties.Description="{DynamicResource Loc.CheckConnection}" />

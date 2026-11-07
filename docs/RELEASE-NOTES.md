@@ -1,4 +1,14 @@
-﻿## Universal TV Controller v0.4.8
+## Universal TV Controller v0.4.9
+
+### English
+
+- Center the connection refresh icon using a vector asset instead of a font glyph.
+
+### Українська
+
+- Вирівняно іконку оновлення з’єднання по центру кнопки за допомогою векторного зображення.
+
+## Universal TV Controller v0.4.8
 
 ### English
 
