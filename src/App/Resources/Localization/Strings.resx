@@ -116,4 +116,11 @@
   <data name="UpdateInstallFailed" xml:space="preserve"><value>Could not download, verify, or start the update. Try again or open the release to install it manually.</value></data>
   <data name="TvCommandRejected" xml:space="preserve"><value>The TV rejected this command. The connection is working.</value></data>
   <data name="TvPowerUnconfirmed" xml:space="preserve"><value>The TV did not confirm changing its power state.</value></data>
+  <data name="VolumePreset3" xml:space="preserve"><value>Set TV volume to 3</value></data>
+  <data name="VolumePreset5" xml:space="preserve"><value>Set TV volume to 5</value></data>
+  <data name="VolumePreset10" xml:space="preserve"><value>Set TV volume to 10</value></data>
+  <data name="VolumePreset30" xml:space="preserve"><value>Set TV volume to 30</value></data>
+  <data name="VolumePreset100" xml:space="preserve"><value>Set TV volume to 100</value></data>
+  <data name="VolumeChangeFailed" xml:space="preserve"><value>The TV did not confirm the requested volume. Check its current level and try again.</value></data>
+  <data name="TvWakeUnconfirmed" xml:space="preserve"><value>The TV did not wake up. Turn on Remote start in the TV's Network &amp; Internet settings, then try again.</value></data>
 </root>

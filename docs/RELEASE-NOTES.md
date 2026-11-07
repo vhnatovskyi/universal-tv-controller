@@ -1,19 +1,25 @@
-﻿## Universal TV Controller v0.4.7
+﻿## Universal TV Controller v0.4.8
 
 ### English
 
-- Fix Sony system commands by negotiating feature 16. Power-off and power-on were verified on a physical BRAVIA 3.
-- Wait for a changed power state before completing the power action, and avoid relying on stale UI state.
-- Temporarily remove the TV settings button while Sony compatibility is investigated.
-- Always send app launch commands even when the initial package report already matches. Prefer the modern HTTPS launch link and retain the legacy fallback.
-- Show command rejection and unconfirmed power separately from connection errors.
-- Add regression coverage for feature negotiation, power confirmation and actual app launch delivery. Kyivstar TV launch still requires further hardware verification.
+- Center remote icons using vector assets and fit the remote controls without scrolling.
+- Wake Sony TVs with Wake-on-LAN instead of relying on a remote session that may be asleep. On Windows, learn and save the TV MAC address automatically. Remote start must be enabled on the TV.
+- Keep Sony's required system-control flag and negotiate app/input features for control sessions. Power-off and Wake-on-LAN power-on were verified with the production client on BRAVIA 3.
+- Hold volume −/+ to repeat until released; stop on loss of focus or app deactivation.
+- Add volume presets 3, 5, 10, 30 and 100. Read the current level and confirm every adjustment to reach the exact target. Large changes can take a few seconds.
+- Improve the wake failure message with the Remote start setting needed on BRAVIA.
+- Verify every preset with a TLS simulator, cancellation and missing confirmations. Levels 3, 5 and 10 were also verified on the physical TV.
+- Fix Netflix and Kyivstar TV shortcuts using their native app links, both verified on the physical TV. Keep YouTube's working native link.
+- The TV settings button remains removed while Sony settings compatibility is investigated.
 
 ### Українська
 
-- Виправлено системні команди Sony завдяки узгодженню прапорця 16. Вимкнення та ввімкнення перевірено на фізичному BRAVIA 3.
-- Кнопка живлення очікує підтвердження зміни стану ТВ та не покладається на застарілий стан інтерфейсу.
-- Кнопку налаштувань ТВ тимчасово прибрано на час дослідження сумісності Sony.
-- Команда запуску застосунку надсилається навіть тоді, коли початковий звіт ТВ уже містить той самий пакет. Спершу використовується сучасне HTTPS-посилання, старий формат залишено як резервний.
-- Відхилення команди та непідтверджену зміну живлення відокремлено від помилок з’єднання.
-- Додано перевірки узгодження прапорців, підтвердження живлення та фактичного надсилання запуску застосунку. Запуск Kyivstar TV ще потребує перевірки на телевізорі.
+- Іконки пульта вирівняно по центру за допомогою векторних зображень; усі кнопки вміщаються без прокручування.
+- Для пробудження Sony використовується Wake-on-LAN замість з’єднання пульта, яке може спати. На Windows MAC-адреса ТВ визначається та зберігається автоматично. На телевізорі потрібно ввімкнути «Віддалений запуск».
+- Збережено обов’язковий прапорець системного керування Sony та узгоджено можливості застосунків і введення для сеансів команд. Вимкнення та ввімкнення через Wake-on-LAN перевірено production-клієнтом на BRAVIA 3.
+- Утримання −/+ безперервно змінює гучність; відпускання, втрата фокуса чи деактивація застосунку зупиняє повторення.
+- Додано кнопки гучності 3, 5, 10, 30 і 100. Пульт читає поточний рівень та підтверджує кожен крок до точного значення. Великі зміни можуть тривати кілька секунд.
+- Повідомлення про невдале пробудження підказує налаштування «Віддалений запуск».
+- Усі рівні, скасування та відсутність підтверджень перевіряються TLS-емулятором. Значення 3, 5 і 10 також перевірено на фізичному ТВ.
+- Виправлено кнопки Netflix і Kyivstar TV через власні посилання застосунків; обидва запуски перевірено на фізичному ТВ. Робоче посилання YouTube збережено.
+- Кнопка налаштувань ТВ залишається прибраною на час дослідження сумісності Sony.

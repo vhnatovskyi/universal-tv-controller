@@ -6,6 +6,17 @@ using System.Security.Cryptography.X509Certificates;
 using BraviaRemote;
 using static BraviaRemote.GoogleTvWire;
 
+var wake = GoogleTvApps.CreateWakePacket("02-11-22-33-44-55");
+var wakeMac = Convert.FromHexString("021122334455");
+if (wake.Length != 102 || !wake.Take(6).All(value => value == 255)
+    || Enumerable.Range(0, 16).Any(index => !wake.AsSpan(6 + index * 6, 6).SequenceEqual(wakeMac)))
+    throw new Exception("Invalid Wake-on-LAN packet");
+foreach (var invalid in new[] { "", "invalid", "00:00:00:00:00:00", "FF:FF:FF:FF:FF:FF", "02:11:22:33:44" })
+{
+    try { GoogleTvApps.CreateWakePacket(invalid); throw new Exception("Invalid wake MAC was accepted"); }
+    catch (ArgumentException) { }
+}
+
 using var rsa = RSA.Create(2048);
 var request = new CertificateRequest("CN=Protocol test",rsa,HashAlgorithmName.SHA256,RSASignaturePadding.Pkcs1);
 using var generated = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1),DateTimeOffset.UtcNow.AddDays(1));
@@ -16,6 +27,8 @@ using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 var token=timeout.Token;
 var listener=new TcpListener(IPAddress.Loopback,6466);
 listener.Start();
+var volumeCases = new (int Initial, int Target)[] { (10, 3), (0, 5), (100, 10), (5, 30), (0, 100), (3, 3), (100, 3) };
+using var holdCancellation = new CancellationTokenSource();
 try
 {
     var server=Task.Run(async () =>
@@ -38,7 +51,7 @@ try
             if(command.Single().Number!=90)throw new Exception("Missing app command");
             var launch = ReadFields(command.Single().Data!);
             var uri = System.Text.Encoding.UTF8.GetString(launch.Single(f => f.Number == 1).Data!);
-            if (launch.Count != 1 || uri != "https://play.google.com/apps/launch?id=com.kyivstar.tv.androidtv")
+            if (launch.Count != 1 || uri != "com.kyivstar.tv.androidtv://")
                 throw new Exception("Incorrect app launch format");
             var app=Bytes(20,Bytes(1,Text(12,"com.kyivstar.tv.androidtv")));
             // Deliberately split the wire frame to verify stream framing.
@@ -50,6 +63,15 @@ try
         }, initialPackage: "com.kyivstar.tv.androidtv");
         await ServeAsync(async stream =>
         {
+            var command = ReadFields(await ReceiveAsync(stream, token));
+            var launch = ReadFields(command.Single(field => field.Number == 90).Data!);
+            var uri = System.Text.Encoding.UTF8.GetString(launch.Single(field => field.Number == 1).Data!);
+            if (launch.Count != 1 || uri != "nflx://www.netflix.com/browse")
+                throw new Exception("Netflix must use its native app link");
+            await SendAsync(stream, Bytes(20, Bytes(1, Text(12, "com.netflix.ninja"))), token);
+        });
+        await ServeAsync(async stream =>
+        {
             var command=ReadFields(await ReceiveAsync(stream,token));
             var batch=ReadFields(command.Single(f=>f.Number==21).Data!);
             var edit=ReadFields(batch.Single(f=>f.Number==3).Data!);
@@ -57,6 +79,20 @@ try
             if(System.Text.Encoding.UTF8.GetString(value)!="voice test")
                 throw new Exception("Incorrect dictated text");
         }, textField: true);
+        foreach (var (initial, target) in volumeCases)
+            await ServeAsync(stream => ServeVolumeAsync(stream, initial, target), initialVolume: initial);
+        await ServeAsync(stream => ServeVolumeAsync(stream, 5, 8), initialVolume: 5);
+        await ServeAsync(async stream =>
+        {
+            await ExpectKeyAsync(stream, 24);
+            // Leave the volume unchanged: the client must fail, not report the preset as set.
+            await ExpectNoKeyAsync(stream);
+        }, initialVolume: 5);
+        await ServeAsync(async stream =>
+        {
+            await ExpectKeyAsync(stream, 26);
+            await ExpectNoKeyAsync(stream);
+        }, screenOn: false);
     },token);
     await GoogleTvApps.ControlAsync(IPAddress.Loopback, pairing, power: false);
     await GoogleTvApps.ControlAsync(IPAddress.Loopback, pairing, power: true);
@@ -66,14 +102,43 @@ try
     if(await GoogleTvApps.ControlAsync(IPAddress.Loopback,pairing)!=13)throw new Exception("Missing volume");
     await GoogleTvApps.ControlAsync(IPAddress.Loopback,pairing,sonyKey:30);
     await GoogleTvApps.LaunchAsync(IPAddress.Loopback,pairing,"com.kyivstar.tv.androidtv");
+    await GoogleTvApps.LaunchAsync(IPAddress.Loopback,pairing,"com.netflix.ninja");
     await GoogleTvApps.TypeTextAsync(IPAddress.Loopback,pairing,"voice test");
+    foreach (var (initial, target) in volumeCases)
+    {
+        var last = -1;
+        await GoogleTvApps.SetVolumeAsync(IPAddress.Loopback, pairing, target, value => last = value);
+        if (last != target)
+            throw new Exception($"Volume {initial} -> {target} was not confirmed");
+    }
+    try
+    {
+        await GoogleTvApps.HoldVolumeAsync(IPAddress.Loopback, pairing, 1, value =>
+        {
+            if (value == 8) holdCancellation.Cancel();
+        }, holdCancellation.Token);
+        throw new Exception("Holding volume did not stop on cancellation");
+    }
+    catch (OperationCanceledException) when (holdCancellation.IsCancellationRequested) { }
+    try
+    {
+        await GoogleTvApps.SetVolumeAsync(IPAddress.Loopback, pairing, 10);
+        throw new Exception("Unconfirmed volume was accepted");
+    }
+    catch (OperationCanceledException) { }
+    try
+    {
+        await GoogleTvApps.ControlAsync(IPAddress.Loopback, pairing, power: true);
+        throw new Exception("Unconfirmed wake was accepted");
+    }
+    catch (TvPowerUnconfirmedException error) when (error.ExpectedOn == true) { }
     await server;
-    Console.WriteLine("Sony feature 16, confirmed power on/off/toggle, idempotence, optional volume, actual app launch despite initial package, volume and text input passed.");
+    Console.WriteLine("Sony feature 16, power confirmation, app launch, volume presets 3/5/10/30/100 from different levels, hold cancellation, missing volume confirmation and text input passed.");
 }
 finally { listener.Stop(); }
 
 async Task ServeAsync(Func<SslStream,Task> action, bool textField = false, bool screenOn = true, uint features = 639,
-    string? initialPackage = null)
+    string? initialPackage = null, int initialVolume = 13)
 {
     using var client=await listener.AcceptTcpClientAsync(token);
     using var stream=new SslStream(client.GetStream(),false,(_,_,_,_)=>true);
@@ -91,7 +156,7 @@ async Task ServeAsync(Func<SslStream,Task> action, bool textField = false, bool 
     var active=ReadFields(await ReceiveAsync(stream,token));
     if(active.Single().Number!=2)throw new Exception("Missing active");
     if ((features & 64) != 0)
-        await SendAsync(stream,Bytes(50,Number(7,13)),token);
+        await SendAsync(stream,Bytes(50,Message(Number(6,100),Number(7,(uint)initialVolume))),token);
     if (initialPackage is not null)
         await SendAsync(stream, Bytes(20, Bytes(1, Text(12, initialPackage))), token);
     if(textField)
@@ -116,4 +181,16 @@ async Task ExpectNoKeyAsync(SslStream stream)
     var probe = new byte[1];
     if (await stream.ReadAsync(probe, token) != 0)
         throw new Exception("TV already in requested state received an unwanted power toggle");
+}
+
+async Task ServeVolumeAsync(SslStream stream, int current, int target)
+{
+    while (current != target)
+    {
+        var direction = Math.Sign(target - current);
+        await ExpectKeyAsync(stream, direction > 0 ? 24u : 25u);
+        current += direction;
+        await SendAsync(stream, Bytes(50, Message(Number(6,100), Number(7,(uint)current))), token);
+    }
+    await ExpectNoKeyAsync(stream);
 }

@@ -14,9 +14,12 @@ public sealed record GoogleTvPairing(string Fingerprint, string Certificate);
 public sealed class AppLaunchUnconfirmedException() : IOException("The TV did not confirm the requested app in the foreground.");
 public sealed class TvTextFieldRequiredException() : IOException("Open a text field on the TV before typing.");
 public sealed class RemoteCommandRejectedException(uint code) : IOException($"The TV rejected the remote command ({code}).");
-public sealed class TvPowerUnconfirmedException() : IOException("The TV did not confirm the requested power state.");
+public sealed class TvPowerUnconfirmedException(bool? expectedOn = null) : IOException("The TV did not confirm the requested power state.")
+{
+    public bool? ExpectedOn { get; } = expectedOn;
+}
 
-public static class GoogleTvApps
+public static partial class GoogleTvApps
 {
     private const uint Ping = 1;
     private const uint Power = 32;
@@ -91,7 +94,7 @@ public static class GoogleTvApps
         int? volume = null;
         bool? screenOn = null;
         var required = sonyKey is null && power is null ? Volume : Keys | Power;
-        await ConfigureAsync(tls, Ping | Keys | Power | Volume, required, token, message =>
+        await ConfigureAsync(tls, Ping | Keys | Power | Volume | CurrentApp | AppLinks, required, token, message =>
         {
             volume = ReadVolume(message) ?? volume;
             screenOn = ReadPower(message) ?? screenOn;
@@ -133,7 +136,7 @@ public static class GoogleTvApps
             }
             catch (OperationCanceledException) when (!token.IsCancellationRequested)
             {
-                throw new TvPowerUnconfirmedException();
+                throw new TvPowerUnconfirmedException(expectedPower);
             }
         }
         await Task.Delay(120, token);
@@ -229,11 +232,15 @@ public static class GoogleTvApps
 
         await ConfigureAsync(tls, AppLinks | Ping | Power | CurrentApp, AppLinks, token);
 
-        var launch = package == "com.google.android.youtube.tv"
-            ? Text(1, "vnd.youtube://")
-            : useLegacyLink
+        var launch = package switch
+        {
+            "com.google.android.youtube.tv" => Text(1, "vnd.youtube://"),
+            "com.netflix.ninja" => Text(1, "nflx://www.netflix.com/browse"),
+            "com.kyivstar.tv.androidtv" => Text(1, "com.kyivstar.tv.androidtv://"),
+            _ => useLegacyLink
                 ? Text(1, $"market://launch?id={Uri.EscapeDataString(package)}")
-                : Text(1, $"https://play.google.com/apps/launch?id={Uri.EscapeDataString(package)}");
+                : Text(1, $"https://play.google.com/apps/launch?id={Uri.EscapeDataString(package)}")
+        };
         await SendAsync(tls, Bytes(90, launch), token);
 
         // Confirm the foreground package, rather than treating a successful write as a launch.

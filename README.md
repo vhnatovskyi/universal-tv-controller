@@ -17,7 +17,9 @@ Download `UniversalTvController-Setup-X.Y.Z.exe` from [GitHub Releases](https://
 
 Version 0.3.4 resets profiles from earlier versions and their pairing credentials. Create a new paired profile after upgrading.
 
-The volume and active-app indicator update from Google TV while the remote is open. An unrecognized app shows a generic icon and its package name as a tooltip. App shortcuts report success when the TV confirms the requested app is in the foreground.
+The volume and active-app indicator update from Google TV while the remote is open. Hold − or + to change volume continuously; release to stop. The 3, 5, 10, 30, and 100 buttons automatically adjust to that exact level using the TV's reported volume, regardless of the starting level. Large changes can take a few seconds. An unrecognized app shows a generic icon and its package name as a tooltip. App shortcuts report success when the TV confirms the requested app is in the foreground.
+
+For BRAVIA 3 power-on, enable **Settings → Network & Internet → Remote start → On (Powered on by apps)** on the TV. If already enabled, turn it off and back on, as [Sony recommends](https://www.sony.co.uk/electronics/support/articles/00364921).
 
 The interface follows the system language, with English as a fallback. A manual language override is available in Settings. **Updates** lists releases. On Windows, **Update to the latest version** downloads and verifies the installer, then closes the app and opens the installation wizard in the current app folder. TV profiles are kept. On iPhone, the button opens the latest release page. Release pages remain available for manual installation.
 

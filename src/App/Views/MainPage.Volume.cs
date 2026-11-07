@@ -22,6 +22,8 @@ public partial class MainPage
 
     internal void SetVolumeTracking(bool active)
     {
+        if (!active)
+            CancelVolumeChange();
         if (volumeTrackingActive == active)
             return;
         volumeTrackingActive = active;

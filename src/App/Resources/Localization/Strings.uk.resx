@@ -116,4 +116,11 @@
   <data name="UpdateInstallFailed" xml:space="preserve"><value>Не вдалося завантажити, перевірити або запустити оновлення. Спробуй ще раз або відкрий реліз і встанови його вручну.</value></data>
   <data name="TvCommandRejected" xml:space="preserve"><value>Телевізор відхилив цю команду. З’єднання працює.</value></data>
   <data name="TvPowerUnconfirmed" xml:space="preserve"><value>Телевізор не підтвердив зміну стану живлення.</value></data>
+  <data name="VolumePreset3" xml:space="preserve"><value>Встановити гучність ТВ на 3</value></data>
+  <data name="VolumePreset5" xml:space="preserve"><value>Встановити гучність ТВ на 5</value></data>
+  <data name="VolumePreset10" xml:space="preserve"><value>Встановити гучність ТВ на 10</value></data>
+  <data name="VolumePreset30" xml:space="preserve"><value>Встановити гучність ТВ на 30</value></data>
+  <data name="VolumePreset100" xml:space="preserve"><value>Встановити гучність ТВ на 100</value></data>
+  <data name="VolumeChangeFailed" xml:space="preserve"><value>Телевізор не підтвердив потрібну гучність. Перевір поточний рівень і спробуй ще раз.</value></data>
+  <data name="TvWakeUnconfirmed" xml:space="preserve"><value>ТВ не прокинувся. Увімкни «Віддалений запуск» у налаштуваннях «Мережа й Інтернет» телевізора та спробуй знову.</value></data>
 </root>

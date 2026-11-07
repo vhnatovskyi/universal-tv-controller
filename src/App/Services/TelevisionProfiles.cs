@@ -7,7 +7,7 @@ namespace BraviaRemote;
 
 internal sealed record QuickButton(string Name, string AppPackage);
 
-internal sealed record TelevisionProfile(Guid Id, string Name, string Address, QuickButton[]? Shortcuts = null);
+internal sealed record TelevisionProfile(Guid Id, string Name, string Address, QuickButton[]? Shortcuts = null, string? MacAddress = null);
 
 internal sealed record TelevisionProfiles(List<TelevisionProfile> Items, Guid? DefaultId)
 {

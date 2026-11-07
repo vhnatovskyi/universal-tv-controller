@@ -55,15 +55,17 @@ public partial class MainPage : ContentPage
 
         var shortcutRows = (Shortcuts.Length + ShortcutColumns - 1) / ShortcutColumns;
         var minimum = DeviceInfo.Platform == DevicePlatform.WinUI ? 36d : 44d;
-        var available = ScreenScroll.Height - 80 - shortcutRows * 8;
+        var available = ScreenScroll.Height - 132 - shortcutRows * 8;
         var height = Math.Clamp(Math.Floor(available / (7 + shortcutRows)), minimum, 58);
-        DirectionPad.WidthRequest = DirectionPad.HeightRequest = height * 3 + 24;
+        DirectionPad.WidthRequest = DirectionPad.HeightRequest = Math.Clamp(
+            available + 24 - height * (4 + shortcutRows), 60, height * 3 + 24);
         if (!Resources.TryGetValue("RemoteButtonHeight", out var previous) || !Equals(previous, height))
             Resources["RemoteButtonHeight"] = height;
     }
 
     private void RefreshRemote()
     {
+        CancelVolumeChange();
         var profile = CurrentProfile;
         var isDefault = profile is not null && profile.Id == profiles.DefaultId;
         ProfileControls.IsVisible = screen == Screen.Settings;
@@ -74,6 +76,7 @@ public partial class MainPage : ContentPage
         DiscoveryPanel.IsVisible = screen == Screen.Discovery;
         Onboarding.IsVisible = screen == Screen.Remote && profile is null;
         RemoteButtons.IsVisible = screen == Screen.Remote && profile is not null;
+        ScreenScroll.Orientation = RemoteButtons.IsVisible ? ScrollOrientation.Neither : ScrollOrientation.Vertical;
         CheckButton.IsVisible = RemoteButtons.IsVisible;
         ProfileActions.IsVisible = ShortcutSettingsButton.IsVisible = ProfilePairingControls.IsVisible = profile is not null;
 
@@ -272,17 +275,21 @@ public partial class MainPage : ContentPage
         }
     }
 
+    private bool? tvPoweredOn;
+
     private async void OnTogglePower(object? sender, EventArgs e)
     {
+        var observedOn = tvPoweredOn;
         await RunAsync(async tv =>
         {
-            await tv.TogglePowerAsync();
+            await tv.TogglePowerAsync(observedOn);
             return null;
         });
     }
 
     private void UpdatePowerState(bool? on)
     {
+        tvPoweredOn = on;
         PowerButton.ImageSource = on switch
         {
             true => "control_power_on.png",
@@ -332,7 +339,17 @@ public partial class MainPage : ContentPage
                 ShowToast(Text("PairTvFirst"), success: false);
                 return;
             }
-            var message = await operation(new TvControl(address, pairing));
+            var macAddress = profile.MacAddress ?? await TvWakeNetwork.FindMacAsync(address);
+            if (profile.MacAddress is null && macAddress is not null)
+            {
+                var index = profiles.Items.FindIndex(item => item.Id == profile.Id);
+                if (index >= 0)
+                {
+                    profiles.Items[index] = profiles.Items[index] with { MacAddress = macAddress };
+                    profiles.Save(Preferences.Default);
+                }
+            }
+            var message = await operation(new TvControl(address, pairing, macAddress));
             if (message is not null)
                 ShowToast(message, success: true);
         }
@@ -352,9 +369,9 @@ public partial class MainPage : ContentPage
         {
             ShowToast(Text("TvCommandRejected"), success: false);
         }
-        catch (TvPowerUnconfirmedException)
+        catch (TvPowerUnconfirmedException error)
         {
-            ShowToast(Text("TvPowerUnconfirmed"), success: false);
+            ShowToast(Text(error.ExpectedOn == true ? "TvWakeUnconfirmed" : "TvPowerUnconfirmed"), success: false);
         }
         catch (AppLaunchUnconfirmedException)
         {

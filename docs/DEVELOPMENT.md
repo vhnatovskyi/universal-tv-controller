@@ -25,6 +25,12 @@ The checks use a local TLS server on port 6466 to verify Sony feature 16 negotia
 
 Run `dotnet run --project tests/ReleaseInstaller/ReleaseInstaller.csproj` to check update downloads, checksum validation, HTTP errors, cancellation, and partial-file cleanup without downloading or executing a real installer.
 
+Volume presets confirm each step on one Google TV connection; holding a volume button repeats until release, deactivation, or a volume limit. Tests cover all five presets from different initial levels, cancellation, and missing confirmations. Values 3, 5 and 10 were verified on BRAVIA 3.
+
+Sony BRAVIA 3 wake-up uses a Wake-on-LAN magic packet followed by a pinned Google TV handshake to confirm the TV is on. Windows resolves the MAC with `SendARP` and stores it as the optional `MacAddress` profile field. No POWER retry is sent after a wake packet. Enable Remote start on the TV, following [Sony's BRAVIA 3 instructions](https://www.sony.co.uk/electronics/support/articles/00364921). Power-off followed by Wake-on-LAN power-on was verified using the production client.
+
+Native app links verified on the physical TV: YouTube `vnd.youtube://`, Netflix `nflx://www.netflix.com/browse`, and Kyivstar TV `com.kyivstar.tv.androidtv://`. A matching initial package report never skips sending the launch command.
+
 On a Mac with compatible Xcode and .NET 10:
 
 ```sh
