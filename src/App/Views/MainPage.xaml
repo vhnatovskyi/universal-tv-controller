@@ -231,12 +231,8 @@
                     <Button Grid.Column="1" Grid.Row="1" ImageSource="control_mute.png" CommandParameter="32" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Mute}" ToolTipProperties.Text="{DynamicResource Loc.Mute}" />
                     <Button Grid.Column="2" Grid.Row="1" Text="+" FontSize="25" TextColor="#A1CEEC" CommandParameter="30" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.VolumeUp}" ToolTipProperties.Text="{DynamicResource Loc.VolumeUp}" />
                 </Grid>
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                    <Button x:Name="VoiceButton" ImageSource="control_mic.png" Text="{DynamicResource Loc.VoiceInput}" TextColor="#D4BDFB"
-                            BackgroundColor="#29243D" BorderColor="#584879" Clicked="OnVoiceInput" />
-                    <Button Grid.Column="1" ImageSource="control_settings.png" Text="{DynamicResource Loc.TvSettings}"
-                            CommandParameter="7" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.TvSettings}" />
-                </Grid>
+                <Button x:Name="VoiceButton" ImageSource="control_mic.png" Text="{DynamicResource Loc.VoiceInput}" TextColor="#D4BDFB"
+                        BackgroundColor="#29243D" BorderColor="#584879" Clicked="OnVoiceInput" />
             </VerticalStackLayout>
           </VerticalStackLayout>
         </ScrollView>

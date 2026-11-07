@@ -21,7 +21,7 @@ The volume and active-app indicator update from Google TV while the remote is op
 
 The interface follows the system language, with English as a fallback. A manual language override is available in Settings. **Updates** lists releases. On Windows, **Update to the latest version** downloads and verifies the installer, then closes the app and opens the installation wizard in the current app folder. TV profiles are kept. On iPhone, the button opens the latest release page. Release pages remain available for manual installation.
 
-For voice input, open a search or text field on the TV, press the microphone, speak a short phrase, and review the text before sending. Windows uses an installed speech recognizer for the selected language. iPhone asks for microphone and speech recognition access. The gear button opens the TV's settings.
+For voice input, open a search or text field on the TV, press the microphone, speak a short phrase, and review the text before sending. Windows uses an installed speech recognizer for the selected language. iPhone asks for microphone and speech recognition access. The TV settings button is temporarily removed while Sony compatibility is investigated.
 
 ## Development
 

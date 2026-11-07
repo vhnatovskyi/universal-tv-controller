@@ -200,6 +200,10 @@ public partial class MainPage
         {
             ShowToast(Text("AppLaunchUnconfirmed"), success: false);
         }
+        catch (RemoteCommandRejectedException)
+        {
+            ShowToast(Text("TvCommandRejected"), success: false);
+        }
         catch (Exception error) when (error is IOException or SocketException or AuthenticationException
             or CryptographicException or FormatException or InvalidOperationException or OperationCanceledException)
         {

@@ -272,24 +272,17 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private bool? tvPoweredOn;
-
     private async void OnTogglePower(object? sender, EventArgs e)
     {
-        var observedPower = tvPoweredOn;
         await RunAsync(async tv =>
         {
-            if (observedPower is { } on)
-                await tv.SetPowerAsync(!on);
-            else
-                await tv.TogglePowerAsync();
+            await tv.TogglePowerAsync();
             return null;
         });
     }
 
     private void UpdatePowerState(bool? on)
     {
-        tvPoweredOn = on;
         PowerButton.ImageSource = on switch
         {
             true => "control_power_on.png",
@@ -354,6 +347,18 @@ public partial class MainPage : ContentPage
         catch (EndOfStreamException)
         {
             ShowToast(Text("ConnectionClosed"), success: false);
+        }
+        catch (RemoteCommandRejectedException)
+        {
+            ShowToast(Text("TvCommandRejected"), success: false);
+        }
+        catch (TvPowerUnconfirmedException)
+        {
+            ShowToast(Text("TvPowerUnconfirmed"), success: false);
+        }
+        catch (AppLaunchUnconfirmedException)
+        {
+            ShowToast(Text("AppLaunchUnconfirmed"), success: false);
         }
         catch (IOException)
         {

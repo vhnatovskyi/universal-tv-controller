@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography;
@@ -20,21 +20,11 @@ try
 {
     var server=Task.Run(async () =>
     {
-        await ServeAsync(stream => ExpectKeyAsync(stream, 26), screenOn: true, features: 35);
-        await ServeAsync(stream => ExpectKeyAsync(stream, 26), screenOn: false, features: 35);
-        await ServeAsync(ExpectNoKeyAsync, screenOn: true, features: 35);
-        await ServeAsync(ExpectNoKeyAsync, screenOn: false, features: 35);
-        await ServeAsync(stream => ExpectKeyAsync(stream, 26), features: 35);
-        await ServeAsync(async stream =>
-        {
-            var command = ReadFields(await ReceiveAsync(stream, token));
-            var launch = ReadFields(command.Single(f => f.Number == 90).Data!);
-            var uri = System.Text.Encoding.UTF8.GetString(launch.Single(f => f.Number == 1).Data!);
-            if (uri != "market://launch?id=com.android.tv.settings")
-                throw new Exception("Settings button did not launch TV settings");
-            await SendAsync(stream, Bytes(20, Bytes(1, Text(12, "com.android.tv.settings"))), token);
-            await Task.Delay(50, token);
-        });
+        await ServeAsync(stream => ExpectKeyAsync(stream, 26, reportedPower: false), screenOn: true, features: 51);
+        await ServeAsync(stream => ExpectKeyAsync(stream, 26, reportedPower: true), screenOn: false, features: 51);
+        await ServeAsync(ExpectNoKeyAsync, screenOn: true, features: 51);
+        await ServeAsync(ExpectNoKeyAsync, screenOn: false, features: 51);
+        await ServeAsync(stream => ExpectKeyAsync(stream, 26, reportedPower: false), features: 51);
         await ServeAsync(async stream => { await Task.Delay(50,token); });
         await ServeAsync(async stream =>
         {
@@ -46,6 +36,10 @@ try
         {
             var command=ReadFields(await ReceiveAsync(stream,token));
             if(command.Single().Number!=90)throw new Exception("Missing app command");
+            var launch = ReadFields(command.Single().Data!);
+            var uri = System.Text.Encoding.UTF8.GetString(launch.Single(f => f.Number == 1).Data!);
+            if (launch.Count != 1 || uri != "https://play.google.com/apps/launch?id=com.kyivstar.tv.androidtv")
+                throw new Exception("Incorrect app launch format");
             var app=Bytes(20,Bytes(1,Text(12,"com.kyivstar.tv.androidtv")));
             // Deliberately split the wire frame to verify stream framing.
             var frame=Message(new byte[]{(byte)app.Length},app);
@@ -53,7 +47,7 @@ try
             await Task.Delay(20,token);
             await stream.WriteAsync(frame.AsMemory(2),token);
             await Task.Delay(80,token);
-        });
+        }, initialPackage: "com.kyivstar.tv.androidtv");
         await ServeAsync(async stream =>
         {
             var command=ReadFields(await ReceiveAsync(stream,token));
@@ -69,17 +63,17 @@ try
     await GoogleTvApps.ControlAsync(IPAddress.Loopback, pairing, power: true);
     await GoogleTvApps.ControlAsync(IPAddress.Loopback, pairing, power: false);
     await GoogleTvApps.ControlAsync(IPAddress.Loopback, pairing, sonyKey: 0);
-    await GoogleTvApps.ControlAsync(IPAddress.Loopback, pairing, sonyKey: 7);
     if(await GoogleTvApps.ControlAsync(IPAddress.Loopback,pairing)!=13)throw new Exception("Missing volume");
     await GoogleTvApps.ControlAsync(IPAddress.Loopback,pairing,sonyKey:30);
     await GoogleTvApps.LaunchAsync(IPAddress.Loopback,pairing,"com.kyivstar.tv.androidtv");
     await GoogleTvApps.TypeTextAsync(IPAddress.Loopback,pairing,"voice test");
     await server;
-    Console.WriteLine("Power on/off/toggle, idempotence, optional volume, settings launch confirmation, volume, app launch and text input passed.");
+    Console.WriteLine("Sony feature 16, confirmed power on/off/toggle, idempotence, optional volume, actual app launch despite initial package, volume and text input passed.");
 }
 finally { listener.Stop(); }
 
-async Task ServeAsync(Func<SslStream,Task> action, bool textField = false, bool screenOn = true, uint features = 615)
+async Task ServeAsync(Func<SslStream,Task> action, bool textField = false, bool screenOn = true, uint features = 639,
+    string? initialPackage = null)
 {
     using var client=await listener.AcceptTcpClientAsync(token);
     using var stream=new SslStream(client.GetStream(),false,(_,_,_,_)=>true);
@@ -90,11 +84,16 @@ async Task ServeAsync(Func<SslStream,Task> action, bool textField = false, bool 
     await SendAsync(stream,Bytes(1,Number(1,features)),token);
     var config=ReadFields(await ReceiveAsync(stream,token));
     if(config.Single().Number!=1)throw new Exception("Missing configure");
+    var negotiated = ReadFields(config.Single().Data!).Single(f => f.Number == 1).Value;
+    if ((features & 16) != 0 && (negotiated & 16) == 0)
+        throw new Exception("Sony system-control feature 16 was dropped during negotiation");
     await SendAsync(stream,Bytes(2,[]),token);
     var active=ReadFields(await ReceiveAsync(stream,token));
     if(active.Single().Number!=2)throw new Exception("Missing active");
     if ((features & 64) != 0)
         await SendAsync(stream,Bytes(50,Number(7,13)),token);
+    if (initialPackage is not null)
+        await SendAsync(stream, Bytes(20, Bytes(1, Text(12, initialPackage))), token);
     if(textField)
         await SendAsync(stream,Bytes(20,Message(Bytes(1,Message(Number(1,7),Number(2,1))),
             Bytes(2,Message(Number(1,2),Number(3,0),Number(4,0))))),token);
@@ -102,12 +101,14 @@ async Task ServeAsync(Func<SslStream,Task> action, bool textField = false, bool 
     await action(stream);
 }
 
-async Task ExpectKeyAsync(SslStream stream, uint expected)
+async Task ExpectKeyAsync(SslStream stream, uint expected, bool? reportedPower = null)
 {
     var command = ReadFields(await ReceiveAsync(stream, token));
     var key = ReadFields(command.Single(f => f.Number == 10).Data!);
     if (key.Single(f => f.Number == 1).Value != expected || key.Single(f => f.Number == 2).Value != 3)
         throw new Exception($"Expected a short press of key {expected}");
+    if (reportedPower is { } on)
+        await SendAsync(stream, Bytes(40, Number(1, on ? 1u : 0u)), token);
 }
 
 async Task ExpectNoKeyAsync(SslStream stream)

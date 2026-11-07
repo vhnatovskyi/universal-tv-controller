@@ -114,4 +114,6 @@
   <data name="UpdateDownloading" xml:space="preserve"><value>Завантажуємо та перевіряємо оновлення…</value></data>
   <data name="UpdateCancelled" xml:space="preserve"><value>Оновлення скасовано або час завантаження вичерпано. Можна спробувати ще раз.</value></data>
   <data name="UpdateInstallFailed" xml:space="preserve"><value>Не вдалося завантажити, перевірити або запустити оновлення. Спробуй ще раз або відкрий реліз і встанови його вручну.</value></data>
+  <data name="TvCommandRejected" xml:space="preserve"><value>Телевізор відхилив цю команду. З’єднання працює.</value></data>
+  <data name="TvPowerUnconfirmed" xml:space="preserve"><value>Телевізор не підтвердив зміну стану живлення.</value></data>
 </root>

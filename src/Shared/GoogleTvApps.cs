@@ -13,6 +13,8 @@ namespace BraviaRemote;
 public sealed record GoogleTvPairing(string Fingerprint, string Certificate);
 public sealed class AppLaunchUnconfirmedException() : IOException("The TV did not confirm the requested app in the foreground.");
 public sealed class TvTextFieldRequiredException() : IOException("Open a text field on the TV before typing.");
+public sealed class RemoteCommandRejectedException(uint code) : IOException($"The TV rejected the remote command ({code}).");
+public sealed class TvPowerUnconfirmedException() : IOException("The TV did not confirm the requested power state.");
 
 public static class GoogleTvApps
 {
@@ -22,6 +24,8 @@ public static class GoogleTvApps
     private const uint CurrentApp = 4;
     private const uint Keys = 2;
     private const uint Volume = 64;
+    // Sony requires feature 16 for system key injection, even though volume works without it.
+    private const uint SystemControl = 16;
 
     public static async Task TypeTextAsync(IPAddress address, GoogleTvPairing pairing, string text)
     {
@@ -75,13 +79,6 @@ public static class GoogleTvApps
 
     public static async Task<int> ControlAsync(IPAddress address, GoogleTvPairing pairing, int? sonyKey = null, bool? power = null)
     {
-        // Sony firmware can ignore KEYCODE_SETTINGS; launch the settings app instead.
-        if (sonyKey == 7 && power is null)
-        {
-            await LaunchAsync(address, pairing, "com.android.tv.settings");
-            return 0;
-        }
-
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         var token = timeout.Token;
         using var certificate = X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(pairing.Certificate), "");
@@ -120,6 +117,25 @@ public static class GoogleTvApps
             }
         };
         await SendAsync(tls, Bytes(10, Message(Number(1, key), Number(2, 3))), token);
+        if (key == 26)
+        {
+            var expectedPower = power ?? !screenOn;
+            using var confirmation = CancellationTokenSource.CreateLinkedTokenSource(token);
+            confirmation.CancelAfter(TimeSpan.FromSeconds(4));
+            try
+            {
+                while (true)
+                {
+                    var message = await ReadRemoteAsync(tls, confirmation.Token);
+                    if (ReadPower(message) is { } observed && (expectedPower is null || observed == expectedPower))
+                        return volume ?? 0;
+                }
+            }
+            catch (OperationCanceledException) when (!token.IsCancellationRequested)
+            {
+                throw new TvPowerUnconfirmedException();
+            }
+        }
         await Task.Delay(120, token);
         return volume ?? 0;
     }
@@ -179,7 +195,7 @@ public static class GoogleTvApps
 
     public static async Task LaunchAsync(IPAddress address, GoogleTvPairing pairing, string package)
     {
-        foreach (var useLegacyLink in new[] { true, false })
+        foreach (var useLegacyLink in new[] { false, true })
         {
             try
             {
@@ -189,6 +205,10 @@ public static class GoogleTvApps
             catch (AppLaunchUnconfirmedException)
             {
                 // Older services and Play Store versions accept different launch URIs.
+            }
+            catch (RemoteCommandRejectedException)
+            {
+                // Try the other URI format when the service explicitly rejects this one.
             }
         }
         throw new AppLaunchUnconfirmedException();
@@ -207,16 +227,13 @@ public static class GoogleTvApps
                 Convert.ToHexString(peer.GetCertHash(HashAlgorithmName.SHA256)), StringComparison.Ordinal));
         await AuthenticateAsync(tls, address, certificate, token);
 
-        var currentApp = await ConfigureAsync(tls, AppLinks | Ping | Power | CurrentApp, AppLinks, token);
-        if (currentApp == package)
-            return true;
+        await ConfigureAsync(tls, AppLinks | Ping | Power | CurrentApp, AppLinks, token);
 
         var launch = package == "com.google.android.youtube.tv"
             ? Text(1, "vnd.youtube://")
             : useLegacyLink
                 ? Text(1, $"market://launch?id={Uri.EscapeDataString(package)}")
-                : Message(Text(1, $"https://play.google.com/apps/launch?id={Uri.EscapeDataString(package)}"),
-                Text(2, "com.android.vending"), Number(3, 1));
+                : Text(1, $"https://play.google.com/apps/launch?id={Uri.EscapeDataString(package)}");
         await SendAsync(tls, Bytes(90, launch), token);
 
         // Confirm the foreground package, rather than treating a successful write as a launch.
@@ -287,7 +304,7 @@ public static class GoogleTvApps
             if (configuration is not null)
             {
                 var offered = ReadFields(configuration).FirstOrDefault(field => field.Number == 1).Value;
-                features = offered & requested;
+                features = offered & (requested | SystemControl);
                 if ((features & required) != required)
                     throw new IOException("The TV does not support the required remote feature.");
                 var info = Message(Number(3, 1), Text(4, "1"), Text(5, "Universal TV Controller"), Text(6, "1.0"));
@@ -320,8 +337,8 @@ public static class GoogleTvApps
     private static async Task<List<Field>> ReadRemoteAsync(SslStream tls, CancellationToken token)
     {
         var fields = ReadFields(await ReceiveAsync(tls, token));
-        if (fields.Any(field => field.Number == 3))
-            throw new AppLaunchUnconfirmedException();
+        if (fields.FirstOrDefault(field => field.Number == 3).Data is { } rejected)
+            throw new RemoteCommandRejectedException(ReadFields(rejected).FirstOrDefault(field => field.Number == 1).Value);
         var ping = fields.FirstOrDefault(field => field.Number == 8).Data;
         if (ping is not null)
         {

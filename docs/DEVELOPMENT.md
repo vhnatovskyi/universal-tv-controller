@@ -21,7 +21,7 @@ Run the local Google TV protocol regression checks (no TV or additional test pac
 dotnet run --project tests/GoogleTvProtocol/GoogleTvProtocol.csproj
 ```
 
-The checks use a local TLS server on port 6466 to verify power commands, idempotent power state changes, controls without volume support, confirmed settings launches, app launches, and text input. Hardware verification is still needed for firmware-specific behavior. Power-on requires the TV's remote service to remain reachable in standby.
+The checks use a local TLS server on port 6466 to verify Sony feature 16 negotiation, confirmed power commands, idempotent power state changes, controls without volume support, actual app launches despite an initial matching package report, and text input. Sony BRAVIA 3 requires feature 16 for system keys: volume works without it, but POWER is silently ignored. Power-off and power-on were verified on the physical TV. The TV settings button is temporarily removed pending hardware verification. Power-on requires the TV's remote service to remain reachable in standby.
 
 Run `dotnet run --project tests/ReleaseInstaller/ReleaseInstaller.csproj` to check update downloads, checksum validation, HTTP errors, cancellation, and partial-file cleanup without downloading or executing a real installer.
 
