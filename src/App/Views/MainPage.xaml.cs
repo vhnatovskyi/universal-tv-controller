@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Net.Sockets;
-using static BraviaRemote.Localization;
+using static UniversalTvRemote.Localization;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 public partial class MainPage : ContentPage
 {
@@ -276,6 +276,9 @@ public partial class MainPage : ContentPage
     }
 
     private bool? tvPoweredOn;
+
+    private async void OnTvSettings(object? sender, EventArgs e) =>
+        await RunAsync(async tv => { await tv.OpenSettingsAsync(); return null; });
 
     private async void OnTogglePower(object? sender, EventArgs e)
     {

@@ -3,7 +3,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 #endif
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 internal static class TvWakeNetwork
 {

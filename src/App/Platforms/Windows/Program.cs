@@ -1,6 +1,6 @@
 using Microsoft.UI.Dispatching;
 
-namespace BraviaRemote.WinUI;
+namespace UniversalTvRemote.WinUI;
 
 internal static class Program
 {

@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 internal static class ReleaseInstaller
 {

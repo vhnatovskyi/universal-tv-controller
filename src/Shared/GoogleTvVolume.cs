@@ -3,9 +3,9 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using static BraviaRemote.GoogleTvWire;
+using static UniversalTvRemote.GoogleTvWire;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 public static partial class GoogleTvApps
 {

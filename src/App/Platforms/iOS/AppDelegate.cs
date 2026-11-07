@@ -1,6 +1,6 @@
-﻿using Foundation;
+using Foundation;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate

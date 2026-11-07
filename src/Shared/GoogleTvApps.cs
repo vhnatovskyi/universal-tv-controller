@@ -6,9 +6,9 @@ using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using static BraviaRemote.GoogleTvWire;
+using static UniversalTvRemote.GoogleTvWire;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 public sealed record GoogleTvPairing(string Fingerprint, string Certificate);
 public sealed class AppLaunchUnconfirmedException() : IOException("The TV did not confirm the requested app in the foreground.");

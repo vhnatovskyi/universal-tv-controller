@@ -1,7 +1,7 @@
 using System.Net;
 using Foundation;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 internal static class GoogleTvIosDiscovery
 {

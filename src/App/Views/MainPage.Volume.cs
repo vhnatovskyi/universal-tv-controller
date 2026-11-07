@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 public partial class MainPage
 {

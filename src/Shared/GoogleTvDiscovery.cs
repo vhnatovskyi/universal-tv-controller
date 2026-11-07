@@ -4,7 +4,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 public sealed record DiscoveredTv(string Name, string Address);
 

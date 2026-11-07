@@ -1,6 +1,6 @@
 using System.Speech.Recognition;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 internal static class VoiceInput
 {

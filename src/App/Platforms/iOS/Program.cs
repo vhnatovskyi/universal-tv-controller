@@ -1,7 +1,7 @@
-﻿using ObjCRuntime;
+using ObjCRuntime;
 using UIKit;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 public class Program
 {

@@ -3,8 +3,8 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using BraviaRemote;
-using static BraviaRemote.GoogleTvWire;
+using UniversalTvRemote;
+using static UniversalTvRemote.GoogleTvWire;
 
 var wake = GoogleTvApps.CreateWakePacket("02-11-22-33-44-55");
 var wakeMac = Convert.FromHexString("021122334455");
@@ -29,10 +29,13 @@ var listener=new TcpListener(IPAddress.Loopback,6466);
 listener.Start();
 var volumeCases = new (int Initial, int Target)[] { (10, 3), (0, 5), (100, 10), (5, 30), (0, 100), (3, 3), (100, 3) };
 using var holdCancellation = new CancellationTokenSource();
+using var settingsCancellation = new CancellationTokenSource();
 try
 {
     var server=Task.Run(async () =>
     {
+        await ServeAsync(stream => ExpectSettingsAsync(stream));
+        await ServeAsync(stream => ExpectSettingsAsync(stream, settingsCancellation));
         await ServeAsync(stream => ExpectKeyAsync(stream, 26, reportedPower: false), screenOn: true, features: 51);
         await ServeAsync(stream => ExpectKeyAsync(stream, 26, reportedPower: true), screenOn: false, features: 51);
         await ServeAsync(ExpectNoKeyAsync, screenOn: true, features: 51);
@@ -94,6 +97,13 @@ try
             await ExpectNoKeyAsync(stream);
         }, screenOn: false);
     },token);
+    await GoogleTvApps.OpenSettingsAsync(IPAddress.Loopback, pairing);
+    try
+    {
+        await GoogleTvApps.OpenSettingsAsync(IPAddress.Loopback, pairing, settingsCancellation.Token);
+        throw new Exception("Settings hold ignored cancellation");
+    }
+    catch (OperationCanceledException) when (settingsCancellation.IsCancellationRequested) { }
     await GoogleTvApps.ControlAsync(IPAddress.Loopback, pairing, power: false);
     await GoogleTvApps.ControlAsync(IPAddress.Loopback, pairing, power: true);
     await GoogleTvApps.ControlAsync(IPAddress.Loopback, pairing, power: true);
@@ -133,7 +143,7 @@ try
     }
     catch (TvPowerUnconfirmedException error) when (error.ExpectedOn == true) { }
     await server;
-    Console.WriteLine("Sony feature 16, power confirmation, app launch, volume presets 3/5/10/30/100 from different levels, hold cancellation, missing volume confirmation and text input passed.");
+    Console.WriteLine("Settings HOME hold and release after cancellation, Sony feature 16, power confirmation, app launch, volume presets 3/5/10/30/100 from different levels, hold cancellation, missing volume confirmation and text input passed.");
 }
 finally { listener.Stop(); }
 
@@ -174,6 +184,21 @@ async Task ExpectKeyAsync(SslStream stream, uint expected, bool? reportedPower =
         throw new Exception($"Expected a short press of key {expected}");
     if (reportedPower is { } on)
         await SendAsync(stream, Bytes(40, Number(1, on ? 1u : 0u)), token);
+}
+
+async Task ExpectSettingsAsync(SslStream stream, CancellationTokenSource? cancel = null)
+{
+    var down = ReadFields(ReadFields(await ReceiveAsync(stream, token)).Single(field => field.Number == 10).Data!);
+    if (down.Single(field => field.Number == 1).Value != 3 || down.Single(field => field.Number == 2).Value != 1)
+        throw new Exception("Settings must press HOME down");
+    var held = System.Diagnostics.Stopwatch.StartNew();
+    cancel?.Cancel();
+    var up = ReadFields(ReadFields(await ReceiveAsync(stream, token)).Single(field => field.Number == 10).Data!);
+    if (up.Single(field => field.Number == 1).Value != 3 || up.Single(field => field.Number == 2).Value != 2)
+        throw new Exception("Settings must release HOME even after cancellation");
+    if (cancel is null && held.ElapsedMilliseconds < 1100)
+        throw new Exception("Settings HOME hold is too short");
+    await ExpectNoKeyAsync(stream);
 }
 
 async Task ExpectNoKeyAsync(SslStream stream)

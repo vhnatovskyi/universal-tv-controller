@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 internal static class GoogleTvWire
 {

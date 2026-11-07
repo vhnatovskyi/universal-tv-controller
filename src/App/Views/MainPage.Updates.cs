@@ -4,9 +4,9 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using static BraviaRemote.Localization;
+using static UniversalTvRemote.Localization;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 public partial class MainPage
 {

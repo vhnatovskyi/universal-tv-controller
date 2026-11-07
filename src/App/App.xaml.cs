@@ -1,4 +1,4 @@
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 public partial class App : Application
 {
@@ -11,7 +11,7 @@ public partial class App : Application
     protected override Window CreateWindow(IActivationState? activationState)
     {
         var page = new MainPage();
-        var window = new Window(page) { Title = "Universal TV Controller v" + global::BraviaRemote.MainPage.DisplayVersion };
+        var window = new Window(page) { Title = "Universal TV Controller v" + global::UniversalTvRemote.MainPage.DisplayVersion };
         window.Stopped += (_, _) => page.SetVolumeTracking(false);
         window.Deactivated += (_, _) => page.CancelVolumeChange();
         window.Resumed += (_, _) => page.SetVolumeTracking(true);

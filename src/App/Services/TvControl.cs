@@ -1,10 +1,12 @@
 using System.Net;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 internal sealed class TvControl(IPAddress address, GoogleTvPairing pairing, string? macAddress = null)
 {
     public Task<int> GetVolumeAsync() => GoogleTvApps.ControlAsync(address, pairing);
+
+    public Task OpenSettingsAsync() => GoogleTvApps.OpenSettingsAsync(address, pairing);
 
     public async Task PressAsync(int key)
     {

@@ -2,12 +2,12 @@ using System.Collections;
 using System.Globalization;
 using System.Resources;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 internal static class Localization
 {
     private const string PreferenceKey = "app-language";
-    private static readonly ResourceManager Strings = new("BraviaRemote.Resources.Localization.Strings", typeof(Localization).Assembly);
+    private static readonly ResourceManager Strings = new("UniversalTvRemote.Resources.Localization.Strings", typeof(Localization).Assembly);
     private static CultureInfo culture = CultureInfo.GetCultureInfo("en");
 
     public static string Mode { get; private set; } = "system";

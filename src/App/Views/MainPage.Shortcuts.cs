@@ -1,9 +1,9 @@
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography;
-using static BraviaRemote.Localization;
+using static UniversalTvRemote.Localization;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 public partial class MainPage
 {

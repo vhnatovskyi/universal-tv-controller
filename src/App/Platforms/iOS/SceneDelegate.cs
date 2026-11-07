@@ -1,6 +1,6 @@
 using Foundation;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 [Register("SceneDelegate")]
 public class SceneDelegate : MauiUISceneDelegate

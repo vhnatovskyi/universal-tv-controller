@@ -1,4 +1,4 @@
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 public partial class MainPage
 {

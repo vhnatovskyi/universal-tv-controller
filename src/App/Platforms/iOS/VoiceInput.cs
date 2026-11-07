@@ -2,7 +2,7 @@ using AVFoundation;
 using Foundation;
 using Speech;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 internal static class VoiceInput
 {

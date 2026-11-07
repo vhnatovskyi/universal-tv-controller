@@ -6,7 +6,7 @@ using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 public static partial class GoogleTvApps
 {

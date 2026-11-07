@@ -1,3 +1,17 @@
+## Universal TV Controller v0.4.10
+
+### English
+
+- Restore the TV settings button beside power. Hold HOME for 1.2 seconds to open the Google TV settings side panel on BRAVIA 3, instead of the ignored SETTINGS key.
+- Always release HOME, including when the operation is cancelled. Keep the remote fitting without scrolling.
+- Rename the code namespace to UniversalTvRemote, including XAML, platform entry points and localization resources.
+
+### Українська
+
+- Повернуто кнопку налаштувань ТВ поруч із живленням. Утримання Home протягом 1,2 секунди відкриває бічну панель налаштувань Google TV на BRAVIA 3 замість команди Settings, яку телевізор ігнорує.
+- Home відпускається навіть після скасування операції. Пульт уміщається без прокручування.
+- Namespace змінено на UniversalTvRemote включно з XAML, платформними точками входу та ресурсами перекладів.
+
 ## Universal TV Controller v0.4.9
 
 ### English

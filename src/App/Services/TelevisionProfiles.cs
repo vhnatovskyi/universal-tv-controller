@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BraviaRemote;
+namespace UniversalTvRemote;
 
 internal sealed record QuickButton(string Name, string AppPackage);
 

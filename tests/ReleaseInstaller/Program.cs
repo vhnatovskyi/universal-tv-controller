@@ -1,6 +1,6 @@
 using System.Net;
 using System.Security.Cryptography;
-using BraviaRemote;
+using UniversalTvRemote;
 
 var version = new Version(1, 2, 3);
 const string name = "UniversalTvController-Setup-1.2.3.exe";

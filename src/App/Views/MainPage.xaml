@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BraviaRemote.MainPage" BackgroundColor="#101820">
+             x:Class="UniversalTvRemote.MainPage" BackgroundColor="#101820">
     <ContentPage.Resources>
         <Style x:Key="StandardButtonStyle" TargetType="Button">
             <Setter Property="BackgroundColor" Value="#1B2635" />
@@ -191,13 +191,18 @@
                     </Style>
                 </VerticalStackLayout.Resources>
                 <Grid x:Name="QuickButtons" ColumnDefinitions="*,*,*" ColumnSpacing="8" RowSpacing="8" />
-                <Button x:Name="PowerButton" ImageSource="control_power.png"
+                <Grid ColumnDefinitions="44,44,44" ColumnSpacing="12" HorizontalOptions="Center">
+                <Button x:Name="PowerButton" Grid.Column="1" ImageSource="control_power.png"
                         WidthRequest="44" HeightRequest="44"
                         MinimumWidthRequest="44" MinimumHeightRequest="44" CornerRadius="100" Padding="0"
                         HorizontalOptions="Center" BackgroundColor="#1B2937" BorderColor="#40576D" BorderWidth="1.5"
                         Clicked="OnTogglePower" SemanticProperties.Description="{DynamicResource Loc.PowerToggle}"
                         ToolTipProperties.Text="{DynamicResource Loc.PowerToggle}">
                 </Button>
+                <Button Grid.Column="2" ImageSource="control_settings.png" WidthRequest="44" HeightRequest="44"
+                        Padding="0" Clicked="OnTvSettings" SemanticProperties.Description="{DynamicResource Loc.TvSettings}"
+                        ToolTipProperties.Text="{DynamicResource Loc.TvSettings}" />
+                </Grid>
                 <Border x:Name="DirectionPad" HorizontalOptions="Center" WidthRequest="204" HeightRequest="204" Padding="10"
                         Stroke="#3B526C" StrokeThickness="1.5" StrokeShape="RoundRectangle 160">
                     <Border.Background>
