@@ -13,9 +13,9 @@
     <AssemblyName>UniversalTvController</AssemblyName>
     <RootNamespace>UniversalTvRemote</RootNamespace>
     <ApplicationId>app.braviaremote.controller</ApplicationId>
-    <ApplicationDisplayVersion>0.4.10</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>0.4.11</ApplicationDisplayVersion>
     <Version>$(ApplicationDisplayVersion)</Version>
-    <ApplicationVersion>19</ApplicationVersion>
+    <ApplicationVersion>20</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
     <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>

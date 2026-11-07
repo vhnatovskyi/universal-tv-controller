@@ -1,3 +1,13 @@
+## Universal TV Controller v0.4.11
+
+### English
+
+- Place TV settings alongside Back, Home and Inputs as four equally sized buttons. Keep power centered above the direction pad and preserve the layout without scrolling.
+
+### Українська
+
+- Налаштування ТВ перенесено в один ряд із кнопками «Назад», «Дім» та «Джерело»: усі чотири кнопки однакового розміру. Живлення залишається по центру над навігацією, пульт уміщається без прокручування.
+
 ## Universal TV Controller v0.4.10
 
 ### English

@@ -191,18 +191,13 @@
                     </Style>
                 </VerticalStackLayout.Resources>
                 <Grid x:Name="QuickButtons" ColumnDefinitions="*,*,*" ColumnSpacing="8" RowSpacing="8" />
-                <Grid ColumnDefinitions="44,44,44" ColumnSpacing="12" HorizontalOptions="Center">
-                <Button x:Name="PowerButton" Grid.Column="1" ImageSource="control_power.png"
+                <Button x:Name="PowerButton" ImageSource="control_power.png"
                         WidthRequest="44" HeightRequest="44"
                         MinimumWidthRequest="44" MinimumHeightRequest="44" CornerRadius="100" Padding="0"
                         HorizontalOptions="Center" BackgroundColor="#1B2937" BorderColor="#40576D" BorderWidth="1.5"
                         Clicked="OnTogglePower" SemanticProperties.Description="{DynamicResource Loc.PowerToggle}"
                         ToolTipProperties.Text="{DynamicResource Loc.PowerToggle}">
                 </Button>
-                <Button Grid.Column="2" ImageSource="control_settings.png" WidthRequest="44" HeightRequest="44"
-                        Padding="0" Clicked="OnTvSettings" SemanticProperties.Description="{DynamicResource Loc.TvSettings}"
-                        ToolTipProperties.Text="{DynamicResource Loc.TvSettings}" />
-                </Grid>
                 <Border x:Name="DirectionPad" HorizontalOptions="Center" WidthRequest="204" HeightRequest="204" Padding="10"
                         Stroke="#3B526C" StrokeThickness="1.5" StrokeShape="RoundRectangle 160">
                     <Border.Background>
@@ -228,13 +223,17 @@
                         <Button Grid.Column="1" Grid.Row="2" ImageSource="control_down.png" CommandParameter="10" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Down}" />
                     </Grid>
                 </Border>
-                <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
                     <Button ImageSource="control_back.png" CommandParameter="8" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Back}" ToolTipProperties.Text="{DynamicResource Loc.Back}" />
                     <Button Grid.Column="1" ImageSource="control_home.png" CommandParameter="6" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Home}" ToolTipProperties.Text="{DynamicResource Loc.Home}" />
                     <Button Grid.Column="2" ImageSource="control_input.png" Clicked="OnInputs" SemanticProperties.Description="{DynamicResource Loc.Inputs}" ToolTipProperties.Text="{DynamicResource Loc.Inputs}" />
-                    <Button Grid.Row="1" ImageSource="control_minus.png" TextColor="#A1CEEC" CommandParameter="31" Clicked="OnVolumeClicked" Pressed="OnVolumePressed" Released="OnVolumeReleased" Unfocused="OnVolumeReleased" SemanticProperties.Description="{DynamicResource Loc.VolumeDown}" ToolTipProperties.Text="{DynamicResource Loc.VolumeDown}" />
-                    <Button Grid.Column="1" Grid.Row="1" ImageSource="control_mute.png" CommandParameter="32" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Mute}" ToolTipProperties.Text="{DynamicResource Loc.Mute}" />
-                    <Button Grid.Column="2" Grid.Row="1" ImageSource="control_plus.png" TextColor="#A1CEEC" CommandParameter="30" Clicked="OnVolumeClicked" Pressed="OnVolumePressed" Released="OnVolumeReleased" Unfocused="OnVolumeReleased" SemanticProperties.Description="{DynamicResource Loc.VolumeUp}" ToolTipProperties.Text="{DynamicResource Loc.VolumeUp}" />
+                    <Button Grid.Column="3" ImageSource="control_settings.png" Clicked="OnTvSettings"
+                            SemanticProperties.Description="{DynamicResource Loc.TvSettings}" ToolTipProperties.Text="{DynamicResource Loc.TvSettings}" />
+                </Grid>
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                    <Button ImageSource="control_minus.png" TextColor="#A1CEEC" CommandParameter="31" Clicked="OnVolumeClicked" Pressed="OnVolumePressed" Released="OnVolumeReleased" Unfocused="OnVolumeReleased" SemanticProperties.Description="{DynamicResource Loc.VolumeDown}" ToolTipProperties.Text="{DynamicResource Loc.VolumeDown}" />
+                    <Button Grid.Column="1" ImageSource="control_mute.png" CommandParameter="32" Clicked="OnKey" SemanticProperties.Description="{DynamicResource Loc.Mute}" ToolTipProperties.Text="{DynamicResource Loc.Mute}" />
+                    <Button Grid.Column="2" ImageSource="control_plus.png" TextColor="#A1CEEC" CommandParameter="30" Clicked="OnVolumeClicked" Pressed="OnVolumePressed" Released="OnVolumeReleased" Unfocused="OnVolumeReleased" SemanticProperties.Description="{DynamicResource Loc.VolumeUp}" ToolTipProperties.Text="{DynamicResource Loc.VolumeUp}" />
                 </Grid>
                 <Grid ColumnDefinitions="*,*,*,*,*" ColumnSpacing="6">
                     <Button Text="3" CommandParameter="3" Clicked="OnVolumePreset" SemanticProperties.Description="{DynamicResource Loc.VolumePreset3}" />
