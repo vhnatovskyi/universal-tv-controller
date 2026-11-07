@@ -107,4 +107,11 @@
   <data name="VoiceTextSent" xml:space="preserve"><value>Text sent to the TV.</value></data>
   <data name="InputMenu" xml:space="preserve"><value>Open TV input menu</value></data>
   <data name="PowerToggle" xml:space="preserve"><value>Toggle TV power</value></data>
+  <data name="InstallLatestUpdate" xml:space="preserve"><value>Update to the latest version</value></data>
+  <data name="OpenLatestRelease" xml:space="preserve"><value>Open latest release</value></data>
+  <data name="UpdateInstallHelp" xml:space="preserve"><value>The installer will download and open. This app will close so you can complete the update in the installation wizard. Your TV profiles will be kept.</value></data>
+  <data name="UpdatesCurrent" xml:space="preserve"><value>You have the latest version.</value></data>
+  <data name="UpdateDownloading" xml:space="preserve"><value>Downloading and verifying the update…</value></data>
+  <data name="UpdateCancelled" xml:space="preserve"><value>Update cancelled or download timed out. You can try again.</value></data>
+  <data name="UpdateInstallFailed" xml:space="preserve"><value>Could not download, verify, or start the update. Try again or open the release to install it manually.</value></data>
 </root>

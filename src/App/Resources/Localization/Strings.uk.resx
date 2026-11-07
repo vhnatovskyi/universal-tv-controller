@@ -107,4 +107,11 @@
   <data name="VoiceTextSent" xml:space="preserve"><value>Текст надіслано на телевізор.</value></data>
   <data name="InputMenu" xml:space="preserve"><value>Відкрити меню входів ТВ</value></data>
   <data name="PowerToggle" xml:space="preserve"><value>Увімкнути або вимкнути ТВ</value></data>
+  <data name="InstallLatestUpdate" xml:space="preserve"><value>Оновити до останньої версії</value></data>
+  <data name="OpenLatestRelease" xml:space="preserve"><value>Відкрити останній реліз</value></data>
+  <data name="UpdateInstallHelp" xml:space="preserve"><value>Інсталятор завантажиться та відкриється. Застосунок закриється, щоб ти завершив оновлення в майстрі встановлення. Профілі телевізорів збережуться.</value></data>
+  <data name="UpdatesCurrent" xml:space="preserve"><value>У тебе остання версія.</value></data>
+  <data name="UpdateDownloading" xml:space="preserve"><value>Завантажуємо та перевіряємо оновлення…</value></data>
+  <data name="UpdateCancelled" xml:space="preserve"><value>Оновлення скасовано або час завантаження вичерпано. Можна спробувати ще раз.</value></data>
+  <data name="UpdateInstallFailed" xml:space="preserve"><value>Не вдалося завантажити, перевірити або запустити оновлення. Спробуй ще раз або відкрий реліз і встанови його вручну.</value></data>
 </root>

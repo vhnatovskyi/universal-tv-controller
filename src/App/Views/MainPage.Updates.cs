@@ -23,6 +23,7 @@ public partial class MainPage
     private string releaseStatus = "UpdatesIdle";
     private Version? updateVersion;
     private PublishedRelease[] releases = [];
+    private CancellationTokenSource? updateDownload;
 
     internal static string DisplayVersion => typeof(MainPage).Assembly.GetName().Version!.ToString(3);
 
@@ -45,7 +46,7 @@ public partial class MainPage
 
     private async Task LoadReleaseListAsync()
     {
-        if (releaseStatus == "UpdatesChecking")
+        if (releaseStatus == "UpdatesChecking" || updateDownload is not null)
             return;
 
         releaseStatus = "UpdatesChecking";
@@ -154,7 +155,15 @@ public partial class MainPage
     private void RefreshUpdateText()
     {
         InstalledVersionLabel.Text = Text("InstalledVersion", DisplayVersion);
-        CheckUpdatesButton.IsEnabled = releaseStatus != "UpdatesChecking";
+        var downloading = updateDownload is not null;
+        CheckUpdatesButton.IsEnabled = releaseStatus != "UpdatesChecking" && !downloading;
+        InstallUpdateButton.IsEnabled = updateVersion is not null && CheckUpdatesButton.IsEnabled;
+        InstallUpdateButton.Text = Text(OperatingSystem.IsWindows() ? "InstallLatestUpdate" : "OpenLatestRelease");
+        UpdateInstallHelpLabel.IsVisible = OperatingSystem.IsWindows();
+        UpdateDownloadSpinner.IsVisible = UpdateDownloadSpinner.IsRunning = downloading;
+        CancelUpdateButton.IsVisible = downloading;
+        LatestVersionLabel.Text = updateVersion is { } available ? Text("UpdateAvailable", available.ToString(3))
+            : releaseListLoaded && releaseStatus.Length == 0 ? Text("UpdatesCurrent") : "";
         ReleaseStatusLabel.IsVisible = releaseStatus.Length > 0;
         ReleaseStatusLabel.Text = releaseStatus.Length > 0 ? Text(releaseStatus) : "";
         var latest = updateVersion?.ToString(3);
@@ -192,6 +201,54 @@ public partial class MainPage
     }
 
     private async void OnCheckUpdates(object? sender, EventArgs e) => await LoadReleaseListAsync();
+
+    private void OnCancelUpdate(object? sender, EventArgs e) => updateDownload?.Cancel();
+
+    private async void OnInstallUpdate(object? sender, EventArgs e)
+    {
+        if (updateVersion is not { } version || updateDownload is not null || releaseStatus == "UpdatesChecking")
+            return;
+#if WINDOWS
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromMinutes(10));
+        updateDownload = cancellation;
+        UpdateInstallStatusLabel.IsVisible = true;
+        UpdateInstallStatusLabel.Text = Text("UpdateDownloading");
+        RefreshUpdateText();
+        try
+        {
+            using var downloadClient = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
+            var directory = Path.Combine(FileSystem.CacheDirectory, "updates", Guid.NewGuid().ToString("N"));
+            var releaseUrl = new Uri($"{RepositoryUrl}/releases/download/v{version.ToString(3)}/");
+            var installer = await ReleaseInstaller.DownloadAsync(downloadClient, releaseUrl, version, directory, cancellation.Token);
+            cancellation.Token.ThrowIfCancellationRequested();
+            var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(installer)
+            {
+                UseShellExecute = true,
+                ArgumentList = { $"/DIR={AppContext.BaseDirectory}" }
+            });
+            if (process is null)
+                throw new IOException("Could not start the update installer.");
+            process.Dispose();
+            Application.Current?.Quit();
+        }
+        catch (OperationCanceledException)
+        {
+            UpdateInstallStatusLabel.Text = Text("UpdateCancelled");
+        }
+        catch (Exception error) when (error is HttpRequestException or IOException or UnauthorizedAccessException
+            or System.ComponentModel.Win32Exception or System.Security.Cryptography.CryptographicException)
+        {
+            UpdateInstallStatusLabel.Text = Text("UpdateInstallFailed");
+        }
+        finally
+        {
+            updateDownload = null;
+            RefreshUpdateText();
+        }
+#else
+        await OpenTagAsync($"v{version.ToString(3)}");
+#endif
+    }
 
     private async void OnOpenRelease(object? sender, EventArgs e)
     {

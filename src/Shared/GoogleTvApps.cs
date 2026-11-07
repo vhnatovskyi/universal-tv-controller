@@ -75,6 +75,13 @@ public static class GoogleTvApps
 
     public static async Task<int> ControlAsync(IPAddress address, GoogleTvPairing pairing, int? sonyKey = null, bool? power = null)
     {
+        // Sony firmware can ignore KEYCODE_SETTINGS; launch the settings app instead.
+        if (sonyKey == 7 && power is null)
+        {
+            await LaunchAsync(address, pairing, "com.android.tv.settings");
+            return 0;
+        }
+
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         var token = timeout.Token;
         using var certificate = X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(pairing.Certificate), "");
@@ -86,12 +93,11 @@ public static class GoogleTvApps
         await AuthenticateAsync(tls, address, certificate, token);
         int? volume = null;
         bool? screenOn = null;
-        await ConfigureAsync(tls, Ping | Keys | Power | Volume, Keys | Volume, token, message =>
+        var required = sonyKey is null && power is null ? Volume : Keys | Power;
+        await ConfigureAsync(tls, Ping | Keys | Power | Volume, required, token, message =>
         {
             volume = ReadVolume(message) ?? volume;
-            var powerData = message.FirstOrDefault(field => field.Number == 40).Data;
-            if (powerData is not null)
-                screenOn = ReadFields(powerData).FirstOrDefault(field => field.Number == 1).Value != 0;
+            screenOn = ReadPower(message) ?? screenOn;
         });
         if (sonyKey is null && power is null)
         {
@@ -103,11 +109,11 @@ public static class GoogleTvApps
             return volume ?? 0;
         var key = power switch
         {
-            true => 224u,
-            false => 223u,
+            // Google TV supports POWER; SLEEP/WAKEUP are ignored on some TVs.
+            true or false => 26u,
             _ => sonyKey switch
             {
-                0 => 26u, 1 => 178u, 6 => 3u, 7 => 176u, 8 => 4u, 9 => 19u, 10 => 20u, 11 => 22u, 12 => 21u,
+                0 => 26u, 1 => 178u, 6 => 3u, 8 => 4u, 9 => 19u, 10 => 20u, 11 => 22u, 12 => 21u,
                 13 => 23u, 30 => 24u, 31 => 25u, 32 => 164u,
                 101 => 243u, 102 => 244u, 103 => 245u, 104 => 246u,
                 _ => throw new IOException("Unsupported remote key.")

@@ -87,6 +87,14 @@
             </VerticalStackLayout>
             <VerticalStackLayout x:Name="UpdatesPanel" Padding="12" Spacing="10" IsVisible="False">
                 <Label x:Name="InstalledVersionLabel" TextColor="#95A3B8" FontSize="11" />
+                <Label x:Name="LatestVersionLabel" TextColor="#83DFF6" />
+                <Button x:Name="InstallUpdateButton" Clicked="OnInstallUpdate" IsEnabled="False" />
+                <Label x:Name="UpdateInstallHelpLabel" Text="{DynamicResource Loc.UpdateInstallHelp}" TextColor="#95A3B8" FontSize="11" />
+                <HorizontalStackLayout Spacing="12">
+                    <ActivityIndicator x:Name="UpdateDownloadSpinner" Color="#72CCFA" IsVisible="False" />
+                    <Button x:Name="CancelUpdateButton" Text="{DynamicResource Loc.Cancel}" Clicked="OnCancelUpdate" IsVisible="False" />
+                </HorizontalStackLayout>
+                <Label x:Name="UpdateInstallStatusLabel" TextColor="#95A3B8" FontSize="11" IsVisible="False" />
                 <Picker x:Name="ReleasePicker" Title="{DynamicResource Loc.ChooseRelease}" TitleColor="#95A3B8"
                         TextColor="White" BackgroundColor="#1B2635" SelectedIndexChanged="OnReleaseSelected" />
                 <Label x:Name="ReleaseStatusLabel" TextColor="#95A3B8" FontSize="11" />
